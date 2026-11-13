@@ -566,6 +566,49 @@ tfoot td:first-child{border-radius:7px 0 0 7px}tfoot td:last-child{border-radius
  .report-layout{min-height:0!important}
  .block-status-row{padding:8px 2px!important}
 }
+
+/* V19 - WhatsApp-ready section capture and report notes */
+.kpi-share-row{display:flex;align-items:center;justify-content:space-between;margin:-3px 0 9px;padding:0 2px}
+.kpi-share-row>span,.additional-kicker{font-size:9px;letter-spacing:.12em;font-weight:950;color:#526b7d}
+.panel-head-actions{display:flex;align-items:center;gap:10px;margin-left:auto}
+.panel-title-text{min-width:0}
+.copy-image-btn{border:1px solid #b9ccda;background:linear-gradient(180deg,#fff,#edf4f8);color:#123c58;border-radius:7px;padding:6px 10px;font-family:inherit;font-size:9px;font-weight:800;line-height:1.1;white-space:nowrap;cursor:pointer;box-shadow:0 2px 4px #163c5514}
+.copy-image-btn:hover{background:#e3f2eb;border-color:#9bcab2;color:#08764f}
+.copy-image-btn:active{transform:translateY(1px)}
+.copy-image-btn.compact{padding:5px 8px;margin-left:auto}
+.region-title{min-width:0}
+.region-heading .copy-image-btn{margin-left:auto}
+.additional-info{margin-top:12px;background:#fff;border:1px solid #d4e0e9;border-radius:13px;padding:14px 16px;box-shadow:0 3px 12px #173a530c}
+.additional-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.additional-head h2{margin:3px 0 4px;color:#153c56;font-size:13px;font-weight:950;letter-spacing:.035em}
+.additional-head p{margin:0;color:#526b7d;font-size:10px;line-height:1.45}
+.additional-info textarea{display:block;width:100%;min-height:66px;resize:vertical;border:1px solid #cbd9e3;border-radius:8px;background:#f8fbfd;padding:10px 12px;color:#19384e;font-family:inherit;font-size:11px;font-weight:500;line-height:1.5;outline:none}
+.additional-info textarea:focus{border-color:#278b72;box-shadow:0 0 0 3px #278b7218}
+.additional-foot{display:flex;justify-content:space-between;gap:10px;margin-top:7px;color:#607789;font-size:9px}
+.capture-panel{box-sizing:border-box}
+@media(max-width:1000px){.panel-head-actions{gap:5px}.report-datetime{font-size:8px}.copy-image-btn{padding:6px 7px;font-size:8px}.additional-info{padding:11px}.additional-head h2{font-size:12px}}
+@media print{.copy-image-btn,.kpi-share-row{display:none!important}}
+
+
+/* V20 - one complete WhatsApp report capture */
+.whatsapp-report-capture{background:#f2f6fa;border:1px solid #d7e2eb;border-radius:14px;padding:10px;box-shadow:0 4px 16px #173a530c}
+.full-report-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:3px 2px 10px}
+.full-report-toolbar b{display:block;color:#123b59;font-size:11px;font-weight:950;letter-spacing:.09em}
+.full-report-toolbar small{display:block;color:#526b7d;font-size:9px;margin-top:3px}
+.full-copy-btn{padding:9px 14px!important;font-size:10px!important;background:linear-gradient(180deg,#087e58,#056044)!important;color:#fff!important;border-color:#056044!important;box-shadow:0 3px 8px #05604425!important}
+.whatsapp-report-capture .filter-row{margin-bottom:9px}
+.whatsapp-report-capture #report{display:block}
+.whatsapp-report-capture #report .dashboard-grid,
+.whatsapp-report-capture #report .bottom-grid,
+.whatsapp-report-capture #report .kpi-share-row{display:none!important}
+.whatsapp-report-capture #report .cards{margin-bottom:10px}
+.whatsapp-report-capture #report .report-layout{margin-bottom:10px}
+.whatsapp-report-capture #report .additional-info{margin-top:10px}
+@media(max-width:1000px){
+ .whatsapp-report-capture{padding:7px}
+ .full-report-toolbar{align-items:flex-start;flex-wrap:wrap}
+ .full-copy-btn{width:100%}
+}
 </style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
@@ -591,11 +634,13 @@ tfoot td:first-child{border-radius:7px 0 0 7px}tfoot td:last-child{border-radius
    </div>
    <div class="notice" id="msg">Upload one workbook independently, or upload both to combine the data. Header-based mapping is enabled.</div>
   </section>
+  <section id="whatsappReport" class="whatsapp-report-capture">
+   <div class="full-report-toolbar"><div><b>WHATSAPP REPORT</b><small>Capture the complete report below, including Additional Information.</small></div><button class="copy-image-btn full-copy-btn" type="button" data-capture="whatsappReport" data-name="Full-WhatsApp-Report">▣ Copy Full Report Image</button></div>
   <div class="filter-row"><div class="filter-title"><span class="filter-icon">☷</span><div><b>Report Filters</b><small>Refine dashboard data</small></div></div>
    <div class="filters"><label>LOAD PLAN TYPE<select id="typeFilter"><option value="ALL">All Load Plan</option><option value="Outstation">Outstation</option><option value="LOCAL &amp; IKA">Local &amp; IKA</option></select></label><label>LOAD PLAN DATE<select id="dateFilter"><option value="ALL">All Dates</option></select></label><button class="btn light" id="reset">Reset Filters</button></div>
   </div>
   <section id="report">
-   <div class="cards">
+   <div class="cards" id="kpiSummary">
     <div class="card"><div class="card-top"><small>TOTAL DO</small><span class="kpi-icon">▤</span></div><b>—</b><span>Unique DO numbers</span></div>
     <div class="card green"><div class="card-top"><small>COMPLETED INVOICED</small><span class="kpi-icon">✓</span></div><b>—</b><span>DO count</span></div>
     <div class="card red"><div class="card-top"><small>PENDING INVOICE</small><span class="kpi-icon">◷</span></div><b>—</b><span>DO count</span></div>
@@ -619,9 +664,9 @@ tfoot td:first-child{border-radius:7px 0 0 7px}tfoot td:last-child{border-radius
     </div></div>
    </div>
    <div class="report-layout">
-    <div class="panel table-panel" id="reports"><h2>OVERALL BLOCK CURRENT ORDER INVOICE STATUS <span id="reportDateTime" class="report-datetime"></span></h2><div class="tablewrap"><table><thead><tr><th>Invoice Status</th><th>Block</th><th>DO No</th><th>DO Line</th><th>Est Total Carton</th><th>DO Percentage</th></tr></thead><tbody><tr><td colspan="6">Upload Excel file(s) to display report.</td></tr></tbody></table></div></div>
+    <div class="panel table-panel capture-panel" id="reports"><h2><span class="panel-title-text">OVERALL BLOCK CURRENT ORDER INVOICE STATUS</span><span class="panel-head-actions"><span id="reportDateTime" class="report-datetime"></span></span></h2><div class="tablewrap"><table><thead><tr><th>Invoice Status</th><th>Block</th><th>DO No</th><th>DO Line</th><th>Est Total Carton</th><th>DO Percentage</th></tr></thead><tbody><tr><td colspan="6">Upload Excel file(s) to display report.</td></tr></tbody></table></div></div>
     <aside class="region-panel" id="regionStatus">
-     <div class="region-heading"><span class="region-symbol">▦</span><div><h2>BY BLOCK STATUS</h2><p>Block-wise invoice and carton overview</p></div><span class="region-tag">LIVE</span></div>
+     <div class="region-heading"><span class="region-symbol">▦</span><div class="region-title"><h2>BY BLOCK STATUS</h2><p>Block-wise invoice and carton overview</p></div><span class="region-tag">LIVE</span></div>
      <div class="block-status-intro"><span>Overall invoice completion</span><b id="blockOverallPct">—</b></div>
      <div class="block-status-list" id="blockStatusList">
       <div class="block-status-row"><span class="block-pill">E</span><div class="block-status-main"><div class="block-status-numbers"><b>—</b><span>DOs</span><strong>—</strong><span>Cartons</span></div><div class="progress-track"><i style="width:0%"></i></div><div class="block-status-foot"><span class="done">Completed —</span><span class="waiting">Pending —</span></div></div><em>—</em></div>
@@ -632,6 +677,12 @@ tfoot td:first-child{border-radius:7px 0 0 7px}tfoot td:last-child{border-radius
      <div class="region-foot"><span class="live-dot"></span> Updates with Load Plan Type &amp; Date filters</div>
     </aside>
    </div>
+   <section class="additional-info capture-panel" id="additionalInfo">
+    <div class="additional-head"><div><span class="additional-kicker">REPORT NOTES</span><h2>ADDITIONAL INFORMATION</h2><p>Add shift updates, operational notes, issues, or important messages for the WhatsApp report.</p></div></div>
+    <textarea id="additionalText" rows="3" placeholder="Example: Shift update: Block E pending invoice is being followed up. Please prioritize outstanding DOs before cutoff."></textarea>
+    <div class="additional-foot"><span>These notes are for reporting only and do not change Excel calculations.</span><span id="additionalCount">0 characters</span></div>
+   </section>
+  </section>
   </section>
   <div class="footer">Operation Picking Overview · Monitor Display</div>
  </div>
@@ -733,7 +784,25 @@ function render(){
 function updateDates(){let old=$('dateFilter').value;let ds=[...new Set(records.map(r=>r.date).filter(Boolean))].sort();$('dateFilter').innerHTML='<option value="ALL">All Dates</option>'+ds.map(d=>`<option value="${d}">${d}</option>`).join('');$('dateFilter').value=ds.includes(old)?old:'ALL'}
 $('load').onclick=async()=>{try{let of=$('outFile').files[0],lf=$('localFile').files[0];if(!of&&!lf)throw new Error('Outstation သို့မဟုတ် Local & IKA Excel ဖိုင် အနည်းဆုံး တစ်ခု Upload လုပ်ပါ။');let a=of?await readFile(of,'Outstation'):[],b=lf?await readFile(lf,'LOCAL & IKA'):[];records=[...a,...b];if(!records.length)throw new Error('ဖိုင်ထဲမှာ အသုံးပြုနိုင်တဲ့ DO Data မတွေ့ပါ။');loaded=true;updateDates();render();$('png').disabled=false;$('export').disabled=false;let parts=[];if(of)parts.push('Outstation '+fmt(a.length));if(lf)parts.push('Local & IKA '+fmt(b.length));$('msg').textContent=`Loaded ${fmt(records.length)} DO rows: ${parts.join(' · ')}. Header mapping successful.`;}catch(e){$('msg').textContent='Upload error: '+e.message;alert(e.message)}};
 $('typeFilter').onchange=()=>{if(loaded)render()};$('dateFilter').onchange=()=>{if(loaded)render()};$('reset').onclick=()=>{$('typeFilter').value='ALL';$('dateFilter').value='ALL';if(loaded)render()};
-$('png').onclick=async()=>{let c=await html2canvas($('report'),{scale:2,backgroundColor:'#fff'});let a=document.createElement('a');a.download='Operation-Picking-Overview-Invoice-Status.png';a.href=c.toDataURL();a.click()};
+async function captureSection(id,name){
+ const target=$(id); if(!target) return;
+ const btn=document.querySelector(`[data-capture="${id}"]`); const old=btn?btn.textContent:'';
+ try{
+  if(btn){btn.disabled=true;btn.textContent='Preparing…'}
+  const canvas=await html2canvas(target,{scale:3,backgroundColor:'#ffffff',useCORS:true,logging:false,windowWidth:Math.max(document.documentElement.clientWidth,target.scrollWidth),onclone:(doc)=>{const el=doc.getElementById(id);if(el){el.style.width=target.scrollWidth+'px';el.style.maxWidth='none';el.style.overflow='visible';el.style.height='auto';}doc.querySelectorAll('.copy-image-btn').forEach(x=>x.remove());}});
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+  if(!blob) throw new Error('Image export failed');
+  const fileName=`Operation-Picking-${name}-${new Date().toISOString().slice(0,10)}.png`;
+  if(navigator.clipboard && window.ClipboardItem){
+   try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);if(btn)btn.textContent='Copied ✓';}
+   catch(e){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=fileName;a.click();URL.revokeObjectURL(url);if(btn)btn.textContent='Downloaded ✓';}
+  }else{const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=fileName;a.click();URL.revokeObjectURL(url);if(btn)btn.textContent='Downloaded ✓';}
+ }catch(e){alert('Image copy မအောင်မြင်ပါ။ '+e.message)}
+ finally{setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent=old}},1600)}
+}
+document.querySelectorAll('[data-capture]').forEach(btn=>btn.addEventListener('click',()=>captureSection(btn.dataset.capture,btn.dataset.name||btn.dataset.capture)));
+$('additionalText').addEventListener('input',()=>{$('additionalCount').textContent=$('additionalText').value.length.toLocaleString('en-US')+' characters'});
+$('png').onclick=async()=>{await captureSection('whatsappReport','Full-WhatsApp-Report')};
 $('export').onclick=()=>{let rows=filtered(),a=aggregate(rows),out=XLSX.utils.book_new();let summary=[];for(let g of a.groups){summary.push({'Invoice Status':g.kind,'Block':'Overall','DO No':g.do,'DO Line':g.line,'Est Total Carton':g.carton,'DO Percentage':g.pct/100});for(let b of g.blocks)summary.push({'Invoice Status':g.kind,'Block':b.block,'DO No':b.do,'DO Line':b.line,'Est Total Carton':b.carton,'DO Percentage':b.pct/100})}summary.push({'Invoice Status':'Grand Total','Block':'All','DO No':a.total,'DO Line':a.allLine,'Est Total Carton':a.allCarton,'DO Percentage':1});XLSX.utils.book_append_sheet(out,XLSX.utils.json_to_sheet(summary),'Invoice Stats');XLSX.utils.book_append_sheet(out,XLSX.utils.json_to_sheet(rows),'Filtered Source Data');XLSX.writeFile(out,'Operation-Picking-Overview.xlsx')};
 setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});},1000);
 </script></body></html>
