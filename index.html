@@ -306,6 +306,56 @@ html,body{height:100%;overflow:hidden}
  .table-panel{display:block;min-height:0}
  .table-panel .tablewrap{overflow-x:auto;overflow-y:visible}
 }
+
+/* V15 calm enterprise palette and balanced report + region layout */
+:root{--navy:#142f46;--navy2:#1d4562;--green:#16845f;--green-soft:#e7f4ed;--red:#c94350;--red-soft:#fff0f1;--blue-soft:#edf4f8;--ink:#20384b;--muted:#64798a;--border:#d9e4eb}
+body{background:#f1f5f8;color:var(--ink)}
+.side{background:linear-gradient(180deg,#142f46,#193b54 72%,#10283b)}
+.brandmark{background:linear-gradient(145deg,#80d2b0,#e2f2e9);box-shadow:0 3px 9px #071c2a66}
+.nav a.active{background:linear-gradient(90deg,#14875f,#20a574);box-shadow:0 5px 12px #08724c30}
+.main{background:#f1f5f8}
+.top{background:#fff;border-bottom:1px solid var(--border)}
+.top h1{color:#172f43;font-weight:850}
+.content{max-width:none}
+.control-panel{background:#fff;border:1px solid var(--border);box-shadow:0 3px 10px #18394e0a}
+.control-head h2,.filter-title b{color:#203f55;font-weight:900}
+.filter-row{background:#eaf1f6;border:1px solid #dbe5ec}
+.cards{gap:12px}
+.card{background:#fff;border:1px solid var(--border);box-shadow:0 3px 10px #18394e0c;border-radius:13px}
+.card small{color:#203d52;font-weight:900}
+.card b{color:#126d91}
+.card.green{background:linear-gradient(145deg,#fff,#f1fbf5);border-top:4px solid #20a36f}
+.card.red{background:linear-gradient(145deg,#fff,#fff4f4);border-top:4px solid #d84c5a}
+.card.gold{background:linear-gradient(145deg,#fff,#fff9eb);border-top:4px solid #d6a43b}
+.card.green b{color:#08794f}.card.red b{color:#bd2938}.card.gold b{color:#96620b}
+.card span{color:#455f72}
+.kpi-icon{width:46px;height:46px;border-radius:13px;font-size:23px;box-shadow:inset 0 2px 4px #ffffffaa,inset 0 -5px 7px #0002,0 5px 10px #18394e24;border:1px solid #ffffffbb}
+.report-layout{display:grid;grid-template-columns:minmax(0,3fr) minmax(280px,1.12fr);gap:12px;align-items:stretch;min-height:390px}
+.table-panel{margin:0;min-width:0;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 4px 14px #18394e0b;padding:14px}
+.table-panel h2{color:#17364b;font-size:14px;font-weight:950}
+.report-datetime{color:#536b7d}
+thead th{background:#e7eff5;color:#173d57;font-weight:900}
+tbody td{color:#294356}
+tbody tr.summary-row.completed td{background:#e2f4e9;color:#12583e}
+tbody tr.detail-row.completed-detail td{background:#f4faf6}
+tbody tr.summary-row.pending td{background:#ffe1e4;color:#982735}
+tbody tr.detail-row.pending-detail td{background:#fff2f3;color:#8e303a}
+tfoot td{background:#dce9f1;color:#173a52}
+.region-panel{min-width:0;background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:0 4px 14px #18394e0b;display:flex;flex-direction:column;gap:14px}
+.region-heading{display:flex;align-items:center;gap:10px;padding:12px;border-radius:11px;background:linear-gradient(110deg,#e6f4ed,#f0f7f3);border:1px solid #d7e9df}
+.region-symbol{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(145deg,#43b889,#08764f);color:#fff;font-size:24px;font-weight:900;box-shadow:inset 0 2px 3px #ffffff88,0 3px 7px #0b684533}
+.region-heading h2{font-size:14px;line-height:1.2;margin:0;color:#15533d;font-weight:950}
+.region-heading p{font-size:9px;color:#617c70;margin:4px 0 0}
+.region-tag{margin-left:auto;background:#fff;color:#438268;border:1px solid #d5e9de;border-radius:20px;padding:5px 8px;font-size:8px;font-weight:850;white-space:nowrap}
+.region-empty{flex:1;min-height:210px;border:1px dashed #cbd9e2;border-radius:12px;background:linear-gradient(160deg,#f8fbfd,#f2f7f9);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px}
+.region-empty-icon{width:58px;height:58px;border-radius:17px;background:linear-gradient(145deg,#e0f2e9,#c8e7d7);color:#16845f;display:grid;place-items:center;font-size:29px;box-shadow:inset 0 2px 4px #fff,0 4px 10px #194d3920;margin-bottom:12px}
+.region-empty strong{font-size:13px;color:#23475e;font-weight:900}
+.region-empty p{max-width:230px;font-size:10px;line-height:1.5;color:#667c8c;margin:7px 0 12px}
+.region-empty>span{font-size:9px;color:#718b7e;background:#e8f3ed;border-radius:20px;padding:6px 10px;font-weight:750}
+.region-foot{display:flex;align-items:center;gap:7px;color:#6a7f8e;font-size:9px;padding:2px 3px}
+.live-dot{width:7px;height:7px;background:#28a878;border-radius:50%;box-shadow:0 0 0 3px #e0f3e9}
+@media(min-width:1001px){.report-layout{flex:1 0 auto;min-height:440px}.table-panel{display:flex;flex-direction:column}.table-panel .tablewrap{flex:1;min-height:0;overflow-x:auto;overflow-y:visible}}
+@media(max-width:1000px){.report-layout{grid-template-columns:minmax(0,1fr);min-height:0}.region-panel{min-height:250px}.region-empty{min-height:150px}}
 </style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
@@ -358,7 +408,14 @@ html,body{height:100%;overflow:hidden}
      <div class="task-row"><span class="task-name">Block H</span><b>—</b><a href="#analytics">View</a></div>
     </div></div>
    </div>
-   <div class="panel table-panel" id="reports"><h2>OVERALL BLOCK CURRENT ORDER INVOICE STATUS <span id="reportDateTime" class="report-datetime"></span></h2><div class="tablewrap"><table><thead><tr><th>Invoice Status</th><th>Block</th><th>DO No</th><th>DO Line</th><th>Est Total Carton</th><th>DO Percentage</th></tr></thead><tbody><tr><td colspan="6">Upload Excel file(s) to display report.</td></tr></tbody></table></div></div>
+   <div class="report-layout">
+    <div class="panel table-panel" id="reports"><h2>OVERALL BLOCK CURRENT ORDER INVOICE STATUS <span id="reportDateTime" class="report-datetime"></span></h2><div class="tablewrap"><table><thead><tr><th>Invoice Status</th><th>Block</th><th>DO No</th><th>DO Line</th><th>Est Total Carton</th><th>DO Percentage</th></tr></thead><tbody><tr><td colspan="6">Upload Excel file(s) to display report.</td></tr></tbody></table></div></div>
+    <aside class="region-panel" id="regionStatus">
+     <div class="region-heading"><span class="region-symbol">⌖</span><div><h2>REGION STATUS</h2><p>Regional overview workspace</p></div><span class="region-tag">NEXT MODULE</span></div>
+     <div class="region-empty"><div class="region-empty-icon">◫</div><strong>Region Status</strong><p>Region-wise data and performance indicators will appear here.</p><span>Waiting for Region Status requirements</span></div>
+     <div class="region-foot"><span class="live-dot"></span> Ready for configuration</div>
+    </aside>
+   </div>
   </section>
   <div class="footer">Operation Picking Overview · Monitor Display</div>
  </div>
