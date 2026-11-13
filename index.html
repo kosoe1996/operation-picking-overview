@@ -529,7 +529,44 @@ tfoot td:first-child{border-radius:7px 0 0 7px}tfoot td:last-child{border-radius
  .tablewrap{padding:7px!important}
  .block-status-row{padding:10px 2px!important}
 }
-.top-title span{display:block;color:#d2e2ed;font-size:11px;margin-top:3px;font-weight:600}.top-title h1{margin:0}</style></head><body><div class="app-shell">
+.top-title span{display:block;color:#d2e2ed;font-size:11px;margin-top:3px;font-weight:600}.top-title h1{margin:0}
+/* V18 - compact desktop dashboard canvas */
+@media(min-width:1001px){
+ .main{width:calc(100% - 190px)!important;min-width:0!important}
+ .content{width:100%;max-width:1240px!important;margin:0 auto!important;padding:11px 13px 16px!important}
+ .top{padding-left:max(18px,calc((100% - 1240px)/2 + 13px))!important;padding-right:max(18px,calc((100% - 1240px)/2 + 13px))!important}
+ .control-panel{padding:10px 12px!important;margin-bottom:9px!important}
+ .control-head{margin-bottom:7px!important}
+ .upload{gap:8px!important}
+ .filter-row{padding:8px 10px!important;margin-bottom:9px!important}
+ .cards{gap:9px!important;margin-bottom:10px!important}
+ .card{min-height:96px!important;padding:10px 12px!important}
+ .card b{font-size:24px!important;margin:6px 0 3px!important}
+ .kpi-icon{width:39px!important;height:39px!important;font-size:21px!important}
+ .report-layout{grid-template-columns:minmax(0,2.15fr) minmax(285px,.88fr)!important;gap:9px!important}
+ .table-panel h2{padding:11px 13px!important;font-size:12px!important}
+ .tablewrap{padding:7px 9px 9px!important}
+ table{border-spacing:0 3px!important;font-size:9px!important}
+ thead th{padding:8px 7px!important;font-size:9px!important}
+ tbody td{padding:7px 7px!important}
+ tfoot td{padding:8px 7px!important}
+ .region-heading{padding:10px 11px!important}
+ .region-symbol{width:36px!important;height:36px!important}
+ .block-status-intro{margin:9px 10px 3px!important;padding:8px 9px!important}
+ .block-status-list{padding:2px 10px 6px!important}
+ .block-status-row{padding:10px 2px!important}
+ .progress-track{height:7px!important;margin:5px 0 4px!important}
+ .region-foot{margin:0 10px 9px!important;padding-top:7px!important}
+}
+@media(min-width:1001px) and (max-height:760px){
+ .top{min-height:64px!important;padding-top:9px!important;padding-bottom:9px!important}
+ .content{padding-top:8px!important;padding-bottom:10px!important}
+ .control-panel{padding:8px 10px!important}
+ .card{min-height:88px!important}
+ .report-layout{min-height:0!important}
+ .block-status-row{padding:8px 2px!important}
+}
+</style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
  <div class="navlabel">MAIN MENU</div>
