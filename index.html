@@ -1,88 +1,126 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Operation Picking Overview</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
-:root{--deep:#092b26;--deep2:#103c34;--mint:#b7d7c6;--ink:#e9f4ed;--muted:#9bb9aa;--line:rgba(213,241,222,.13);--glass:rgba(34,78,65,.42);--green:#36b783;--red:#e46d7b;--gold:#d8b56d}
+:root{--nav:#06251f;--nav2:#0a3028;--mint:#dce7df;--paper:#f6faf6;--panel:#dce5df;--ink:#152c24;--muted:#6d8076;--green:#168363;--green2:#45a78e;--line:#cbd8cf;--red:#d85b68}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;color:var(--ink);font:14px Inter,"Segoe UI",Arial,sans-serif;background:radial-gradient(ellipse at 86% 18%,rgba(195,154,86,.20),transparent 33%),radial-gradient(ellipse at 45% 80%,rgba(56,135,104,.24),transparent 45%),linear-gradient(130deg,#071c1a,#10372f 55%,#102b26);background-attachment:fixed}
-.app-shell{display:flex;min-height:100vh;padding:13px;gap:13px}
-.side{width:226px;flex-shrink:0;position:sticky;top:13px;height:calc(100vh - 26px);padding:15px 12px;border-radius:19px;background:linear-gradient(165deg,rgba(5,39,34,.94),rgba(11,57,47,.91));border:1px solid rgba(183,225,199,.18);box-shadow:0 18px 45px rgba(0,0,0,.20);backdrop-filter:blur(22px);display:flex;flex-direction:column}
-.brand{display:flex;align-items:center;gap:9px;padding:4px 7px 18px;border-bottom:1px solid var(--line)}
-.brandmark{width:34px;height:34px;border-radius:11px;background:linear-gradient(140deg,#5bc49a,#267b60);display:grid;place-items:center;color:#062b21;font-size:12px;font-weight:900;box-shadow:0 5px 16px #0003}
-.brand b{display:block;font-size:12px;letter-spacing:1px;color:#f0f8f2}
-.brand span{display:block;font-size:8px;color:#91b4a1;letter-spacing:.55px;margin-top:4px}
-.navlabel{font-size:8px;color:#739c89;margin:22px 10px 9px;letter-spacing:1.5px}
-.nav a{display:flex;align-items:center;gap:9px;text-decoration:none;color:#b7d0c2;padding:11px 9px;border-radius:10px;margin:4px 0;font-size:10px;line-height:1.35;border:1px solid transparent}
-.nav a.active{background:linear-gradient(100deg,rgba(60,157,116,.40),rgba(36,111,80,.17));border-color:rgba(147,221,177,.22);color:#f4fbf5;font-weight:700;box-shadow:inset 3px 0 #6ed4a2}
-.nav a small{display:block;color:#8eb4a0;font-size:8px;margin-top:2px}
-.navicon{width:23px;height:23px;flex-shrink:0;border-radius:7px;background:rgba(209,239,218,.08);display:grid;place-items:center;font-size:12px}
-.side-bottom{margin-top:auto}.side-status{padding:9px 10px;border-radius:9px;background:rgba(204,238,216,.07);font-size:9px;color:#a6c7b4}.side-status i,.live-pill i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#5bd49a;margin-right:6px;box-shadow:0 0 8px #5bd49a}.side-foot{font-size:8px;line-height:1.7;color:#759b87;padding:13px 9px 2px;letter-spacing:1px}.side-foot b{color:#b9d4c4;font-size:9px}
-.main{flex:1;min-width:0}
-.top{height:58px;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:0 17px;margin-bottom:17px;border-radius:15px;background:rgba(190,226,203,.10);border:1px solid rgba(214,244,223,.14);box-shadow:0 8px 28px rgba(0,0,0,.10);backdrop-filter:blur(22px)}
-.searchbox{height:35px;max-width:470px;flex:1;display:flex;align-items:center;gap:9px;padding:0 12px;border-radius:10px;background:rgba(4,31,26,.34);border:1px solid rgba(199,231,209,.12);color:#a5c3b1}
-.searchbox span{font-size:19px}.searchbox input{width:100%;border:0;outline:0;background:transparent;color:#eaf5ed;font-size:10px}.searchbox input::placeholder{color:#89a99a}
-.top-actions{display:flex;align-items:center;gap:9px}.top-icon{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:rgba(211,240,220,.10);color:#d6ebdc;font-size:13px}.avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#7ec6a0,#327e63);color:#082c22;font-weight:800;font-size:9px}.profile b{display:block;font-size:9px;color:#e6f2e9}.profile small{display:block;font-size:8px;color:#8eb09d;margin-top:2px}.mobile-brand{display:none}
-.content{padding:2px 3px 22px;max-width:1600px;margin:auto}
-.welcome{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:3px 2px 16px}.eyebrow{font-size:8px;letter-spacing:1.5px;color:#82b99c;font-weight:800;margin-bottom:7px}.welcome h1{font-size:21px;margin:0 0 5px;color:#f0f7f1;font-weight:650;letter-spacing:-.35px}.welcome p{margin:0;color:#9eb9aa;font-size:10px}.welcome-actions{display:flex;gap:7px}
-.control-panel,.filters,.panel{background:linear-gradient(135deg,rgba(180,220,195,.13),rgba(91,151,121,.09));border:1px solid rgba(200,236,211,.16);box-shadow:0 12px 32px rgba(0,0,0,.09);backdrop-filter:blur(20px)}
-.control-panel{padding:13px;border-radius:15px;margin-bottom:12px}
-.control-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.control-head h2{font-size:11px;margin:0 0 3px;color:#e5f2e9}.control-head p{font-size:9px;margin:0;color:#93b3a0}.live-pill{font-size:8px;color:#9cc9ae;letter-spacing:.8px;padding:6px 8px;border:1px solid rgba(136,214,165,.2);border-radius:20px;background:rgba(49,136,94,.12)}
-.upload{display:flex;align-items:end;gap:10px;flex-wrap:wrap}.file-field{min-width:180px;flex:1}.file-field label{font-size:8px;letter-spacing:.9px;color:#a7c7b4;font-weight:800}.file-field input{display:block;width:100%;margin-top:5px;font-size:9px;color:#c1d8c9}
-input[type=file]::file-selector-button{border:1px solid rgba(156,214,176,.18);background:rgba(207,239,216,.12);color:#e0f0e5;border-radius:7px;padding:7px 9px;margin-right:7px}
-.btn{border:1px solid rgba(140,224,174,.22);background:linear-gradient(135deg,#39a878,#1d7655);color:white;font-weight:700;border-radius:9px;padding:9px 12px;cursor:pointer;box-shadow:0 5px 14px rgba(0,0,0,.12);font-size:9px}.btn.light{background:rgba(211,239,219,.10);color:#d9ebe0;border:1px solid rgba(205,239,215,.17)}.btn:disabled{opacity:.4}
-.notice{font-size:9px;color:#9fbdac;padding:8px 10px;background:rgba(3,31,26,.20);border:1px solid rgba(205,239,215,.10);border-radius:9px;margin-top:10px}
-.filter-row{display:flex;align-items:center;gap:14px;padding:11px 13px;border-radius:14px;background:rgba(3,32,27,.25);border:1px solid rgba(205,239,215,.12);margin-bottom:12px}.filter-title{display:flex;align-items:center;gap:8px;min-width:130px}.filter-icon{width:27px;height:27px;border-radius:8px;background:rgba(135,204,158,.13);display:grid;place-items:center;color:#b9e0c5}.filter-title b{display:block;font-size:9px;color:#e3f0e6}.filter-title small{display:block;font-size:8px;color:#89a997;margin-top:2px}
-.filters{display:flex;align-items:end;gap:9px;flex:1;flex-wrap:wrap;border-radius:10px;padding:7px;background:rgba(183,224,195,.08);box-shadow:none}.filters label{font-size:8px;color:#a7c5b2;font-weight:800;letter-spacing:.55px;flex:1;min-width:130px}.filters select{display:block;width:100%;margin-top:4px;padding:8px;border:1px solid rgba(191,229,202,.17);border-radius:8px;background:rgba(6,43,35,.55);color:#e5f2e9;font-size:9px}.filters option{background:#123d32;color:#e5f2e9}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
-.card{background:linear-gradient(145deg,rgba(197,229,207,.16),rgba(97,163,126,.09));border:1px solid rgba(204,239,213,.16);border-radius:14px;padding:12px;border-top:2px solid #6db1c0;box-shadow:0 9px 25px rgba(0,0,0,.08)}
-.card.green{border-top-color:#43c18b}.card.red{border-top-color:#e26f7d}.card.gold{border-top-color:#d6b36c}
-.card-top{display:flex;justify-content:space-between;align-items:center}.card small{font-size:8px;color:#9dbbaa;font-weight:800;letter-spacing:.75px}.mini-icon{width:25px;height:25px;border-radius:8px;background:rgba(200,238,211,.10);display:grid;place-items:center;color:#b6ddc3;font-size:11px}.card b{display:block;font-size:24px;color:#f1f8f2;margin:7px 0 3px}.card span{font-size:9px;color:#9bb7a7}
-.panel{border-radius:14px;padding:13px;margin-bottom:12px}.panel h2{font-size:11px;color:#e5f1e8;margin:0 0 10px}
-.tablewrap{overflow:auto;border:1px solid rgba(205,235,217,.10);border-radius:9px;background:rgba(3,31,26,.12)}table{width:100%;border-collapse:collapse;min-width:690px;font-size:9px}th{background:rgba(133,190,151,.15);color:#c7dfce;text-align:left;padding:9px 7px;white-space:nowrap}td{padding:8px 7px;border-bottom:1px solid rgba(205,235,217,.09);color:#c2d8c9}tfoot td{font-weight:750;background:rgba(121,186,141,.13);color:#e3f0e6}.status{font-weight:700}.pending{color:#ef8994}.completed{color:#5bd49a}
-.charts{display:grid;grid-template-columns:1.2fr .8fr;gap:11px}.chartbox{height:230px}
-.footer{padding:11px;color:#769b87;font-size:8px;text-align:right}.footer span{padding:0 4px}
-@media(max-width:850px){.side{width:190px}.cards{grid-template-columns:repeat(2,1fr)}.charts{grid-template-columns:1fr}}
-@media(max-width:600px){
-.app-shell{display:block;padding:6px}.side{width:100%;height:auto;position:relative;top:auto;padding:8px;margin-bottom:7px;border-radius:13px}.brand{padding:1px 5px 7px}.brandmark{width:27px;height:27px}.brand b{font-size:10px}.brand span{font-size:7px}.navlabel{display:none}.nav{display:flex;overflow-x:auto;gap:4px;margin-top:6px}.nav a{white-space:nowrap;font-size:8px;padding:6px 7px;margin:0}.navicon{width:19px;height:19px}.side-bottom{display:none}
-.top{height:39px;padding:0 8px;margin-bottom:8px;border-radius:10px}.searchbox{height:28px}.searchbox input{font-size:8px}.searchbox span{font-size:15px}.top-actions{gap:4px}.top-icon{width:25px;height:25px;font-size:10px}.avatar{width:25px;height:25px;font-size:8px}.profile{display:none}
-.content{padding:0 1px 14px}.welcome{margin:3px 2px 9px;align-items:flex-start}.welcome h1{font-size:14px}.welcome p{font-size:8px}.eyebrow{font-size:7px;margin-bottom:4px}.welcome-actions{width:100%}.welcome-actions .btn{flex:1}
-.control-panel{padding:8px;margin-bottom:7px;border-radius:11px}.control-head h2{font-size:9px}.control-head p{font-size:8px}.live-pill{font-size:7px}.upload{gap:6px}.file-field{min-width:calc(50% - 4px)}.file-field label{font-size:7px}.file-field input{font-size:8px}.upload .btn{width:100%}.notice{font-size:8px;padding:7px;margin-top:7px}
-.filter-row{display:block;padding:8px;margin-bottom:7px;border-radius:11px}.filter-title{margin-bottom:7px}.filter-title b{font-size:8px}.filters{padding:6px;gap:5px}.filters label{min-width:0;font-size:7px}.filters select{font-size:8px;padding:6px 3px}.filters .btn{padding:7px 8px}
-.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-bottom:7px}.card{padding:8px;border-radius:10px}.card small{font-size:7px}.card b{font-size:18px;margin:5px 0 2px}.card span{font-size:8px}.mini-icon{width:21px;height:21px;font-size:9px}
-.panel{padding:8px;margin-bottom:7px;border-radius:10px}.panel h2{font-size:9px;margin-bottom:7px}.tablewrap{overflow:visible;border:0}table{width:100%;min-width:0;table-layout:fixed;font-size:7px}th{padding:5px 2px;white-space:normal;overflow-wrap:anywhere;line-height:1.1}td{padding:5px 2px;overflow-wrap:anywhere;line-height:1.15}table th:nth-child(1),table td:nth-child(1){width:23%}table th:nth-child(2),table td:nth-child(2){width:12%}table th:nth-child(3),table td:nth-child(3){width:12%}table th:nth-child(4),table td:nth-child(4){width:13%}table th:nth-child(5),table td:nth-child(5){width:22%}table th:nth-child(6),table td:nth-child(6){width:18%}
-.charts{gap:7px}.chartbox{height:165px}.footer{font-size:7px;padding:7px}
+body{margin:0;background:#f2f7f2;color:var(--ink);font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:14px}
+.app-shell{display:flex;min-height:100vh;background:var(--paper)}
+.side{width:248px;flex:0 0 248px;background:linear-gradient(180deg,#041e19,#06271f 65%,#031a16);color:#dce9e1;display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;height:100vh;padding:20px 0 16px}
+.brand{height:78px;padding:0 27px 20px;border-bottom:1px solid rgba(210,238,220,.09);display:flex;align-items:center;gap:12px}
+.brandmark{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#63b99c,#d6e8dc);color:#073428;display:grid;place-items:center;font-weight:900;font-size:12px}
+.brand b{display:block;font-size:13px;letter-spacing:1px;color:#f3f8f4}
+.brand span{display:block;font-size:8px;letter-spacing:.7px;color:#8eaa9b;margin-top:4px}
+.navlabel{font-size:9px;letter-spacing:1.4px;color:#6e9382;padding:24px 27px 9px}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav a{display:flex;align-items:center;gap:14px;text-decoration:none;color:#a9bcb2;padding:12px 25px;font-size:13px;border-left:4px solid transparent}
+.nav a.active{background:rgba(123,177,148,.17);border-left-color:#36a77d;color:#f3f8f4}
+.navicon{width:20px;text-align:center;font-size:17px;color:#a6c1b2}
+.nav a small{font-size:9px;color:#769889;margin-left:auto}
+.side-bottom{margin-top:auto;padding:14px 22px;border-top:1px solid rgba(210,238,220,.09)}
+.side-status{font-size:10px;color:#88a997;margin-bottom:18px}.side-status i{display:inline-block;width:7px;height:7px;background:#46bb83;border-radius:50%;margin-right:7px}
+.side-foot{display:flex;align-items:center;gap:9px;color:#9fb5a8;font-size:11px}
+.side-avatar{width:30px;height:30px;border-radius:50%;background:#d3e1d7;color:#174b39;display:grid;place-items:center;font-weight:800}
+.main{flex:1;min-width:0;background:linear-gradient(120deg,#f8fbf7,#edf4ee)}
+.top{height:78px;display:flex;align-items:center;justify-content:space-between;padding:0 36px;border-bottom:1px solid #e3ebe4;background:rgba(250,252,249,.88)}
+.top h1{font-size:23px;margin:0;font-weight:700;color:#182e25}
+.top-actions{display:flex;align-items:center;gap:10px}
+.btn{border:0;border-radius:9px;background:#087254;color:#fff;font-weight:650;padding:11px 18px;font-size:12px;cursor:pointer;box-shadow:0 4px 10px rgba(10,91,65,.10)}
+.btn:hover{background:#075f47}.btn.light{background:#e7efe8;color:#285543;border:1px solid #d4e1d7;box-shadow:none}.btn:disabled{opacity:.45;cursor:not-allowed}
+.content{max-width:1600px;margin:0 auto;padding:24px 36px 32px}
+.subhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.subhead p{margin:0;color:#72847a;font-size:11px}
+.control-panel{background:rgba(255,255,255,.76);border:1px solid #e1eae2;border-radius:12px;padding:12px 15px;margin-bottom:15px;box-shadow:0 3px 12px rgba(30,65,43,.035)}
+.control-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.control-head h2{font-size:11px;margin:0;color:#31483c}.control-head p{font-size:9px;color:#87958d;margin:3px 0 0}.live-pill{font-size:8px;color:#168363;background:#e4f2e9;border-radius:20px;padding:6px 9px}.live-pill i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#2da879;margin-right:5px}
+.upload{display:flex;align-items:end;gap:12px;flex-wrap:wrap}.file-field{flex:1;min-width:190px}.file-field label{font-size:8px;font-weight:800;letter-spacing:.6px;color:#718379}.file-field input{display:block;width:100%;font-size:10px;margin-top:5px;color:#536a5d}input[type=file]::file-selector-button{border:1px solid #d4e2d8;background:#edf4ee;color:#315d49;border-radius:7px;padding:7px 9px;margin-right:7px}
+.notice{font-size:9px;color:#71857a;margin-top:8px;padding:7px 9px;border-radius:7px;background:#f0f5f0;border:1px solid #e4ece5}
+.filter-row{display:flex;align-items:center;gap:15px;margin-bottom:17px;padding:11px 14px;background:#e7eee8;border:1px solid #dce6dd;border-radius:11px}
+.filter-title{display:flex;align-items:center;gap:9px;min-width:140px}.filter-icon{width:29px;height:29px;border-radius:8px;background:#d3e4d8;color:#17684d;display:grid;place-items:center}.filter-title b{display:block;font-size:10px}.filter-title small{display:block;font-size:8px;color:#839188;margin-top:2px}
+.filters{display:flex;align-items:end;gap:10px;flex:1;flex-wrap:wrap}.filters label{font-size:8px;font-weight:800;color:#6d8075;letter-spacing:.5px;flex:1;min-width:145px}.filters select{display:block;width:100%;margin-top:5px;padding:9px 10px;border:1px solid #d1ddd4;border-radius:8px;background:#fbfdfb;color:#263e32;font-size:10px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:17px}
+.card{background:#dce6df;border:1px solid #d4e0d7;border-radius:13px;padding:15px 17px;min-height:105px;box-shadow:0 3px 10px rgba(33,67,45,.035)}
+.card:nth-child(1){border-top:3px solid #68a6b6}.card.green{border-top:3px solid #3c9d79}.card.red{border-top:3px solid #d86a75}.card.gold{border-top:3px solid #c7a35e}
+.card-top{display:flex;align-items:center;justify-content:space-between}.card small{font-size:10px;font-weight:800;color:#344a3e;letter-spacing:.25px}.mini-icon{display:none}
+.card b{display:block;font-size:27px;color:#399b81;margin:5px 0 1px}.card.red b{color:#cf5b68}.card.gold b{color:#3b806b}.card span{font-size:10px;color:#546b5e}
+.dashboard-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-bottom:17px}
+.panel{background:#dce5df;border:1px solid #d4dfd7;border-radius:13px;padding:17px 18px;box-shadow:0 3px 10px rgba(33,67,45,.035);min-width:0}
+.panel h2{font-size:12px;font-weight:800;color:#253d31;margin:0 0 12px}
+.chartbox{height:220px}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.activity-list{display:flex;flex-direction:column;gap:0}
+.activity-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(74,104,82,.12);font-size:11px;color:#31493b}
+.activity-item:last-child{border-bottom:0}.activity-icon{width:27px;height:27px;border-radius:50%;background:#d0e5d8;color:#14714f;display:grid;place-items:center;font-size:12px;flex-shrink:0}.activity-item .time{margin-left:auto;color:#829087;font-size:9px;white-space:nowrap}
+.task-list{display:flex;flex-direction:column}
+.task-row{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid rgba(74,104,82,.12);font-size:10px;color:#344b3d}
+.task-row:last-child{border-bottom:0}.task-row .task-name{flex:1}.task-row b{font-size:10px;color:#244738}.task-row a{background:#40a78c;color:#fff;text-decoration:none;padding:6px 12px;border-radius:6px;font-size:9px}
+.table-panel{margin-bottom:17px}
+.tablewrap{overflow:auto;border-radius:8px}table{width:100%;border-collapse:collapse;font-size:10px}th{background:#d0dfd4;color:#425d4c;text-align:left;padding:9px 8px;white-space:nowrap}td{padding:8px;border-bottom:1px solid #cbd8cf;color:#41594a}tfoot td{font-weight:800;background:#d1e1d6;color:#294536}.status{font-weight:750}.completed{color:#168363}.pending{color:#d65b69}
+.footer{font-size:9px;color:#87968d;text-align:right;padding:15px 2px}
+@media(max-width:1000px){.side{width:205px;flex-basis:205px}.content{padding:20px}.top{padding:0 22px}.dashboard-grid{grid-template-columns:1.2fr 1fr}}
+@media(max-width:700px){
+.app-shell{display:block}.side{position:relative;width:100%;height:auto;min-height:0;padding:8px 10px;display:block}.brand{height:auto;padding:2px 4px 8px;border:0}.brandmark{width:27px;height:27px}.brand b{font-size:10px}.brand span{font-size:7px}.navlabel,.side-bottom{display:none}.nav{display:flex;overflow-x:auto;gap:4px;margin-top:5px}.nav a{white-space:nowrap;padding:7px 9px;font-size:9px;border-left:0;border-bottom:2px solid transparent}.nav a.active{border-left:0;border-bottom-color:#45b889}
+.top{height:48px;padding:0 12px}.top h1{font-size:17px}.content{padding:12px 11px 20px}.subhead{margin-bottom:9px}.subhead p{font-size:9px}
+.control-panel{padding:9px;margin-bottom:9px}.control-head h2{font-size:9px}.control-head p{font-size:8px}.upload{gap:7px}.file-field{min-width:calc(50% - 5px)}.file-field label{font-size:7px}.file-field input{font-size:8px}.upload .btn{width:100%;padding:8px}.notice{font-size:8px}
+.filter-row{display:block;padding:8px;margin-bottom:10px}.filter-title{margin-bottom:7px}.filters{gap:6px}.filters label{min-width:0;font-size:7px}.filters select{font-size:9px;padding:7px 5px}.filters .btn{padding:7px 9px}
+.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:10px}.card{min-height:83px;padding:9px 10px}.card small{font-size:8px}.card b{font-size:21px;margin:5px 0 2px}.card span{font-size:8px}
+.dashboard-grid,.bottom-grid{grid-template-columns:1fr;gap:9px;margin-bottom:9px}.panel{padding:10px;border-radius:10px}.panel h2{font-size:10px;margin-bottom:8px}.chartbox{height:185px}
+.table-panel{margin-bottom:9px}.tablewrap{overflow:visible}table{table-layout:fixed;font-size:7px}th,td{padding:6px 3px;white-space:normal;overflow-wrap:anywhere}th:nth-child(1),td:nth-child(1){width:23%}th:nth-child(2),td:nth-child(2){width:12%}th:nth-child(3),td:nth-child(3){width:12%}th:nth-child(4),td:nth-child(4){width:13%}th:nth-child(5),td:nth-child(5){width:22%}th:nth-child(6),td:nth-child(6){width:18%}
+.activity-item{font-size:9px;padding:7px 0}.task-row{font-size:9px;padding:8px 0}.footer{font-size:8px}
 }
 </style></head><body><div class="app-shell">
 <aside class="side">
- <div class="brand"><div class="brandmark">OP</div><div><b>MONITOR DISPLAY</b><span>OPERATION PICKING OVERVIEW</span></div></div>
- <div class="navlabel">WORKSPACE</div>
+ <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
+ <div class="navlabel">MAIN MENU</div>
  <nav class="nav">
-  <a class="active" href="#"><span class="navicon">▦</span><span>Overall Block Current Order Invoice Status</span></a>
-  <a href="#" onclick="return false"><span class="navicon">◫</span><span>Picking Performance <small>Next</small></span></a>
+  <a class="active" href="#dashboard"><span class="navicon">⌂</span><span>Home</span></a>
+  <a href="#analytics"><span class="navicon">▥</span><span>Analytics</span></a>
+  <a href="#reports"><span class="navicon">▤</span><span>Reports</span></a>
+  <a href="#settings"><span class="navicon">⚙</span><span>Settings</span></a>
  </nav>
- <div class="side-bottom"><div class="side-status"><i></i> System ready</div><div class="side-foot">OPERATION CONTROL<br><b>MONITOR DISPLAY</b></div></div>
+ <div class="side-bottom"><div class="side-status"><i></i> System ready</div><div class="side-foot"><div class="side-avatar">OP</div><div>Operations Team<br><b>Monitor Profile</b></div></div></div>
 </aside>
-<main class="main">
- <header class="top">
-  <div class="mobile-brand">OPERATION OVERVIEW</div>
-  <div class="searchbox"><span>⌕</span><input type="search" placeholder="Search dashboard, blocks, invoice status..." aria-label="Search dashboard"></div>
-  <div class="top-actions"><button class="top-icon" aria-label="Notifications">♧</button><button class="top-icon" aria-label="Settings">⚙</button><div class="avatar">OP</div><div class="profile"><b>Operations</b><small>Monitor Admin</small></div></div>
- </header>
+<main class="main" id="dashboard">
+ <header class="top"><h1>Dashboard</h1><div class="top-actions"><span id="now" style="font-size:10px;color:#829188"></span><button class="btn" id="png" disabled>Generate Report</button></div></header>
  <div class="content">
-  <div class="welcome"><div><div class="eyebrow">OPERATIONS / INVOICE CONTROL</div><h1>Overall Block Current Order Invoice Status</h1><p>Monitor current order invoice progress across Blocks E, F, G and H.</p></div><div class="welcome-actions"><button class="btn light" id="png" disabled>↓ Export PNG</button><button class="btn light" id="export" disabled>↓ Export Excel</button></div></div>
   <section class="control-panel">
-   <div class="control-head"><div><h2>Data Source</h2><p>Upload one workbook or combine both load plan files.</p></div><span class="live-pill"><i></i> LIVE WORKSPACE</span></div>
+   <div class="control-head"><div><h2>DATA SOURCE</h2><p>Upload Outstation, Local &amp; IKA, or both Excel workbooks.</p></div><span class="live-pill"><i></i> WORKSPACE</span></div>
    <div class="upload">
     <div class="file-field"><label>OUTSTATION EXCEL</label><input type="file" id="outFile" accept=".xlsx,.xls"></div>
     <div class="file-field"><label>LOCAL &amp; IKA EXCEL</label><input type="file" id="localFile" accept=".xlsx,.xls"></div>
     <button class="btn" id="load">↻ Process &amp; Refresh</button>
+    <button class="btn light" id="export" disabled>Export Excel</button>
    </div>
-   <div class="notice" id="msg">Upload Outstation, Local &amp; IKA, or both files. One file works independently; two files are combined. Header positions may change.</div>
+   <div class="notice" id="msg">Upload one workbook independently, or upload both to combine the data. Header-based mapping is enabled.</div>
   </section>
   <div class="filter-row"><div class="filter-title"><span class="filter-icon">☷</span><div><b>Report Filters</b><small>Refine dashboard data</small></div></div>
    <div class="filters"><label>LOAD PLAN TYPE<select id="typeFilter"><option value="ALL">All Load Plan</option><option value="Outstation">Outstation</option><option value="LOCAL &amp; IKA">Local &amp; IKA</option></select></label><label>LOAD PLAN DATE<select id="dateFilter"><option value="ALL">All Dates</option></select></label><button class="btn light" id="reset">Reset Filters</button></div>
   </div>
-  <section id="report"><div class="cards"><div class="card"><div class="card-top"><small>TOTAL DO</small><span class="mini-icon">▤</span></div><b>—</b><span>Unique DO numbers</span></div><div class="card green"><div class="card-top"><small>COMPLETED INVOICED</small><span class="mini-icon">✓</span></div><b>—</b><span>DO count</span></div><div class="card red"><div class="card-top"><small>PENDING INVOICE</small><span class="mini-icon">◷</span></div><b>—</b><span>DO count</span></div><div class="card gold"><div class="card-top"><small>TOTAL CARTONS</small><span class="mini-icon">▣</span></div><b>—</b><span>Selected load plan</span></div></div><div class="panel"><h2>Invoice Status by Block</h2><p class="notice">Upload Outstation, Local &amp; IKA, or both files to display the report.</p></div></section>
-  <div class="footer">Operation Picking Overview <span>•</span> Monitor Display</div>
+  <section id="report">
+   <div class="cards">
+    <div class="card"><div class="card-top"><small>TOTAL DO</small></div><b>—</b><span>Unique DO numbers</span></div>
+    <div class="card green"><div class="card-top"><small>COMPLETED INVOICED</small></div><b>—</b><span>DO count</span></div>
+    <div class="card red"><div class="card-top"><small>PENDING INVOICE</small></div><b>—</b><span>DO count</span></div>
+    <div class="card gold"><div class="card-top"><small>TOTAL CARTONS</small></div><b>—</b><span>Selected load plan</span></div>
+   </div>
+   <div class="dashboard-grid" id="analytics">
+    <div class="panel"><h2>DO COUNT BY BLOCK</h2><div class="chartbox"><canvas id="blockChart"></canvas></div></div>
+    <div class="panel"><h2>INVOICE COMPLETION OVERVIEW</h2><div class="chartbox"><canvas id="statusChart"></canvas></div></div>
+   </div>
+   <div class="bottom-grid">
+    <div class="panel"><h2>RECENT ACTIVITY</h2><div class="activity-list" id="activityList">
+     <div class="activity-item"><span class="activity-icon">↥</span><span>Upload an Excel workbook to begin</span><span class="time">Waiting</span></div>
+     <div class="activity-item"><span class="activity-icon">↻</span><span>Process &amp; refresh dashboard data</span><span class="time">Waiting</span></div>
+     <div class="activity-item"><span class="activity-icon">▦</span><span>Invoice status by Blocks E / F / G / H</span><span class="time">Ready</span></div>
+    </div></div>
+    <div class="panel"><h2>BLOCK STATUS / QUICK VIEW</h2><div class="task-list" id="taskList">
+     <div class="task-row"><span class="task-name">Block E</span><b>—</b><a href="#analytics">View</a></div>
+     <div class="task-row"><span class="task-name">Block F</span><b>—</b><a href="#analytics">View</a></div>
+     <div class="task-row"><span class="task-name">Block G</span><b>—</b><a href="#analytics">View</a></div>
+     <div class="task-row"><span class="task-name">Block H</span><b>—</b><a href="#analytics">View</a></div>
+    </div></div>
+   </div>
+   <div class="panel table-panel" id="reports"><h2>OVERALL BLOCK CURRENT ORDER INVOICE STATS</h2><div class="tablewrap"><table><thead><tr><th>Invoice Status</th><th>Block</th><th>DO No</th><th>DO Line</th><th>Est Total Carton</th><th>DO Percentage</th></tr></thead><tbody><tr><td colspan="6">Upload Excel file(s) to display report.</td></tr></tbody></table></div></div>
+  </section>
+  <div class="footer">Operation Picking Overview · Monitor Display</div>
  </div>
 </main></div>
 <script>
@@ -133,16 +171,33 @@ async function readFile(file, fallback){
 }
 function filtered(){let t=$('typeFilter').value,d=$('dateFilter').value;return records.filter(r=>(t==='ALL'||r.loadType===t)&&(d==='ALL'||r.date===d))}
 function aggregate(rows){let all=new Set(rows.map(r=>r.doNo)),total=all.size;let groups=['completed','pending'];let by=groups.map(g=>{let z=rows.filter(r=>statusKind(r.status)===g);let dos=new Set(z.map(r=>r.doNo));let blocks=['E','F','G','H'].map(b=>{let a=z.filter(r=>r.block===b),bd=new Set(a.map(r=>r.doNo));return{block:b,do:bd.size,line:a.reduce((s,x)=>s+x.line,0),carton:a.reduce((s,x)=>s+x.carton,0),pct:total?bd.size/total*100:0}});return{kind:g,do:dos.size,line:z.reduce((s,x)=>s+x.line,0),carton:z.reduce((s,x)=>s+x.carton,0),pct:total?dos.size/total*100:0,blocks}});return{total,allLine:rows.reduce((s,x)=>s+x.line,0),allCarton:rows.reduce((s,x)=>s+x.carton,0),groups:by}}
-function render(){let rows=filtered(),a=aggregate(rows),completed=a.groups[0],pending=a.groups[1];let card=(label,value,sub,cls='')=>`<div class="card ${cls}"><div class="card-top"><small>${label}</small><span class="mini-icon">${label==='TOTAL DO'?'▤':label==='COMPLETED INVOICED'?'✓':label==='PENDING INVOICE'?'◷':'▣'}</span></div><b>${value}</b><span>${sub}</span></div>`;
-let html=`<div class="cards">${card('TOTAL DO',fmt(a.total),'Unique DO numbers')}${card('COMPLETED INVOICED',fmt(completed.do),Math.round(completed.pct)+'% of selected DO','green')}${card('PENDING INVOICE',fmt(pending.do),Math.round(pending.pct)+'% of selected DO','red')}${card('TOTAL CARTONS',fmt(a.allCarton),'Selected load plan','gold')}</div>`;
-html+=`<div class="panel"><h2>Overall Block Current Order Invoice Stats</h2><div class="tablewrap"><table><thead><tr><th>Invoice Status</th><th>Block</th><th>DO No</th><th>DO Line</th><th>Est Total Carton</th><th>DO Percentage</th></tr></thead><tbody>`;
-for(let g of a.groups){html+=`<tr><td class="status ${g.kind}">${g.kind==='completed'?'Completed Invoiced':'Pending Invoice'}</td><td><b>Overall</b></td><td>${fmt(g.do)}</td><td>${fmt(g.line)}</td><td>${fmt(g.carton)}</td><td>${Math.round(g.pct)}%</td></tr>`;for(let b of g.blocks)html+=`<tr><td></td><td>${b.block}</td><td>${fmt(b.do)}</td><td>${fmt(b.line)}</td><td>${fmt(b.carton)}</td><td>${Math.round(b.pct)}%</td></tr>`}
-html+=`</tbody><tfoot><tr><td>Grand Total</td><td>All Blocks</td><td>${fmt(a.total)}</td><td>${fmt(a.allLine)}</td><td>${fmt(a.allCarton)}</td><td>100%</td></tr></tfoot></table></div></div><div class="charts"><div class="panel"><h2>DO Count by Block</h2><div class="chartbox"><canvas id="blockChart"></canvas></div></div><div class="panel"><h2>Invoice Completion Split</h2><div class="chartbox"><canvas id="statusChart"></canvas></div></div></div>`;
-$('report').innerHTML=html;if(chartObj)chartObj.forEach(c=>c.destroy());let blocks=['E','F','G','H'];chartObj=[new Chart($('blockChart'),{type:'bar',data:{labels:blocks,datasets:[{label:'Completed Invoiced',data:blocks.map(b=>completed.blocks.find(x=>x.block===b).do),backgroundColor:'#27966b'},{label:'Pending Invoice',data:blocks.map(b=>pending.blocks.find(x=>x.block===b).do),backgroundColor:'#dc6670'}]},options:{responsive:true,maintainAspectRatio:false}}),new Chart($('statusChart'),{type:'doughnut',data:{labels:['Completed Invoiced','Pending Invoice'],datasets:[{data:[completed.do,pending.do],backgroundColor:['#27966b','#dc6670']}]},options:{responsive:true,maintainAspectRatio:false}})]}
+function render(){
+ let rows=filtered(),a=aggregate(rows),completed=a.groups[0],pending=a.groups[1];
+ let card=(label,value,sub,cls='')=>`<div class="card ${cls}"><div class="card-top"><small>${label}</small></div><b>${value}</b><span>${sub}</span></div>`;
+ let htmlCards=`<div class="cards">${card('TOTAL DO',fmt(a.total),'Unique DO numbers')}${card('COMPLETED INVOICED',fmt(completed.do),Math.round(completed.pct)+'% of selected DO','green')}${card('PENDING INVOICE',fmt(pending.do),Math.round(pending.pct)+'% of selected DO','red')}${card('TOTAL CARTONS',fmt(a.allCarton),'Selected load plan','gold')}</div>`;
+ $('report').querySelector('.cards').outerHTML=htmlCards;
+ let blocks=['E','F','G','H'];
+ let table=`<table><thead><tr><th>Invoice Status</th><th>Block</th><th>DO No</th><th>DO Line</th><th>Est Total Carton</th><th>DO Percentage</th></tr></thead><tbody>`;
+ for(let g of a.groups){table+=`<tr><td class="status ${g.kind}">${g.kind==='completed'?'Completed Invoiced':'Pending Invoice'}</td><td><b>Overall</b></td><td>${fmt(g.do)}</td><td>${fmt(g.line)}</td><td>${fmt(g.carton)}</td><td>${Math.round(g.pct)}%</td></tr>`;for(let b of g.blocks)table+=`<tr><td></td><td>${b.block}</td><td>${fmt(b.do)}</td><td>${fmt(b.line)}</td><td>${fmt(b.carton)}</td><td>${Math.round(b.pct)}%</td></tr>`}
+ table+=`</tbody><tfoot><tr><td>Grand Total</td><td>All Blocks</td><td>${fmt(a.total)}</td><td>${fmt(a.allLine)}</td><td>${fmt(a.allCarton)}</td><td>100%</td></tr></tfoot></table>`;
+ $('reports').querySelector('.tablewrap').innerHTML=table;
+ $('taskList').innerHTML=blocks.map(b=>{let c=completed.blocks.find(x=>x.block===b),p=pending.blocks.find(x=>x.block===b);return `<div class="task-row"><span class="task-name">Block ${b} · Pending ${fmt(p.do)}</span><b>${fmt(c.do)} completed</b><a href="#analytics">View</a></div>`}).join('');
+ $('activityList').innerHTML=[
+  `<div class="activity-item"><span class="activity-icon">▤</span><span>${fmt(rows.length)} DO records loaded</span><span class="time">Current</span></div>`,
+  `<div class="activity-item"><span class="activity-icon">✓</span><span>${fmt(completed.do)} completed invoices</span><span class="time">${Math.round(completed.pct)}%</span></div>`,
+  `<div class="activity-item"><span class="activity-icon">◷</span><span>${fmt(pending.do)} pending invoices</span><span class="time">${Math.round(pending.pct)}%</span></div>`
+ ].join('');
+ if(chartObj)chartObj.forEach(c=>c.destroy());
+ let grid=blocks;
+ chartObj=[
+  new Chart($('blockChart'),{type:'line',data:{labels:grid,datasets:[{label:'Completed Invoiced',data:grid.map(b=>completed.blocks.find(x=>x.block===b).do),borderColor:'#43a88c',backgroundColor:'rgba(67,168,140,.12)',pointBackgroundColor:'#43a88c',pointRadius:3,tension:.3},{label:'Pending Invoice',data:grid.map(b=>pending.blocks.find(x=>x.block===b).do),borderColor:'#0b4937',backgroundColor:'rgba(11,73,55,.08)',pointBackgroundColor:'#0b4937',pointRadius:3,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,usePointStyle:true,font:{size:10}}}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,grid:{color:'rgba(44,82,58,.10)'}}}}}),
+  new Chart($('statusChart'),{type:'bar',data:{labels:grid,datasets:[{label:'Completed',data:grid.map(b=>completed.blocks.find(x=>x.block===b).do),backgroundColor:'#45a78e',borderRadius:3},{label:'Pending',data:grid.map(b=>pending.blocks.find(x=>x.block===b).do),backgroundColor:'#0b4937',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,font:{size:10}}}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,grid:{color:'rgba(44,82,58,.10)'}}}}})
+ ];
+}
 function updateDates(){let old=$('dateFilter').value;let ds=[...new Set(records.map(r=>r.date).filter(Boolean))].sort();$('dateFilter').innerHTML='<option value="ALL">All Dates</option>'+ds.map(d=>`<option value="${d}">${d}</option>`).join('');$('dateFilter').value=ds.includes(old)?old:'ALL'}
 $('load').onclick=async()=>{try{let of=$('outFile').files[0],lf=$('localFile').files[0];if(!of&&!lf)throw new Error('Outstation သို့မဟုတ် Local & IKA Excel ဖိုင် အနည်းဆုံး တစ်ခု Upload လုပ်ပါ။');let a=of?await readFile(of,'Outstation'):[],b=lf?await readFile(lf,'LOCAL & IKA'):[];records=[...a,...b];if(!records.length)throw new Error('ဖိုင်ထဲမှာ အသုံးပြုနိုင်တဲ့ DO Data မတွေ့ပါ။');loaded=true;updateDates();render();$('png').disabled=false;$('export').disabled=false;let parts=[];if(of)parts.push('Outstation '+fmt(a.length));if(lf)parts.push('Local & IKA '+fmt(b.length));$('msg').textContent=`Loaded ${fmt(records.length)} DO rows: ${parts.join(' · ')}. Header mapping successful.`;}catch(e){$('msg').textContent='Upload error: '+e.message;alert(e.message)}};
 $('typeFilter').onchange=()=>{if(loaded)render()};$('dateFilter').onchange=()=>{if(loaded)render()};$('reset').onclick=()=>{$('typeFilter').value='ALL';$('dateFilter').value='ALL';if(loaded)render()};
 $('png').onclick=async()=>{let c=await html2canvas($('report'),{scale:2,backgroundColor:'#fff'});let a=document.createElement('a');a.download='Operation-Picking-Overview-Invoice-Status.png';a.href=c.toDataURL();a.click()};
 $('export').onclick=()=>{let rows=filtered(),a=aggregate(rows),out=XLSX.utils.book_new();let summary=[];for(let g of a.groups){summary.push({'Invoice Status':g.kind,'Block':'Overall','DO No':g.do,'DO Line':g.line,'Est Total Carton':g.carton,'DO Percentage':g.pct/100});for(let b of g.blocks)summary.push({'Invoice Status':g.kind,'Block':b.block,'DO No':b.do,'DO Line':b.line,'Est Total Carton':b.carton,'DO Percentage':b.pct/100})}summary.push({'Invoice Status':'Grand Total','Block':'All','DO No':a.total,'DO Line':a.allLine,'Est Total Carton':a.allCarton,'DO Percentage':1});XLSX.utils.book_append_sheet(out,XLSX.utils.json_to_sheet(summary),'Invoice Stats');XLSX.utils.book_append_sheet(out,XLSX.utils.json_to_sheet(rows),'Filtered Source Data');XLSX.writeFile(out,'Operation-Picking-Overview.xlsx')};
-setInterval(()=>$('now').textContent=new Date().toLocaleString(),1000);
+setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});},1000);
 </script></body></html>
