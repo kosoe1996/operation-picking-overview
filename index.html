@@ -1,83 +1,90 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Operation Picking Overview</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
-:root{--forest:#123c35;--forest2:#0d302b;--mint:#dcece3;--ink:#1c342d;--muted:#74877d;--line:rgba(30,67,53,.12);--glass:rgba(255,255,255,.64);--green:#16845b;--red:#d84d5c;--gold:#c99a4a}
+:root{--deep:#092b26;--deep2:#103c34;--mint:#b7d7c6;--ink:#e9f4ed;--muted:#9bb9aa;--line:rgba(213,241,222,.13);--glass:rgba(34,78,65,.42);--green:#36b783;--red:#e46d7b;--gold:#d8b56d}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;color:var(--ink);font:14px Inter,"Segoe UI",Arial,sans-serif;background:radial-gradient(ellipse at 82% 10%,rgba(215,192,146,.50),transparent 32%),radial-gradient(ellipse at 52% 60%,rgba(192,218,201,.75),transparent 45%),linear-gradient(135deg,#e5eee8,#d4e3dc 48%,#e9e3d4);background-attachment:fixed}
-.shell{display:flex;gap:12px;min-height:100vh;padding:12px}
-.side{width:218px;flex-shrink:0;position:sticky;top:12px;height:calc(100vh - 24px);padding:15px 11px;border-radius:19px;background:linear-gradient(160deg,rgba(17,69,59,.94),rgba(7,39,35,.96));border:1px solid rgba(255,255,255,.2);box-shadow:0 18px 45px rgba(19,51,40,.18);color:#e8f4ec}
-.brand{padding:4px 9px 17px;border-bottom:1px solid rgba(230,250,236,.14)}
-.brand b{display:block;font-size:15px;letter-spacing:1.1px;color:#f2faf4}
-.brand span{display:block;font-size:9px;color:#a8c7b7;letter-spacing:1px;margin-top:4px}
-.navlabel{font-size:9px;color:#89aa9a;margin:19px 10px 7px;letter-spacing:1.4px}
-.nav a{display:block;text-decoration:none;color:#c1d7ca;padding:10px 10px;border-radius:10px;margin:4px 0;font-size:11px;line-height:1.35;border:1px solid transparent}
-.nav a.active{background:linear-gradient(100deg,rgba(70,159,123,.55),rgba(51,116,90,.24));border-color:rgba(173,226,192,.22);color:#fff;font-weight:700;box-shadow:inset 3px 0 #b6e2c5}
-.nav a small{color:#a8c9b6}
+body{margin:0;min-height:100vh;color:var(--ink);font:14px Inter,"Segoe UI",Arial,sans-serif;background:radial-gradient(ellipse at 86% 18%,rgba(195,154,86,.20),transparent 33%),radial-gradient(ellipse at 45% 80%,rgba(56,135,104,.24),transparent 45%),linear-gradient(130deg,#071c1a,#10372f 55%,#102b26);background-attachment:fixed}
+.app-shell{display:flex;min-height:100vh;padding:13px;gap:13px}
+.side{width:226px;flex-shrink:0;position:sticky;top:13px;height:calc(100vh - 26px);padding:15px 12px;border-radius:19px;background:linear-gradient(165deg,rgba(5,39,34,.94),rgba(11,57,47,.91));border:1px solid rgba(183,225,199,.18);box-shadow:0 18px 45px rgba(0,0,0,.20);backdrop-filter:blur(22px);display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:9px;padding:4px 7px 18px;border-bottom:1px solid var(--line)}
+.brandmark{width:34px;height:34px;border-radius:11px;background:linear-gradient(140deg,#5bc49a,#267b60);display:grid;place-items:center;color:#062b21;font-size:12px;font-weight:900;box-shadow:0 5px 16px #0003}
+.brand b{display:block;font-size:12px;letter-spacing:1px;color:#f0f8f2}
+.brand span{display:block;font-size:8px;color:#91b4a1;letter-spacing:.55px;margin-top:4px}
+.navlabel{font-size:8px;color:#739c89;margin:22px 10px 9px;letter-spacing:1.5px}
+.nav a{display:flex;align-items:center;gap:9px;text-decoration:none;color:#b7d0c2;padding:11px 9px;border-radius:10px;margin:4px 0;font-size:10px;line-height:1.35;border:1px solid transparent}
+.nav a.active{background:linear-gradient(100deg,rgba(60,157,116,.40),rgba(36,111,80,.17));border-color:rgba(147,221,177,.22);color:#f4fbf5;font-weight:700;box-shadow:inset 3px 0 #6ed4a2}
+.nav a small{display:block;color:#8eb4a0;font-size:8px;margin-top:2px}
+.navicon{width:23px;height:23px;flex-shrink:0;border-radius:7px;background:rgba(209,239,218,.08);display:grid;place-items:center;font-size:12px}
+.side-bottom{margin-top:auto}.side-status{padding:9px 10px;border-radius:9px;background:rgba(204,238,216,.07);font-size:9px;color:#a6c7b4}.side-status i,.live-pill i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#5bd49a;margin-right:6px;box-shadow:0 0 8px #5bd49a}.side-foot{font-size:8px;line-height:1.7;color:#759b87;padding:13px 9px 2px;letter-spacing:1px}.side-foot b{color:#b9d4c4;font-size:9px}
 .main{flex:1;min-width:0}
-.top{height:55px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 17px;margin-bottom:13px;border-radius:16px;background:rgba(255,255,255,.48);border:1px solid rgba(255,255,255,.68);box-shadow:0 8px 28px rgba(46,78,60,.08);backdrop-filter:blur(18px)}
-.top strong{font-size:11px;letter-spacing:1.1px;color:#315448}
-.top span{font-size:10px;color:#71857a}
-.content{padding:4px 5px 24px;max-width:1600px;margin:auto}
-.heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin:7px 2px 15px}
-.heading h1{font-size:22px;margin:0 0 5px;color:#203b30;font-weight:650;letter-spacing:-.3px}
-.heading p{margin:0;color:#75877d;font-size:11px}
-.upload,.filters,.panel{background:var(--glass);border:1px solid rgba(255,255,255,.76);box-shadow:0 9px 26px rgba(48,77,58,.07);backdrop-filter:blur(18px)}
-.upload{padding:13px;border-radius:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:11px}
-.upload label{font-size:10px;font-weight:700;color:#526c5e}
-input[type=file]{display:block;margin-top:6px;max-width:260px;font-size:10px;color:#60796c}
-input[type=file]::file-selector-button{border:1px solid rgba(38,99,72,.18);background:#e9f2eb;color:#315c48;border-radius:8px;padding:7px 9px;margin-right:7px}
-.btn{border:1px solid rgba(31,115,77,.12);background:linear-gradient(135deg,#267d5c,#165b46);color:white;font-weight:650;border-radius:9px;padding:9px 13px;cursor:pointer;box-shadow:0 5px 14px rgba(23,89,60,.13)}
-.btn.light{background:rgba(255,255,255,.56);color:#345a49;border:1px solid rgba(45,100,70,.15)}
-.btn:disabled{opacity:.4}
-.filters{display:flex;gap:11px;align-items:end;flex-wrap:wrap;border-radius:15px;padding:12px;margin-bottom:12px}
-.filters label{font-size:9px;color:#62796c;font-weight:700;letter-spacing:.45px}
-.filters select{display:block;margin-top:5px;min-width:175px;padding:9px;border:1px solid rgba(48,100,71,.15);border-radius:9px;background:rgba(255,255,255,.78);color:#294638}
-.filters option{background:#fff;color:#294638}
+.top{height:58px;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:0 17px;margin-bottom:17px;border-radius:15px;background:rgba(190,226,203,.10);border:1px solid rgba(214,244,223,.14);box-shadow:0 8px 28px rgba(0,0,0,.10);backdrop-filter:blur(22px)}
+.searchbox{height:35px;max-width:470px;flex:1;display:flex;align-items:center;gap:9px;padding:0 12px;border-radius:10px;background:rgba(4,31,26,.34);border:1px solid rgba(199,231,209,.12);color:#a5c3b1}
+.searchbox span{font-size:19px}.searchbox input{width:100%;border:0;outline:0;background:transparent;color:#eaf5ed;font-size:10px}.searchbox input::placeholder{color:#89a99a}
+.top-actions{display:flex;align-items:center;gap:9px}.top-icon{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:rgba(211,240,220,.10);color:#d6ebdc;font-size:13px}.avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#7ec6a0,#327e63);color:#082c22;font-weight:800;font-size:9px}.profile b{display:block;font-size:9px;color:#e6f2e9}.profile small{display:block;font-size:8px;color:#8eb09d;margin-top:2px}.mobile-brand{display:none}
+.content{padding:2px 3px 22px;max-width:1600px;margin:auto}
+.welcome{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:3px 2px 16px}.eyebrow{font-size:8px;letter-spacing:1.5px;color:#82b99c;font-weight:800;margin-bottom:7px}.welcome h1{font-size:21px;margin:0 0 5px;color:#f0f7f1;font-weight:650;letter-spacing:-.35px}.welcome p{margin:0;color:#9eb9aa;font-size:10px}.welcome-actions{display:flex;gap:7px}
+.control-panel,.filters,.panel{background:linear-gradient(135deg,rgba(180,220,195,.13),rgba(91,151,121,.09));border:1px solid rgba(200,236,211,.16);box-shadow:0 12px 32px rgba(0,0,0,.09);backdrop-filter:blur(20px)}
+.control-panel{padding:13px;border-radius:15px;margin-bottom:12px}
+.control-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.control-head h2{font-size:11px;margin:0 0 3px;color:#e5f2e9}.control-head p{font-size:9px;margin:0;color:#93b3a0}.live-pill{font-size:8px;color:#9cc9ae;letter-spacing:.8px;padding:6px 8px;border:1px solid rgba(136,214,165,.2);border-radius:20px;background:rgba(49,136,94,.12)}
+.upload{display:flex;align-items:end;gap:10px;flex-wrap:wrap}.file-field{min-width:180px;flex:1}.file-field label{font-size:8px;letter-spacing:.9px;color:#a7c7b4;font-weight:800}.file-field input{display:block;width:100%;margin-top:5px;font-size:9px;color:#c1d8c9}
+input[type=file]::file-selector-button{border:1px solid rgba(156,214,176,.18);background:rgba(207,239,216,.12);color:#e0f0e5;border-radius:7px;padding:7px 9px;margin-right:7px}
+.btn{border:1px solid rgba(140,224,174,.22);background:linear-gradient(135deg,#39a878,#1d7655);color:white;font-weight:700;border-radius:9px;padding:9px 12px;cursor:pointer;box-shadow:0 5px 14px rgba(0,0,0,.12);font-size:9px}.btn.light{background:rgba(211,239,219,.10);color:#d9ebe0;border:1px solid rgba(205,239,215,.17)}.btn:disabled{opacity:.4}
+.notice{font-size:9px;color:#9fbdac;padding:8px 10px;background:rgba(3,31,26,.20);border:1px solid rgba(205,239,215,.10);border-radius:9px;margin-top:10px}
+.filter-row{display:flex;align-items:center;gap:14px;padding:11px 13px;border-radius:14px;background:rgba(3,32,27,.25);border:1px solid rgba(205,239,215,.12);margin-bottom:12px}.filter-title{display:flex;align-items:center;gap:8px;min-width:130px}.filter-icon{width:27px;height:27px;border-radius:8px;background:rgba(135,204,158,.13);display:grid;place-items:center;color:#b9e0c5}.filter-title b{display:block;font-size:9px;color:#e3f0e6}.filter-title small{display:block;font-size:8px;color:#89a997;margin-top:2px}
+.filters{display:flex;align-items:end;gap:9px;flex:1;flex-wrap:wrap;border-radius:10px;padding:7px;background:rgba(183,224,195,.08);box-shadow:none}.filters label{font-size:8px;color:#a7c5b2;font-weight:800;letter-spacing:.55px;flex:1;min-width:130px}.filters select{display:block;width:100%;margin-top:4px;padding:8px;border:1px solid rgba(191,229,202,.17);border-radius:8px;background:rgba(6,43,35,.55);color:#e5f2e9;font-size:9px}.filters option{background:#123d32;color:#e5f2e9}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
-.card{background:rgba(255,255,255,.68);border:1px solid rgba(255,255,255,.88);border-radius:15px;padding:14px;border-top:3px solid #74a9bb;box-shadow:0 9px 24px rgba(47,78,58,.07)}
-.card.green{border-top-color:#42a77b}.card.red{border-top-color:#df7880}.card.gold{border-top-color:#d2ad68}
-.card small{font-size:9px;color:#71857a;font-weight:700;letter-spacing:.7px}
-.card b{display:block;font-size:25px;color:#203e31;margin:7px 0 3px}
-.card span{font-size:10px;color:#819187}
-.panel{border-radius:16px;padding:14px;margin-bottom:12px}
-.panel h2{font-size:12px;color:#29483a;margin:0 0 11px;letter-spacing:.1px}
-.tablewrap{overflow:auto;border:1px solid rgba(50,89,64,.08);border-radius:10px;background:rgba(255,255,255,.35)}
-table{width:100%;border-collapse:collapse;min-width:700px;font-size:10px}
-th{background:rgba(216,232,220,.82);color:#496556;text-align:left;padding:10px 8px;white-space:nowrap;font-weight:700}
-td{padding:9px 8px;border-bottom:1px solid rgba(55,91,68,.10);color:#435d4e}
-tfoot td{font-weight:750;background:rgba(211,230,216,.72);color:#294638}
-.status{font-weight:700}.pending{color:#cf4d5b}.completed{color:#16845b}
-.charts{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}
-.chartbox{height:235px}
-.notice{font-size:10px;color:#60776a;padding:10px;background:rgba(255,255,255,.44);border:1px solid rgba(255,255,255,.55);border-radius:10px}
-.footer{padding:11px;color:#84948a;font-size:9px;text-align:right}
-@media(max-width:850px){.side{width:190px}.cards{grid-template-columns:repeat(2,1fr)}.content{padding:7px}.charts{grid-template-columns:1fr}}
+.card{background:linear-gradient(145deg,rgba(197,229,207,.16),rgba(97,163,126,.09));border:1px solid rgba(204,239,213,.16);border-radius:14px;padding:12px;border-top:2px solid #6db1c0;box-shadow:0 9px 25px rgba(0,0,0,.08)}
+.card.green{border-top-color:#43c18b}.card.red{border-top-color:#e26f7d}.card.gold{border-top-color:#d6b36c}
+.card-top{display:flex;justify-content:space-between;align-items:center}.card small{font-size:8px;color:#9dbbaa;font-weight:800;letter-spacing:.75px}.mini-icon{width:25px;height:25px;border-radius:8px;background:rgba(200,238,211,.10);display:grid;place-items:center;color:#b6ddc3;font-size:11px}.card b{display:block;font-size:24px;color:#f1f8f2;margin:7px 0 3px}.card span{font-size:9px;color:#9bb7a7}
+.panel{border-radius:14px;padding:13px;margin-bottom:12px}.panel h2{font-size:11px;color:#e5f1e8;margin:0 0 10px}
+.tablewrap{overflow:auto;border:1px solid rgba(205,235,217,.10);border-radius:9px;background:rgba(3,31,26,.12)}table{width:100%;border-collapse:collapse;min-width:690px;font-size:9px}th{background:rgba(133,190,151,.15);color:#c7dfce;text-align:left;padding:9px 7px;white-space:nowrap}td{padding:8px 7px;border-bottom:1px solid rgba(205,235,217,.09);color:#c2d8c9}tfoot td{font-weight:750;background:rgba(121,186,141,.13);color:#e3f0e6}.status{font-weight:700}.pending{color:#ef8994}.completed{color:#5bd49a}
+.charts{display:grid;grid-template-columns:1.2fr .8fr;gap:11px}.chartbox{height:230px}
+.footer{padding:11px;color:#769b87;font-size:8px;text-align:right}.footer span{padding:0 4px}
+@media(max-width:850px){.side{width:190px}.cards{grid-template-columns:repeat(2,1fr)}.charts{grid-template-columns:1fr}}
 @media(max-width:600px){
-.shell{display:block;padding:6px}.side{width:100%;height:auto;position:relative;top:auto;padding:8px 8px;margin-bottom:7px;border-radius:14px}
-.brand{padding:1px 6px 7px}.brand b{font-size:12px}.brand span{font-size:8px}
-.nav{display:flex;overflow-x:auto;gap:4px}.navlabel{display:none}.nav a{white-space:nowrap;font-size:9px;padding:7px 8px;margin:4px 0}
-.top{height:36px;padding:0 9px;border-radius:10px;margin-bottom:7px}.top strong{font-size:9px}.top span{font-size:8px}
-.content{padding:2px 2px 14px}.heading{gap:6px;margin:4px 1px 8px}.heading h1{font-size:15px;line-height:1.25}.heading p{font-size:9px}
-.btn{font-size:9px;padding:7px 8px}.upload{padding:8px;gap:7px;margin-bottom:7px;border-radius:11px}.upload label{font-size:9px}input[type=file]{max-width:100%;font-size:9px}
-.filters{gap:6px;padding:8px;margin-bottom:7px;border-radius:11px}.filters label{font-size:8px;flex:1;min-width:0}.filters select{width:100%;min-width:0;padding:7px 4px;font-size:10px}
-.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-bottom:7px}.card{padding:8px;border-radius:10px}.card small{font-size:7px;letter-spacing:.25px}.card b{font-size:18px;margin:5px 0 2px}.card span{font-size:8px}
-.panel{padding:8px;margin-bottom:7px;border-radius:11px}.panel h2{font-size:10px;margin-bottom:7px}
-.tablewrap{overflow:visible;border:0;background:transparent}table{width:100%;min-width:0;table-layout:fixed;font-size:8px}
-th{padding:6px 2px;white-space:normal;overflow-wrap:anywhere;line-height:1.12}td{padding:6px 2px;overflow-wrap:anywhere;word-break:normal;line-height:1.2}
-table th:nth-child(1),table td:nth-child(1){width:23%}table th:nth-child(2),table td:nth-child(2){width:12%}
-table th:nth-child(3),table td:nth-child(3){width:12%}table th:nth-child(4),table td:nth-child(4){width:13%}
-table th:nth-child(5),table td:nth-child(5){width:22%}table th:nth-child(6),table td:nth-child(6){width:18%}
-.charts{gap:7px}.chartbox{height:175px}.notice{font-size:9px;padding:7px}.footer{font-size:8px;padding:7px}
+.app-shell{display:block;padding:6px}.side{width:100%;height:auto;position:relative;top:auto;padding:8px;margin-bottom:7px;border-radius:13px}.brand{padding:1px 5px 7px}.brandmark{width:27px;height:27px}.brand b{font-size:10px}.brand span{font-size:7px}.navlabel{display:none}.nav{display:flex;overflow-x:auto;gap:4px;margin-top:6px}.nav a{white-space:nowrap;font-size:8px;padding:6px 7px;margin:0}.navicon{width:19px;height:19px}.side-bottom{display:none}
+.top{height:39px;padding:0 8px;margin-bottom:8px;border-radius:10px}.searchbox{height:28px}.searchbox input{font-size:8px}.searchbox span{font-size:15px}.top-actions{gap:4px}.top-icon{width:25px;height:25px;font-size:10px}.avatar{width:25px;height:25px;font-size:8px}.profile{display:none}
+.content{padding:0 1px 14px}.welcome{margin:3px 2px 9px;align-items:flex-start}.welcome h1{font-size:14px}.welcome p{font-size:8px}.eyebrow{font-size:7px;margin-bottom:4px}.welcome-actions{width:100%}.welcome-actions .btn{flex:1}
+.control-panel{padding:8px;margin-bottom:7px;border-radius:11px}.control-head h2{font-size:9px}.control-head p{font-size:8px}.live-pill{font-size:7px}.upload{gap:6px}.file-field{min-width:calc(50% - 4px)}.file-field label{font-size:7px}.file-field input{font-size:8px}.upload .btn{width:100%}.notice{font-size:8px;padding:7px;margin-top:7px}
+.filter-row{display:block;padding:8px;margin-bottom:7px;border-radius:11px}.filter-title{margin-bottom:7px}.filter-title b{font-size:8px}.filters{padding:6px;gap:5px}.filters label{min-width:0;font-size:7px}.filters select{font-size:8px;padding:6px 3px}.filters .btn{padding:7px 8px}
+.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-bottom:7px}.card{padding:8px;border-radius:10px}.card small{font-size:7px}.card b{font-size:18px;margin:5px 0 2px}.card span{font-size:8px}.mini-icon{width:21px;height:21px;font-size:9px}
+.panel{padding:8px;margin-bottom:7px;border-radius:10px}.panel h2{font-size:9px;margin-bottom:7px}.tablewrap{overflow:visible;border:0}table{width:100%;min-width:0;table-layout:fixed;font-size:7px}th{padding:5px 2px;white-space:normal;overflow-wrap:anywhere;line-height:1.1}td{padding:5px 2px;overflow-wrap:anywhere;line-height:1.15}table th:nth-child(1),table td:nth-child(1){width:23%}table th:nth-child(2),table td:nth-child(2){width:12%}table th:nth-child(3),table td:nth-child(3){width:12%}table th:nth-child(4),table td:nth-child(4){width:13%}table th:nth-child(5),table td:nth-child(5){width:22%}table th:nth-child(6),table td:nth-child(6){width:18%}
+.charts{gap:7px}.chartbox{height:165px}.footer{font-size:7px;padding:7px}
 }
-</style></head><body><div class="shell">
-<aside class="side"><div class="brand"><b>MONITOR DISPLAY</b><span>OPERATION PICKING OVERVIEW</span></div><div class="navlabel">MAIN MENU</div><nav class="nav"><a class="active" href="#">▦ &nbsp; Overall Block Current Order Invoice Status</a><a href="#" onclick="return false">◫ &nbsp; Picking Performance <small>(Next)</small></a></nav></aside>
-<main class="main"><div class="top"><strong>MONITOR DISPLAY</strong><span id="now">--</span></div><div class="content">
-<div class="heading"><div><h1>Overall Block Current Order Invoice Status</h1><p>Current order invoice overview · Block E / F / G / H</p></div><button class="btn light" id="png" disabled>Download Dashboard PNG</button></div>
-<div class="upload"><div><label>Upload Outstation Excel</label><input type="file" id="outFile" accept=".xlsx,.xls"></div><div><label>Upload Local & IKA Excel</label><input type="file" id="localFile" accept=".xlsx,.xls"></div><button class="btn" id="load">↻ Process & Refresh</button><button class="btn light" id="export" disabled>Export Excel</button></div>
-<div class="notice" id="msg">Upload Outstation, Local & IKA, or both files. One file works independently; two files are combined. Header positions may change.</div>
-<div class="filters"><label>A — LOAD PLAN TYPE<select id="typeFilter"><option value="ALL">All Load Plan</option><option value="Outstation">Outstation</option><option value="LOCAL & IKA">Local & IKA</option></select></label><label>B — LOAD PLAN DATE<select id="dateFilter"><option value="ALL">All Dates</option></select></label><button class="btn light" id="reset">Reset Filters</button></div>
-<section id="report"><div class="cards"><div class="card"><small>TOTAL DO</small><b>—</b><span>Unique DO numbers</span></div><div class="card green"><small>COMPLETED INVOICED</small><b>—</b><span>DO count</span></div><div class="card red"><small>PENDING INVOICE</small><b>—</b><span>DO count</span></div><div class="card gold"><small>TOTAL CARTONS</small><b>—</b><span>Selected load plan</span></div></div><div class="panel"><h2>Invoice Status by Block</h2><p class="notice">Upload Outstation, Local & IKA, or both files to display the report.</p></div></section>
-<div class="footer">Operation Picking Overview · Monitor Display</div></div></main></div>
+</style></head><body><div class="app-shell">
+<aside class="side">
+ <div class="brand"><div class="brandmark">OP</div><div><b>MONITOR DISPLAY</b><span>OPERATION PICKING OVERVIEW</span></div></div>
+ <div class="navlabel">WORKSPACE</div>
+ <nav class="nav">
+  <a class="active" href="#"><span class="navicon">▦</span><span>Overall Block Current Order Invoice Status</span></a>
+  <a href="#" onclick="return false"><span class="navicon">◫</span><span>Picking Performance <small>Next</small></span></a>
+ </nav>
+ <div class="side-bottom"><div class="side-status"><i></i> System ready</div><div class="side-foot">OPERATION CONTROL<br><b>MONITOR DISPLAY</b></div></div>
+</aside>
+<main class="main">
+ <header class="top">
+  <div class="mobile-brand">OPERATION OVERVIEW</div>
+  <div class="searchbox"><span>⌕</span><input type="search" placeholder="Search dashboard, blocks, invoice status..." aria-label="Search dashboard"></div>
+  <div class="top-actions"><button class="top-icon" aria-label="Notifications">♧</button><button class="top-icon" aria-label="Settings">⚙</button><div class="avatar">OP</div><div class="profile"><b>Operations</b><small>Monitor Admin</small></div></div>
+ </header>
+ <div class="content">
+  <div class="welcome"><div><div class="eyebrow">OPERATIONS / INVOICE CONTROL</div><h1>Overall Block Current Order Invoice Status</h1><p>Monitor current order invoice progress across Blocks E, F, G and H.</p></div><div class="welcome-actions"><button class="btn light" id="png" disabled>↓ Export PNG</button><button class="btn light" id="export" disabled>↓ Export Excel</button></div></div>
+  <section class="control-panel">
+   <div class="control-head"><div><h2>Data Source</h2><p>Upload one workbook or combine both load plan files.</p></div><span class="live-pill"><i></i> LIVE WORKSPACE</span></div>
+   <div class="upload">
+    <div class="file-field"><label>OUTSTATION EXCEL</label><input type="file" id="outFile" accept=".xlsx,.xls"></div>
+    <div class="file-field"><label>LOCAL &amp; IKA EXCEL</label><input type="file" id="localFile" accept=".xlsx,.xls"></div>
+    <button class="btn" id="load">↻ Process &amp; Refresh</button>
+   </div>
+   <div class="notice" id="msg">Upload Outstation, Local &amp; IKA, or both files. One file works independently; two files are combined. Header positions may change.</div>
+  </section>
+  <div class="filter-row"><div class="filter-title"><span class="filter-icon">☷</span><div><b>Report Filters</b><small>Refine dashboard data</small></div></div>
+   <div class="filters"><label>LOAD PLAN TYPE<select id="typeFilter"><option value="ALL">All Load Plan</option><option value="Outstation">Outstation</option><option value="LOCAL &amp; IKA">Local &amp; IKA</option></select></label><label>LOAD PLAN DATE<select id="dateFilter"><option value="ALL">All Dates</option></select></label><button class="btn light" id="reset">Reset Filters</button></div>
+  </div>
+  <section id="report"><div class="cards"><div class="card"><div class="card-top"><small>TOTAL DO</small><span class="mini-icon">▤</span></div><b>—</b><span>Unique DO numbers</span></div><div class="card green"><div class="card-top"><small>COMPLETED INVOICED</small><span class="mini-icon">✓</span></div><b>—</b><span>DO count</span></div><div class="card red"><div class="card-top"><small>PENDING INVOICE</small><span class="mini-icon">◷</span></div><b>—</b><span>DO count</span></div><div class="card gold"><div class="card-top"><small>TOTAL CARTONS</small><span class="mini-icon">▣</span></div><b>—</b><span>Selected load plan</span></div></div><div class="panel"><h2>Invoice Status by Block</h2><p class="notice">Upload Outstation, Local &amp; IKA, or both files to display the report.</p></div></section>
+  <div class="footer">Operation Picking Overview <span>•</span> Monitor Display</div>
+ </div>
+</main></div>
 <script>
 let records=[],loaded=false,chartObj=null;
 const $=id=>document.getElementById(id), num=v=>{let x=Number(String(v??'').replace(/,/g,''));return Number.isFinite(x)?x:0}, fmt=v=>Math.round(num(v)).toLocaleString('en-US');
@@ -126,7 +133,7 @@ async function readFile(file, fallback){
 }
 function filtered(){let t=$('typeFilter').value,d=$('dateFilter').value;return records.filter(r=>(t==='ALL'||r.loadType===t)&&(d==='ALL'||r.date===d))}
 function aggregate(rows){let all=new Set(rows.map(r=>r.doNo)),total=all.size;let groups=['completed','pending'];let by=groups.map(g=>{let z=rows.filter(r=>statusKind(r.status)===g);let dos=new Set(z.map(r=>r.doNo));let blocks=['E','F','G','H'].map(b=>{let a=z.filter(r=>r.block===b),bd=new Set(a.map(r=>r.doNo));return{block:b,do:bd.size,line:a.reduce((s,x)=>s+x.line,0),carton:a.reduce((s,x)=>s+x.carton,0),pct:total?bd.size/total*100:0}});return{kind:g,do:dos.size,line:z.reduce((s,x)=>s+x.line,0),carton:z.reduce((s,x)=>s+x.carton,0),pct:total?dos.size/total*100:0,blocks}});return{total,allLine:rows.reduce((s,x)=>s+x.line,0),allCarton:rows.reduce((s,x)=>s+x.carton,0),groups:by}}
-function render(){let rows=filtered(),a=aggregate(rows),completed=a.groups[0],pending=a.groups[1];let card=(label,value,sub,cls='')=>`<div class="card ${cls}"><small>${label}</small><b>${value}</b><span>${sub}</span></div>`;
+function render(){let rows=filtered(),a=aggregate(rows),completed=a.groups[0],pending=a.groups[1];let card=(label,value,sub,cls='')=>`<div class="card ${cls}"><div class="card-top"><small>${label}</small><span class="mini-icon">${label==='TOTAL DO'?'▤':label==='COMPLETED INVOICED'?'✓':label==='PENDING INVOICE'?'◷':'▣'}</span></div><b>${value}</b><span>${sub}</span></div>`;
 let html=`<div class="cards">${card('TOTAL DO',fmt(a.total),'Unique DO numbers')}${card('COMPLETED INVOICED',fmt(completed.do),Math.round(completed.pct)+'% of selected DO','green')}${card('PENDING INVOICE',fmt(pending.do),Math.round(pending.pct)+'% of selected DO','red')}${card('TOTAL CARTONS',fmt(a.allCarton),'Selected load plan','gold')}</div>`;
 html+=`<div class="panel"><h2>Overall Block Current Order Invoice Stats</h2><div class="tablewrap"><table><thead><tr><th>Invoice Status</th><th>Block</th><th>DO No</th><th>DO Line</th><th>Est Total Carton</th><th>DO Percentage</th></tr></thead><tbody>`;
 for(let g of a.groups){html+=`<tr><td class="status ${g.kind}">${g.kind==='completed'?'Completed Invoiced':'Pending Invoice'}</td><td><b>Overall</b></td><td>${fmt(g.do)}</td><td>${fmt(g.line)}</td><td>${fmt(g.carton)}</td><td>${Math.round(g.pct)}%</td></tr>`;for(let b of g.blocks)html+=`<tr><td></td><td>${b.block}</td><td>${fmt(b.do)}</td><td>${fmt(b.line)}</td><td>${fmt(b.carton)}</td><td>${Math.round(b.pct)}%</td></tr>`}
