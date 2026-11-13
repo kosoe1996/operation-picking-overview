@@ -609,6 +609,109 @@ tfoot td:first-child{border-radius:7px 0 0 7px}tfoot td:last-child{border-radius
  .full-report-toolbar{align-items:flex-start;flex-wrap:wrap}
  .full-copy-btn{width:100%}
 }
+
+/* V21 - fully visible filter values in dashboard and WhatsApp capture */
+.whatsapp-report-capture .filter-row{
+  align-items:center!important;
+}
+.whatsapp-report-capture .filters{
+  align-items:center!important;
+  min-width:0!important;
+  gap:12px!important;
+}
+.whatsapp-report-capture .filters label{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-end!important;
+  min-width:0!important;
+  line-height:1.35!important;
+  color:#203f55!important;
+  font-size:9px!important;
+  font-weight:900!important;
+  letter-spacing:.45px!important;
+}
+.whatsapp-report-capture .filters select{
+  display:block!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  height:42px!important;
+  min-height:42px!important;
+  margin-top:6px!important;
+  padding:9px 34px 9px 12px!important;
+  line-height:22px!important;
+  font-family:inherit!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  color:#18384e!important;
+  background-color:#fff!important;
+  border:1px solid #c7d7e2!important;
+  border-radius:9px!important;
+  vertical-align:middle!important;
+  overflow:visible!important;
+}
+.whatsapp-report-capture .filters select option{
+  color:#18384e!important;
+  background:#fff!important;
+  font-size:12px!important;
+}
+@media(max-width:1000px){
+  .whatsapp-report-capture .filter-row{
+    display:flex!important;
+    align-items:center!important;
+    gap:8px!important;
+    padding:9px!important;
+  }
+  .whatsapp-report-capture .filter-title{
+    min-width:105px!important;
+    flex:0 0 105px!important;
+  }
+  .whatsapp-report-capture .filters{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto!important;
+    align-items:end!important;
+    gap:7px!important;
+    flex:1 1 auto!important;
+  }
+  .whatsapp-report-capture .filters label{
+    min-width:0!important;
+    font-size:8px!important;
+  }
+  .whatsapp-report-capture .filters select{
+    height:40px!important;
+    min-height:40px!important;
+    padding:8px 25px 8px 8px!important;
+    font-size:10px!important;
+    line-height:22px!important;
+  }
+}
+@media(max-width:620px){
+  .whatsapp-report-capture .filter-row{
+    display:block!important;
+  }
+  .whatsapp-report-capture .filter-title{
+    min-width:0!important;
+    margin-bottom:7px!important;
+  }
+  .whatsapp-report-capture .filters{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:7px!important;
+  }
+  .whatsapp-report-capture .filters label{
+    font-size:7px!important;
+  }
+  .whatsapp-report-capture .filters select{
+    height:40px!important;
+    min-height:40px!important;
+    font-size:10px!important;
+    padding:8px 24px 8px 8px!important;
+  }
+  .whatsapp-report-capture .filters #reset{
+    grid-column:1/-1!important;
+    justify-self:start!important;
+  }
+}
+
 </style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
