@@ -20,7 +20,7 @@ function norm(s){return String(s??'').trim().toLowerCase().replace(/[\s._/-]+/g,
 const aliases={
 'doNo':['do no'],'esttotalcarton':['est total carton'],'doline':['do line'],'block':['block'],'invstatus':['inv status'],'loadplan':['load plan'],'date':['date']
 };
-function mapHeaders(headers){let m={};for(let k in aliases){let found=headers.find(h=>aliases[k].some(a=>norm(a)===norm(h)));if(found)m[k]=found;}return m}
+function mapHeaders(headers){let m={};for(let k in aliases){let found=headers.find(h=>aliases[k].includes(norm(h)));if(found)m[k]=found;}return m}
 function getVal(r,m,k){return r[m[k]]}
 function cleanType(v, fallback){let s=String(v??'').trim().toUpperCase();if(s.includes('OUTSTATION'))return'Outstation';if(s==='GT')return'Outstation';if(s.includes('LOCAL')||s.includes('IKA'))return'LOCAL & IKA';return fallback}
 function excelDate(v){if(v instanceof Date&&!isNaN(v))return v.toISOString().slice(0,10);if(typeof v==='number'){let d=XLSX.SSF.parse_date_code(v);if(d)return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;}let s=String(v??'').trim();let m=s.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})$/);if(m)return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;let d=new Date(s);return isNaN(d)?s:d.toISOString().slice(0,10)}
