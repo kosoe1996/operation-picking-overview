@@ -237,6 +237,52 @@ html,body{height:100%;overflow:hidden}
 .table-panel h2{display:block}
 .kpi-icon{width:18px;height:18px;font-size:10px}
 }
+
+/* V13 SMART FULL-WIDTH DESKTOP: remove centered narrow canvas */
+*{box-sizing:border-box}
+@media(min-width:1001px){
+ html,body{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden}
+ .app-shell{display:flex;width:100vw;height:100vh;min-height:0;overflow:hidden}
+ .side{width:220px;flex:0 0 220px;height:100vh;min-height:0;position:relative;padding:18px 0 12px}
+ .brand{height:68px;padding:0 20px 14px}
+ .navlabel{padding:18px 20px 7px}
+ .nav a{padding:11px 18px;font-size:12px}
+ .main{flex:1 1 auto;width:calc(100vw - 220px);max-width:none;height:100vh;min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:column;background:#f2f6f9}
+ .top{height:62px;min-height:62px;flex:0 0 62px;padding:0 26px;background:#fff;border-bottom:1px solid #dce5eb}
+ .top h1{font-size:21px;letter-spacing:-.3px;color:#142f43}
+ .content{width:100%;max-width:none;height:calc(100vh - 62px);flex:1 1 auto;min-height:0;margin:0;padding:12px 22px 12px;overflow:hidden;display:flex;flex-direction:column}
+ .subhead{display:none}
+ .control-panel{flex:0 0 auto;margin:0 0 9px;padding:9px 13px;border-radius:11px;background:#fff;border:1px solid #dce5eb;box-shadow:0 2px 8px rgba(19,49,69,.045)}
+ .control-head{margin-bottom:6px}
+ .control-head h2{font-size:11px}
+ .control-head p{font-size:9px}
+ .upload{display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,1fr) auto auto;align-items:end;gap:9px}
+ .file-field{min-width:0}
+ .file-field input{max-width:100%;font-size:10px}
+ .upload .btn{white-space:nowrap;padding:10px 15px;font-size:11px}
+ .notice{margin-top:7px;padding:6px 9px;font-size:9px}
+ .filter-row{flex:0 0 auto;margin:0 0 9px;padding:8px 12px;background:#e7eef4;border:1px solid #d7e2ea;border-radius:10px;display:flex;align-items:center;gap:14px}
+ .filter-title{min-width:150px}
+ .filters{display:grid;grid-template-columns:minmax(180px,1fr) minmax(180px,1fr) auto;align-items:end;gap:10px;flex:1}
+ .filters label{font-size:9px}
+ .filters select{height:34px;font-size:11px}
+ .filters .btn{height:34px;padding:0 15px;font-size:10px}
+ .cards{flex:0 0 auto;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 10px}
+ .card{min-height:82px;padding:9px 14px;border-radius:11px}
+ .card small{font-size:10px}
+ .card b{font-size:25px;margin:3px 0 1px}
+ .card span{font-size:10px}
+ .kpi-icon{width:39px;height:39px;border-radius:11px;font-size:20px}
+ .table-panel{flex:1 1 auto;min-height:0;margin:0;padding:12px 15px;border:1px solid #d8e2e9;border-radius:12px;background:#fff;box-shadow:0 3px 12px rgba(19,49,69,.05);display:flex;flex-direction:column}
+ .table-panel h2{flex:0 0 auto;font-size:14px;margin:0 0 8px}
+ .tablewrap{flex:1 1 auto;min-height:0;overflow:hidden}
+ table{width:100%;height:100%;table-layout:fixed;font-size:11px;border-collapse:separate;border-spacing:0 3px}
+ thead th{font-size:11px;padding:7px 12px}
+ tbody td{font-size:11px;padding:5px 12px;line-height:1.15}
+ tbody tr.summary-row td{padding-top:6px;padding-bottom:6px}
+ tfoot td{padding:7px 12px}
+ .footer{display:none}
+}
 </style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
