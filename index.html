@@ -123,6 +123,44 @@ th:nth-child(6),td:nth-child(6){width:18%}
 .card b{font-size:15px;line-height:1.1;margin:5px 0 2px}
 .card span{font-size:6px;line-height:1.1;display:block;overflow-wrap:anywhere}
 }
+
+/* Clean report revision: remove crossed-out chart/activity widgets */
+.dashboard-grid,.bottom-grid{display:none!important}
+.panel h2,.top h1,.control-head h2,.filter-title b{font-weight:850!important;letter-spacing:.15px}
+.card small{font-weight:850!important}
+.card span{font-weight:650;line-height:1.25}
+.card{min-height:88px}
+.card b{font-weight:850}
+.table-panel{margin-top:4px;background:#e2ebe4;border:0;box-shadow:none}
+.table-panel h2{font-size:15px;font-weight:900;letter-spacing:.25px;margin:0 0 12px;color:#183a2b}
+.tablewrap{overflow:visible;border-radius:10px}
+table{border-collapse:separate;border-spacing:0 5px;width:100%;font-size:12px}
+thead th{background:#cfdfd3;color:#294b3a;font-weight:850;padding:11px 9px;border:0}
+thead th:first-child{border-radius:8px 0 0 8px}
+thead th:last-child{border-radius:0 8px 8px 0}
+tbody td{border:0;padding:10px 9px;color:#354e40;font-weight:550;background:rgba(255,255,255,.27)}
+tbody tr.summary-row td{background:#d2e4d8;font-weight:850;color:#234b38;padding-top:12px;padding-bottom:12px}
+tbody tr.summary-row td:first-child{border-radius:8px 0 0 8px}
+tbody tr.summary-row td:last-child{border-radius:0 8px 8px 0}
+tbody tr.detail-row td{background:rgba(255,255,255,.13)}
+tbody tr.detail-row td:first-child{border-radius:7px 0 0 7px}
+tbody tr.detail-row td:last-child{border-radius:0 7px 7px 0}
+tbody tr.detail-row td:nth-child(2){font-weight:800;color:#42614e;padding-left:15px}
+tfoot td{border:0;padding:12px 9px;background:#c8ddce;color:#1e4934;font-weight:900}
+tfoot td:first-child{border-radius:8px 0 0 8px}
+tfoot td:last-child{border-radius:0 8px 8px 0}
+.status.completed{color:#168363}.status.pending{color:#d65b69}
+@media(max-width:700px){
+.card{min-height:75px}
+.card span{font-size:6.5px;font-weight:700}
+.table-panel{padding:8px}
+.table-panel h2{font-size:9px;margin-bottom:7px}
+table{font-size:6.8px;border-spacing:0 3px}
+thead th{padding:6px 3px;font-size:6.5px}
+tbody td{padding:6px 3px}
+tbody tr.summary-row td{padding-top:7px;padding-bottom:7px}
+tfoot td{padding:7px 3px}
+}
 </style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
@@ -231,11 +269,11 @@ function aggregate(rows){let all=new Set(rows.map(r=>r.doNo)),total=all.size;let
 function render(){
  let rows=filtered(),a=aggregate(rows),completed=a.groups[0],pending=a.groups[1];
  let card=(label,value,sub,cls='')=>{let ico=label==='TOTAL DO'?'▤':label==='COMPLETED INVOICED'?'✓':label==='PENDING INVOICE'?'◷':'▦';return `<div class="card ${cls}"><div class="card-top"><small>${label}</small><span class="kpi-icon">${ico}</span></div><b>${value}</b><span>${sub}</span></div>`};
- let htmlCards=`<div class="cards">${card('TOTAL DO',fmt(a.total),'Unique DO numbers')}${card('COMPLETED INVOICED',fmt(completed.do),Math.round(completed.pct)+'% of selected DO','green')}${card('PENDING INVOICE',fmt(pending.do),Math.round(pending.pct)+'% of selected DO','red')}${card('TOTAL CARTONS',fmt(a.allCarton),'Selected load plan','gold')}</div>`;
+ let htmlCards=`<div class="cards">${card('TOTAL DO',fmt(a.total),'Unique DO numbers')}${card('COMPLETED INVOICED',fmt(completed.do),fmt(completed.carton)+' Cartons · '+Math.round(completed.pct)+'% DO','green')}${card('PENDING INVOICE',fmt(pending.do),fmt(pending.carton)+' Cartons · '+Math.round(pending.pct)+'% DO','red')}${card('TOTAL CARTONS',fmt(a.allCarton),'Selected load plan','gold')}</div>`;
  $('report').querySelector('.cards').outerHTML=htmlCards;
  let blocks=['E','F','G','H'];
  let table=`<table><thead><tr><th>Invoice Status</th><th>Block</th><th>DO No</th><th>DO Line</th><th>Est Total Carton</th><th>DO Percentage</th></tr></thead><tbody>`;
- for(let g of a.groups){table+=`<tr><td class="status ${g.kind}">${g.kind==='completed'?'Completed Invoiced':'Pending Invoice'}</td><td><b>Overall</b></td><td>${fmt(g.do)}</td><td>${fmt(g.line)}</td><td>${fmt(g.carton)}</td><td>${Math.round(g.pct)}%</td></tr>`;for(let b of g.blocks)table+=`<tr><td></td><td>${b.block}</td><td>${fmt(b.do)}</td><td>${fmt(b.line)}</td><td>${fmt(b.carton)}</td><td>${Math.round(b.pct)}%</td></tr>`}
+ for(let g of a.groups){table+=`<tr class="summary-row"><td class="status ${g.kind}">${g.kind==='completed'?'Completed Invoiced':'Pending Invoice'}</td><td>Overall</td><td>${fmt(g.do)}</td><td>${fmt(g.line)}</td><td>${fmt(g.carton)}</td><td>${Math.round(g.pct)}%</td></tr>`;for(let b of g.blocks)table+=`<tr class="detail-row"><td></td><td>${b.block}</td><td>${fmt(b.do)}</td><td>${fmt(b.line)}</td><td>${fmt(b.carton)}</td><td>${Math.round(b.pct)}%</td></tr>`}
  table+=`</tbody><tfoot><tr><td>Grand Total</td><td>All Blocks</td><td>${fmt(a.total)}</td><td>${fmt(a.allLine)}</td><td>${fmt(a.allCarton)}</td><td>100%</td></tr></tfoot></table>`;
  $('reports').querySelector('.tablewrap').innerHTML=table;
  $('taskList').innerHTML=blocks.map(b=>{let c=completed.blocks.find(x=>x.block===b),p=pending.blocks.find(x=>x.block===b);return `<div class="task-row"><span class="task-name">Block ${b} · Pending ${fmt(p.do)}</span><b>${fmt(c.do)} completed</b><a href="#analytics">View</a></div>`}).join('');
