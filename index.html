@@ -785,6 +785,21 @@ body[data-theme="dark"] #reports table td{color:#e5edf4}
   }
 }
 
+
+/* V25: compact Process & Refresh action; retain header accent line */
+.upload #load{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:150px!important;
+  max-width:170px!important;
+  padding:10px 14px!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+}
+@media(max-width:700px){
+  .upload #load{min-width:0!important;max-width:none!important;padding:9px 11px!important}
+}
+
 </style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
