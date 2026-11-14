@@ -765,6 +765,26 @@ body[data-theme="dark"] #reports table td{color:#e5edf4}
 .rich-toolbar{margin:5px 0 5px!important;padding:5px!important;gap:5px!important}
 @media(max-width:700px){.additional-editor{min-height:58px!important}.additional-info{padding:9px!important}}
 
+
+/* V24: align sidebar with the full page; keep dashboard content geometry unchanged */
+@media(min-width:1001px){
+  .app-shell{align-items:stretch!important;gap:0!important}
+  .side{
+    align-self:flex-start!important;
+    position:sticky!important;
+    top:0!important;
+    height:100vh!important;
+    min-height:100vh!important;
+    flex-shrink:0!important;
+    margin:0!important;
+  }
+  .main{
+    flex:1 1 auto!important;
+    min-width:0!important;
+    margin:0!important;
+  }
+}
+
 </style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
@@ -862,7 +882,11 @@ function cleanType(v, fallback){let s=String(v??'').trim().toUpperCase();if(s.in
 function excelDate(v){if(v instanceof Date&&!isNaN(v))return v.toISOString().slice(0,10);if(typeof v==='number'){let d=XLSX.SSF.parse_date_code(v);if(d)return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;}let s=String(v??'').trim();let m=s.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})$/);if(m)return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;let d=new Date(s);return isNaN(d)?s:d.toISOString().slice(0,10)}
 async function readFile(file, fallback){
  let wb=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:true});
- let sheet=wb.Sheets[wb.SheetNames[0]];
+ const rawSheetName=wb.SheetNames.find(n=>String(n).trim().toLowerCase().replace(/[^a-z0-9]/g,'')==='rawdata');
+ if(!rawSheetName){
+  throw new Error(file.name+' ထဲမှာ "Raw Data" Sheet မတွေ့ပါ။ ရှိတဲ့ Sheet များ: '+wb.SheetNames.join(', '));
+ }
+ let sheet=wb.Sheets[rawSheetName];
  let matrix=XLSX.utils.sheet_to_json(sheet,{header:1,defval:'',raw:true});
  const key=s=>String(s??'').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
  const aliases={
