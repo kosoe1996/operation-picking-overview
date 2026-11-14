@@ -1084,6 +1084,49 @@ body[data-view="picking"] .content{padding:0!important}
  #pickingDashboardPage #pickingLineStatus .pls-block-grid{grid-template-columns:1fr 1fr!important}
 }
 
+
+
+/* V31 — compact WhatsApp-friendly Picking Line Status layout */
+#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{
+ display:grid!important;
+ grid-template-columns:minmax(0,1.12fr) minmax(0,1fr) minmax(210px,.72fr)!important;
+ grid-template-rows:auto auto!important;
+ gap:8px!important;align-items:start!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid{display:contents!important}
+#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:first-child{grid-column:1!important;grid-row:1 / span 2!important}
+#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:nth-child(2){grid-column:2!important;grid-row:1!important}
+#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:first-child{grid-column:2!important;grid-row:2!important}
+#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:nth-child(2){grid-column:3!important;grid-row:1 / span 2!important;max-height:540px!important;overflow:auto!important}
+#pickingDashboardPage #pickingLineStatus .pls-block-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important}
+#pickingDashboardPage #pickingLineStatus .pls-panel{padding:7px 8px!important;border:1px solid #d8e2ea!important;border-radius:7px!important;box-shadow:none!important;background:#fff!important;min-width:0}
+#pickingDashboardPage #pickingLineStatus .pls-panel h3{font-size:12px!important;font-weight:800!important;line-height:1.15!important;padding:7px 9px!important;margin:0 0 5px!important;letter-spacing:.2px!important}
+#pickingDashboardPage #pickingLineStatus .pls-block{border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;min-width:0!important}
+#pickingDashboardPage #pickingLineStatus .pls-block-title{font-size:10px!important;font-weight:800!important;padding:4px 5px!important;background:#eaf0f4!important;border-bottom:1px solid #d7e1e8!important;white-space:nowrap!important}
+#pickingDashboardPage #pickingLineStatus .pls-block-title span{font-size:9px!important;font-weight:500!important}
+#pickingDashboardPage #pickingLineStatus .pls-subtable,#pickingDashboardPage #pickingLineStatus .pls-summary-table{font-size:9px!important;line-height:1.08!important;border-collapse:collapse!important;border-spacing:0!important;table-layout:fixed!important;width:100%!important}
+#pickingDashboardPage #pickingLineStatus .pls-subtable th,#pickingDashboardPage #pickingLineStatus .pls-summary-table th{font-size:9px!important;font-weight:700!important;padding:3px 4px!important;line-height:1.08!important;background:#edf2f6!important;color:#29475d!important;white-space:nowrap!important}
+#pickingDashboardPage #pickingLineStatus .pls-subtable td,#pickingDashboardPage #pickingLineStatus .pls-summary-table td{font-size:9px!important;font-weight:400!important;padding:2px 4px!important;line-height:1.08!important;background:transparent!important;color:#30495c!important;border:0!important;border-bottom:1px solid #e5ebef!important;white-space:nowrap!important}
+#pickingDashboardPage #pickingLineStatus .pls-subtable tr,#pickingDashboardPage #pickingLineStatus .pls-summary-table tr{background:transparent!important;box-shadow:none!important}
+#pickingDashboardPage #pickingLineStatus .pls-subtable .pls-subtotal,#pickingDashboardPage #pickingLineStatus .pls-subtotal,#pickingDashboardPage #pickingLineStatus .pls-summary-table tr.total td{background:transparent!important;color:#173f5e!important;font-weight:700!important;border-top:1px solid #bdccd6!important;border-bottom:1px solid #bdccd6!important}
+#pickingDashboardPage #pickingLineStatus .pls-scroll{max-height:500px!important;overflow:auto!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpis{gap:7px!important;margin-bottom:8px!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi{padding:8px 10px!important;min-height:62px!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi small{font-size:9px!important;font-weight:800!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi strong{font-size:21px!important;line-height:1.1!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi span{font-size:9px!important}
+#pickingDashboardPage #pickingLineStatus .pls-filters label{font-size:9px!important}
+#pickingDashboardPage #pickingLineStatus .pls-filters select{font-size:10px!important}
+#pickingDashboardPage #pickingLineStatus .pls-note{font-size:9px!important;line-height:1.25!important}
+#pickingDashboardPage #pickingLineStatus .pls-do-classification{margin-top:8px!important}
+@media(max-width:760px){
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{grid-template-columns:1fr 1fr!important;grid-template-rows:auto!important}
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:first-child{grid-column:1/-1!important;grid-row:auto!important}
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:nth-child(2),#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:first-child,#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:nth-child(2){grid-column:auto!important;grid-row:auto!important;max-height:none!important}
+ #pickingDashboardPage #pickingLineStatus .pls-block-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:480px){#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{grid-template-columns:1fr!important}}
+
 </style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
