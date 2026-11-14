@@ -1471,15 +1471,18 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   const blocks=['E','F','G','H'];
   $('plsBlocks').innerHTML=blocks.map(b=>{
    const rows=filtered.filter(r=>String(r.Block??'').trim().toUpperCase()===b);
-   const types=[...new Set(rows.map(r=>val(r,'Type')))].sort();
+   const remarks=[...new Set(rows.map(r=>val(r,'Priority Remark')).filter(v=>v!=='(Blank)'))]
+    .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
    let body='';
-   types.forEach(t=>{
-    const tr=rows.filter(r=>val(r,'Type')===t);
-    body+=`<tr class="pls-subtotal"><td>${esc(t)}</td><td>${fmt(tr.length)}</td></tr>`;
-    const remarks=[...new Set(tr.map(r=>val(r,'Priority Remark')))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
-    remarks.forEach(p=>{const n=tr.filter(r=>val(r,'Priority Remark')===p).length;body+=`<tr><td style="padding-left:20px">${esc(p)}</td><td>${fmt(n)}</td></tr>`;});
+   remarks.forEach(remark=>{
+    const rr=rows.filter(r=>val(r,'Priority Remark')===remark);
+    const bk=rr.filter(r=>String(val(r,'Type')).trim().toUpperCase()==='BK').length;
+    const pf=rr.filter(r=>String(val(r,'Type')).trim().toUpperCase()==='PF').length;
+    body+=`<tr><td>${esc(remark)}</td><td class="num">${fmt(bk)}</td><td class="num">${fmt(pf)}</td><td class="num">${fmt(bk+pf)}</td></tr>`;
    });
-   return `<div class="pls-block"><div class="pls-block-title">BLOCK ${b}<span>${fmt(rows.length)} TO Lines</span></div><table class="pls-subtable"><thead><tr><th>Type / Priority Remark</th><th>Count of TO Line</th></tr></thead><tbody>${body||'<tr><td colspan="2">No records</td></tr>'}</tbody><tfoot><tr class="pls-subtotal"><td>Grand Total</td><td>${fmt(rows.length)}</td></tr></tfoot></table></div>`;
+   const bkTotal=rows.filter(r=>String(val(r,'Type')).trim().toUpperCase()==='BK').length;
+   const pfTotal=rows.filter(r=>String(val(r,'Type')).trim().toUpperCase()==='PF').length;
+   return `<div class="pls-block"><div class="pls-block-title">BLOCK ${b}<span>${fmt(rows.length)} TO Lines</span></div><table class="pls-subtable pls-pivot-block"><thead><tr><th>Row Labels</th><th>BK</th><th>PF</th><th>Grand Total</th></tr></thead><tbody>${body||'<tr><td colspan="4">No records</td></tr>'}</tbody><tfoot><tr class="pls-subtotal"><td>Grand Total</td><td class="num">${fmt(bkTotal)}</td><td class="num">${fmt(pfTotal)}</td><td class="num">${fmt(rows.length)}</td></tr></tfoot></table></div>`;
   }).join('');
   const statuses=['COMPLETED PICK','PENDING PICK'];
   let st='';
@@ -1589,11 +1592,11 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
 </script>
 
 
-<style id="v32-pivot-layout">
-/* V32: Pivot-style Picking Line Status layout. Dashboard 1 remains untouched. */
-@media (min-width: 1101px){
+<style id="v33-pivot-correction">
+/* V33: match the supplied Excel Pivot layout; Dashboard 1 is untouched. */
+@media (min-width:1101px){
  #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{
-  display:grid!important;grid-template-columns:minmax(0,1.8fr) minmax(0,.92fr) minmax(0,.92fr)!important;
+  grid-template-columns:minmax(0,1.8fr) minmax(0,.92fr) minmax(220px,.92fr)!important;
   grid-template-rows:auto auto!important;gap:9px!important;align-items:start!important;
  }
  #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid{display:contents!important}
@@ -1603,38 +1606,36 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
  #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:nth-child(2){grid-column:3!important;grid-row:1 / span 2!important;max-height:540px!important;overflow:auto!important}
 }
 #pickingDashboardPage #pickingLineStatus .pls-block-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
-#pickingDashboardPage #pickingLineStatus .pls-summary-table,
-#pickingDashboardPage #pickingLineStatus .pls-subtable{border-collapse:separate!important;border-spacing:0!important}
-#pickingDashboardPage #pickingLineStatus .pls-summary-table th,
-#pickingDashboardPage #pickingLineStatus .pls-summary-table td,
+#pickingDashboardPage #pickingLineStatus .pls-pivot-block{table-layout:fixed!important}
+#pickingDashboardPage #pickingLineStatus .pls-pivot-block th:first-child,
+#pickingDashboardPage #pickingLineStatus .pls-pivot-block td:first-child{width:48%;text-align:left}
+#pickingDashboardPage #pickingLineStatus .pls-pivot-block th:not(:first-child),
+#pickingDashboardPage #pickingLineStatus .pls-pivot-block td:not(:first-child){text-align:right;font-variant-numeric:tabular-nums}
+#pickingDashboardPage #pickingLineStatus .pls-subtable,
+#pickingDashboardPage #pickingLineStatus .pls-summary-table{border-collapse:collapse!important;border-spacing:0!important}
 #pickingDashboardPage #pickingLineStatus .pls-subtable th,
-#pickingDashboardPage #pickingLineStatus .pls-subtable td{
- border:0!important;border-bottom:0!important;outline:0!important;box-shadow:none!important;
-}
-#pickingDashboardPage #pickingLineStatus .pls-summary-table tbody tr,
-#pickingDashboardPage #pickingLineStatus .pls-subtable tbody tr{border:0!important;box-shadow:none!important}
-#pickingDashboardPage #pickingLineStatus .pls-summary-table .pls-group-row td{
- background:#eaf1f5!important;color:#173f5e!important;font-weight:800!important;
- padding-top:5px!important;padding-bottom:3px!important;
-}
-#pickingDashboardPage #pickingLineStatus .pls-summary-table tr.total td{
- background:#f1f5f8!important;color:#173f5e!important;font-weight:800!important;
- border:0!important;
-}
-#pickingDashboardPage #pickingLineStatus .pls-summary-table tr.grand-total td{
- background:#dceaf1!important;color:#102f49!important;font-weight:900!important;
-}
+#pickingDashboardPage #pickingLineStatus .pls-subtable td,
+#pickingDashboardPage #pickingLineStatus .pls-summary-table th,
+#pickingDashboardPage #pickingLineStatus .pls-summary-table td{border:0!important;outline:0!important;box-shadow:none!important}
+#pickingDashboardPage #pickingLineStatus .pls-subtable tbody tr,
+#pickingDashboardPage #pickingLineStatus .pls-summary-table tbody tr{border:0!important;box-shadow:none!important}
+#pickingDashboardPage #pickingLineStatus .pls-subtable th{white-space:normal!important}
+#pickingDashboardPage #pickingLineStatus .pls-subtotal{font-weight:850!important;background:#eaf1f5!important}
+#pickingDashboardPage #pickingLineStatus .pls-summary-table .pls-group-row td{background:#eaf1f5!important;color:#173f5e!important;font-weight:800!important}
+#pickingDashboardPage #pickingLineStatus .pls-summary-table tr.total td{background:#f1f5f8!important;color:#173f5e!important;font-weight:800!important}
+#pickingDashboardPage #pickingLineStatus .pls-summary-table tr.grand-total td{background:#dceaf1!important;color:#102f49!important;font-weight:900!important}
 #pickingDashboardPage #pickingLineStatus .pls-status-complete{color:#25824d!important;font-weight:900!important}
 #pickingDashboardPage #pickingLineStatus .pls-status-pending{color:#b33b3b!important;font-weight:900!important}
 #pickingDashboardPage #pickingLineStatus .pls-summary-table td{padding:3px 5px!important;line-height:1.12!important}
 #pickingDashboardPage #pickingLineStatus .pls-summary-table th{padding:4px 5px!important}
-@media (max-width:1100px){
+@media(max-width:1100px){
  #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{grid-template-columns:1fr 1fr!important;grid-template-rows:auto!important}
  #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:first-child{grid-column:1/-1!important;grid-row:auto!important}
  #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:nth-child(2),
  #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:first-child,
  #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:nth-child(2){grid-column:auto!important;grid-row:auto!important;max-height:none!important}
 }
-@media (max-width:560px){#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{grid-template-columns:1fr!important}}
+@media(max-width:560px){#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{grid-template-columns:1fr!important}}
 </style>
+
 </body></html>
