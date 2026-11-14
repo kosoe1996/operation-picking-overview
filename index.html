@@ -1767,3 +1767,45 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
  #pickingLineStatus .pls-block-title .pls-block-count{font-size:13px!important}
 }
 </style>
+
+
+<style id="v36-block-spacing-and-title-match">
+/* V36: make the E/F row and G/H row visibly separate; keep cards compact */
+#pickingLineStatus #plsBlocks{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ grid-auto-rows:max-content!important;
+ align-content:start!important;
+ align-items:start!important;
+ row-gap:42px!important;
+ column-gap:14px!important;
+}
+#pickingLineStatus #plsBlocks > .pls-block{
+ align-self:start!important;
+ margin:0!important;
+}
+/* Match the TO Lines count typography exactly to BLOCK E/F/G/H title typography */
+#pickingLineStatus #plsBlocks .pls-block-title{
+ font-size:12px!important;
+ font-weight:850!important;
+}
+#pickingLineStatus #plsBlocks .pls-block-title > .pls-block-count,
+#pickingLineStatus #plsBlocks .pls-block-title > .pls-block-count.is-completed,
+#pickingLineStatus #plsBlocks .pls-block-title > .pls-block-count.is-pending{
+ font-size:12px!important;
+ line-height:1.2!important;
+ font-weight:850!important;
+}
+#pickingLineStatus #plsBlocks .pls-block-title > .pls-block-count.is-completed{
+ color:#087b56!important;
+}
+#pickingLineStatus #plsBlocks .pls-block-title > .pls-block-count.is-pending{
+ color:#bd3948!important;
+}
+@media(max-width:700px){
+ #pickingLineStatus #plsBlocks{
+  grid-template-columns:1fr!important;
+  row-gap:22px!important;
+ }
+}
+</style>
