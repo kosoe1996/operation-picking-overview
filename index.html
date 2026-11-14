@@ -1021,6 +1021,69 @@ body[data-view="picking"] .content{padding:0!important}
  #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{grid-template-columns:1fr}
 }
 
+
+/* V30 — flat rows, fixed typography, compact enterprise density */
+#pickingDashboardPage #pickingLineStatus{font-family:Arial,Helvetica,sans-serif}
+#pickingDashboardPage .pls-top-title b{font-size:21px!important;font-weight:800!important}
+#pickingDashboardPage #pickingLineStatus .pls-panel h3{
+ font-size:12px!important;font-weight:800!important;letter-spacing:.25px;
+ padding:7px 9px!important;margin-bottom:5px!important
+}
+#pickingDashboardPage #pickingLineStatus .pls-block-grid{
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important
+}
+#pickingDashboardPage #pickingLineStatus .pls-block{
+ border:1px solid #dce4ea;border-radius:4px;box-shadow:none;background:#fff
+}
+#pickingDashboardPage #pickingLineStatus .pls-block-title{
+ font-size:10px!important;font-weight:800!important;padding:5px 6px!important;
+ background:#edf2f6!important;border-bottom:1px solid #dce4ea
+}
+#pickingDashboardPage #pickingLineStatus .pls-block-title span{
+ font-size:9px!important;font-weight:600!important
+}
+#pickingDashboardPage #pickingLineStatus .pls-subtable,
+#pickingDashboardPage #pickingLineStatus .pls-summary-table{
+ font-size:9px!important;line-height:1.1!important;border-collapse:collapse!important;
+ border-spacing:0!important
+}
+#pickingDashboardPage #pickingLineStatus .pls-subtable th,
+#pickingDashboardPage #pickingLineStatus .pls-summary-table th{
+ font-size:9px!important;font-weight:700!important;padding:3px 5px!important;
+ line-height:1.1!important;background:#f0f3f6!important;color:#314b60!important;
+ white-space:nowrap
+}
+#pickingDashboardPage #pickingLineStatus .pls-subtable td,
+#pickingDashboardPage #pickingLineStatus .pls-summary-table td{
+ font-size:9px!important;font-weight:400!important;padding:2px 5px!important;
+ line-height:1.1!important;background:transparent!important;color:#30495c!important;
+ border:0!important;border-bottom:1px solid #e8edf1!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-subtable tr,
+#pickingDashboardPage #pickingLineStatus .pls-summary-table tr{
+ background:transparent!important;box-shadow:none!important
+}
+#pickingDashboardPage #pickingLineStatus .pls-subtable .pls-subtotal,
+#pickingDashboardPage #pickingLineStatus .pls-subtotal,
+#pickingDashboardPage #pickingLineStatus .pls-summary-table tr.total td{
+ background:transparent!important;color:#173f5e!important;font-weight:700!important;
+ border-top:1px solid #cbd7df!important;border-bottom:1px solid #cbd7df!important
+}
+#pickingDashboardPage #pickingLineStatus .pls-scroll{max-height:250px!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi small{font-size:9px!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi strong{font-size:22px!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi span{font-size:9px!important}
+#pickingDashboardPage #pickingLineStatus .pls-filters label{font-size:9px!important}
+#pickingDashboardPage #pickingLineStatus .pls-filters select{font-size:10px!important}
+#pickingDashboardPage #pickingLineStatus .pls-note{font-size:9px!important}
+#pickingDashboardPage #pickingLineStatus #plsDoToTable{font-size:9px!important}
+@media(max-width:1100px){
+ #pickingDashboardPage #pickingLineStatus .pls-block-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:720px){
+ #pickingDashboardPage #pickingLineStatus .pls-block-grid{grid-template-columns:1fr 1fr!important}
+}
+
 </style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
