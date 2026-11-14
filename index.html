@@ -1453,8 +1453,14 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
  }
  function render(){
   applyFilters();
-  const total=filtered.length, completed=filtered.filter(r=>norm(val(r,'Status')).includes('completed')).length;
-  const pending=filtered.filter(r=>norm(val(r,'Status')).includes('pending')).length;
+  const selectedFilters=[...$('plsFilters').querySelectorAll('select')];
+  // KPI totals ignore Status only; every other selected filter remains active.
+  const kpiRows=raw.filter(r=>selectedFilters.every(s=>s.dataset.plsFilter==='Status'||s.value==='ALL'||val(r,s.dataset.plsFilter)===s.value));
+  const total=kpiRows.length;
+  const completed=kpiRows.filter(r=>norm(val(r,'Status')).includes('completed')).length;
+  const pending=kpiRows.filter(r=>norm(val(r,'Status')).includes('pending')).length;
+  const completedPct=total?completed/total*100:0;
+  const pendingPct=total?pending/total*100:0;
   const doMap=new Map();
   filtered.forEach(r=>{
    const d=String(r['Delivery']??'').trim(),t=String(r['Transfer Order Number']??'').trim();
@@ -1465,9 +1471,12 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   let singleRows=0,multipleRows=0;
   filtered.forEach(r=>{if(classes.get(String(r.Delivery??'').trim())==='Multiple TO')multipleRows++;else singleRows++;});
   $('plsKpis').innerHTML=[
-   ['TOTAL TO LINE',total,'Raw Data rows'],['COMPLETED PICK',completed,'Rows completed'],['PENDING PICK',pending,'Rows pending'],
-   ['SINGLE TO LINES',singleRows,'Rows belonging to Single TO DOs'],['MULTIPLE TO LINES',multipleRows,'Rows belonging to Multiple TO DOs']
-  ].map((x,i)=>`<div class="pls-kpi"><small>${x[0]}</small><strong>${fmt(x[1])}</strong><span>${x[2]}</span></div>`).join('');
+   `<div class="pls-kpi"><div class="pls-kpi-head"><small>TOTAL TO LINE</small><b class="pls-kpi-percent neutral">100.0%</b></div><strong>${fmt(total)}</strong><span>Raw Data rows</span><div class="pls-kpi-track"><i class="neutral-fill" style="width:100%"></i></div></div>`,
+   `<div class="pls-kpi"><div class="pls-kpi-head"><small>COMPLETED PICK</small><b class="pls-kpi-percent completed">${completedPct.toFixed(1)}%</b></div><strong>${fmt(completed)}</strong><span>Rows completed</span><div class="pls-kpi-track"><i class="completed-fill" style="width:${completedPct}%"></i></div></div>`,
+   `<div class="pls-kpi"><div class="pls-kpi-head"><small>PENDING PICK</small><b class="pls-kpi-percent pending">${pendingPct.toFixed(1)}%</b></div><strong>${fmt(pending)}</strong><span>Rows pending</span><div class="pls-kpi-track"><i class="pending-fill" style="width:${pendingPct}%"></i></div></div>`,
+   `<div class="pls-kpi"><small>SINGLE TO LINES</small><strong>${fmt(singleRows)}</strong><span>Rows belonging to Single TO DOs</span></div>`,
+   `<div class="pls-kpi"><small>MULTIPLE TO LINES</small><strong>${fmt(multipleRows)}</strong><span>Rows belonging to Multiple TO DOs</span></div>`
+  ].join('');
   const blocks=['E','F','G','H'];
   $('plsBlocks').innerHTML=blocks.map(b=>{
    const rows=filtered.filter(r=>String(r.Block??'').trim().toUpperCase()===b);
@@ -1822,5 +1831,33 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
  color:#bd3948!important;
  background:#fbecef!important;
  font-weight:950!important;
+}
+</style>
+
+
+<style id="v38-kpi-alignment-and-status-independent-totals">
+/* Align the first 3 KPI cards over Block Breakdown and the next 2 over Picking Status. */
+#pickingLineStatus .pls-kpis{
+ display:grid!important;
+ grid-template-columns:minmax(0,.3733fr) minmax(0,.3733fr) minmax(0,.3733fr) minmax(0,.46fr) minmax(0,.46fr) minmax(0,.72fr)!important;
+ gap:10px!important;
+ align-items:stretch!important;
+}
+#pickingLineStatus .pls-kpi-head{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0}
+#pickingLineStatus .pls-kpi-head small{min-width:0}
+#pickingLineStatus .pls-kpi-percent{font-size:12px;font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums}
+#pickingLineStatus .pls-kpi-percent.neutral{color:#285d7d}
+#pickingLineStatus .pls-kpi-percent.completed{color:#087b56}
+#pickingLineStatus .pls-kpi-percent.pending{color:#bd3948}
+#pickingLineStatus .pls-kpi-track{height:5px;background:#edf1f4;border-radius:99px;overflow:hidden;margin-top:8px}
+#pickingLineStatus .pls-kpi-track i{display:block;height:100%;border-radius:99px}
+#pickingLineStatus .pls-kpi-track .neutral-fill{background:#285d7d}
+#pickingLineStatus .pls-kpi-track .completed-fill{background:#16845f}
+#pickingLineStatus .pls-kpi-track .pending-fill{background:#c64753}
+@media(max-width:1100px){
+ #pickingLineStatus .pls-kpis{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+ #pickingLineStatus .pls-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
 </style>
