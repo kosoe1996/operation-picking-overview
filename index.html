@@ -843,21 +843,119 @@ body[data-theme="dark"] #reports table td{color:#e5edf4}
 @media(max-width:1100px){#pickingLineStatus .pls-filters{grid-template-columns:repeat(3,minmax(0,1fr))}#pickingLineStatus .pls-main-grid{grid-template-columns:1fr}}
 @media(max-width:700px){#pickingLineStatus .pls-filters{grid-template-columns:repeat(2,minmax(0,1fr))}#pickingLineStatus .pls-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#pickingLineStatus .pls-block-grid{grid-template-columns:1fr}#pickingLineStatus .pls-priority{grid-template-columns:1fr}#pickingLineStatus .pls-head{align-items:flex-start;flex-direction:column}}
 
+
+/* V27: two independent dashboard views under one URL */
+.view-page{display:none;min-width:0}.view-page.active{display:block}
+body[data-view="picking"] .side{width:82px!important;flex:0 0 82px!important;padding:10px 7px!important}
+body[data-view="picking"] .brand{padding:4px 2px 15px!important;display:flex;flex-direction:column;align-items:center;text-align:center;gap:5px}
+body[data-view="picking"] .brandmark{width:38px;height:38px;margin:0!important}
+body[data-view="picking"] .brand b{font-size:9px!important;line-height:1.15}
+body[data-view="picking"] .brand span{font-size:7px!important}
+body[data-view="picking"] .navlabel{font-size:7px!important;padding:8px 0!important;text-align:center}
+body[data-view="picking"] .nav a{padding:10px 3px!important;justify-content:center;flex-direction:column;gap:4px;text-align:center;font-size:9px!important;line-height:1.1}
+body[data-view="picking"] .navicon{font-size:18px!important}
+body[data-view="picking"] .side-bottom{padding:8px 0!important}
+body[data-view="picking"] .side-foot{justify-content:center}
+body[data-view="picking"] .side-foot>div:last-child{display:none}
+body[data-view="picking"] .main{width:calc(100vw - 82px)!important}
+body[data-view="picking"] .main>.footer{display:none}
+body[data-view="picking"] .content{padding:0!important}
+.pls-topbar{height:66px;background:#102d63;color:#fff;display:grid;grid-template-columns:220px minmax(0,1fr) 300px;align-items:center;gap:16px;padding:0 18px;border-radius:0 0 10px 10px;box-shadow:0 4px 14px #102d6320}
+.pls-brand{display:flex;align-items:center;gap:10px;min-width:0;border-right:1px solid #ffffff50;height:46px}
+.pls-brand-icon{font-size:30px;color:#e6edf7}.pls-brand b{display:block;font-size:13px;line-height:1.1}.pls-brand small{display:block;font-size:10px;color:#c7d5ec;margin-top:3px}
+.pls-top-title{display:flex;align-items:center;gap:12px;min-width:0}.pls-top-title b{font-size:clamp(14px,1.45vw,22px);letter-spacing:.1px;line-height:1.1}.pls-forklift{font-size:28px;color:#f2b52f}
+.pls-top-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #ffffff70;border-radius:9px;padding:7px 12px;text-align:center;font-size:11px;font-weight:800;white-space:nowrap}.pls-top-meta small{font-size:9px;font-weight:600;color:#d9e3f4}.pls-top-meta strong{font-size:13px}
+#pickingLineStatus{margin:0!important;padding:10px 12px 16px!important;scroll-margin-top:0;background:#f2f5f9;min-height:calc(100vh - 66px)}
+#pickingLineStatus .pls-head{display:none}
+#pickingLineStatus .pls-source{margin:0 0 8px!important;padding:8px 12px!important;display:flex;align-items:center;gap:12px;box-shadow:none;border-radius:9px}
+#pickingLineStatus .pls-source>div:first-child{min-width:150px;margin:0!important;font-size:10px!important}
+#pickingLineStatus .pls-source-row{flex:1;display:grid;grid-template-columns:minmax(220px,1fr) auto auto;align-items:end;gap:8px}
+#pickingLineStatus .pls-source label{font-size:9px;min-width:0;gap:3px}
+#pickingLineStatus input[type=file]{min-height:31px;font-size:10px;padding:5px}
+#pickingLineStatus .pls-btn{min-height:31px;padding:7px 12px;font-size:10px}
+#pickingLineStatus .pls-note{font-size:9px;margin:3px 0 0!important}
+#pickingLineStatus .pls-filterbox{margin:0 0 8px!important;padding:8px 10px!important;box-shadow:none}
+#pickingLineStatus .pls-filterbox>div:first-child{display:none}
+#pickingLineStatus .pls-filters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+#pickingLineStatus .pls-filters label{min-width:0;font-size:8px;gap:3px}
+#pickingLineStatus .pls-filters select{min-height:30px;font-size:10px;padding:5px 7px}
+#pickingLineStatus .pls-kpis{display:grid;grid-template-columns:1.15fr 1fr 1fr repeat(4,.78fr);gap:8px;margin:0 0 9px}
+#pickingLineStatus .pls-kpi{min-height:67px;padding:9px 11px;border-radius:9px;box-shadow:none}
+#pickingLineStatus .pls-kpi small{font-size:8px;letter-spacing:.35px}
+#pickingLineStatus .pls-kpi strong{font-size:22px;line-height:1.2;margin:4px 0 1px}
+#pickingLineStatus .pls-kpi span{font-size:8px}
+#pickingLineStatus .pls-main-grid{display:grid;grid-template-columns:minmax(0,1.16fr) minmax(0,1fr) minmax(220px,.78fr);gap:9px;margin:0 0 9px;align-items:start}
+#pickingLineStatus .pls-main-grid:first-of-type{grid-template-columns:minmax(0,1.18fr) minmax(0,.9fr) minmax(220px,.76fr)}
+#pickingLineStatus .pls-panel{padding:9px 10px!important;margin:0!important;border-radius:9px;box-shadow:0 2px 8px #183a500c;min-width:0}
+#pickingLineStatus .pls-panel h3{font-size:10px!important;letter-spacing:.25px;margin:0 0 7px!important;padding:7px 8px;background:#123b70;color:#fff;border-radius:5px}
+#pickingLineStatus .pls-block-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#pickingLineStatus .pls-block{border:1px solid #d8e1eb;border-radius:7px;overflow:hidden;min-width:0}
+#pickingLineStatus .pls-block-title{padding:6px 8px;background:#e8eef6;color:#173956;font-size:10px;font-weight:850;display:flex;justify-content:space-between}
+#pickingLineStatus .pls-subtable,#pickingLineStatus .pls-summary-table{font-size:9px!important;width:100%;border-collapse:collapse}
+#pickingLineStatus .pls-subtable th,#pickingLineStatus .pls-subtable td,#pickingLineStatus .pls-summary-table th,#pickingLineStatus .pls-summary-table td{padding:4px 5px!important;line-height:1.15;border-bottom:1px solid #e5eaf0}
+#pickingLineStatus .pls-subtable th,#pickingLineStatus .pls-summary-table th{background:#dce8f4;color:#193d5c;font-weight:800;white-space:nowrap}
+#pickingLineStatus .pls-subtotal{background:#edf3f8;font-weight:800;color:#183a58}
+#pickingLineStatus .pls-summary-table .total{background:#e2edf7;color:#143b60;font-weight:900}
+#pickingLineStatus .pls-scroll{max-height:310px;overflow:auto}
+#pickingLineStatus .pls-main-grid:nth-of-type(2){grid-template-columns:minmax(0,1.3fr) minmax(220px,.7fr)}
+#pickingLineStatus .pls-main-grid:nth-of-type(2) .pls-panel{max-height:280px;overflow:auto}
+#pickingLineStatus #plsPriorityTable{font-size:9px}
+#pickingLineStatus>.pls-panel{margin-top:8px!important}
+#pickingLineStatus #plsDoToTable{max-width:650px}
+#pickingLineStatus #plsAdditional{min-height:44px!important;max-height:72px}
+@media(max-width:1100px){
+ body[data-view="picking"] .side{width:64px!important;flex-basis:64px!important}
+ body[data-view="picking"] .main{width:calc(100vw - 64px)!important}
+ .pls-topbar{grid-template-columns:150px minmax(0,1fr) 230px;padding:0 10px;gap:8px}
+ .pls-top-title b{font-size:14px}
+ #pickingLineStatus .pls-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+ #pickingLineStatus .pls-main-grid,#pickingLineStatus .pls-main-grid:first-of-type{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #pickingLineStatus .pls-main-grid:nth-of-type(2){grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:720px){
+ body[data-view="picking"] .side{width:58px!important;flex-basis:58px!important}
+ body[data-view="picking"] .main{width:calc(100vw - 58px)!important}
+ .pls-topbar{height:auto;min-height:64px;grid-template-columns:1fr auto;padding:8px;}
+ .pls-brand{display:none}.pls-top-title{grid-column:1;grid-row:1}.pls-top-title b{font-size:12px}.pls-top-meta{grid-column:2;grid-row:1;font-size:9px}
+ #pickingLineStatus{padding:7px!important}
+ #pickingLineStatus .pls-source{display:block}
+ #pickingLineStatus .pls-source-row{grid-template-columns:1fr 1fr}
+ #pickingLineStatus .pls-source-row label{grid-column:1/-1}
+ #pickingLineStatus .pls-filters{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #pickingLineStatus .pls-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #pickingLineStatus .pls-main-grid,#pickingLineStatus .pls-main-grid:first-of-type,#pickingLineStatus .pls-main-grid:nth-of-type(2){grid-template-columns:1fr}
+ #pickingLineStatus .pls-block-grid{grid-template-columns:1fr 1fr}
+}
+
+
+/* V27 layout grid: blocks left, summaries center, priority set right */
+#pickingLineStatus .pls-dashboard-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.92fr) minmax(220px,.72fr);grid-template-rows:minmax(0,1fr) minmax(0,.82fr);gap:9px;align-items:stretch}
+#pickingLineStatus .pls-dashboard-grid>.pls-main-grid{display:contents}
+#pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:first-child{grid-column:1;grid-row:1 / span 2}
+#pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:nth-child(2){grid-column:2;grid-row:1}
+#pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:first-child{grid-column:2;grid-row:2}
+#pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:nth-child(2){grid-column:3;grid-row:1 / span 2;max-height:none;overflow:auto}
+#pickingLineStatus .pls-dashboard-grid .pls-panel{min-height:0}
+#pickingLineStatus .pls-do-classification{margin-top:9px!important}
+@media(max-width:1100px){#pickingLineStatus .pls-dashboard-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto}#pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:first-child{grid-column:1 / -1;grid-row:auto}#pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:nth-child(2),#pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:first-child,#pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:nth-child(2){grid-column:auto;grid-row:auto}}
+@media(max-width:720px){#pickingLineStatus .pls-dashboard-grid{grid-template-columns:1fr}}
+
 </style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
  <div class="navlabel">MAIN MENU</div>
  <nav class="nav">
-  <a class="active" href="#dashboard"><span class="navicon">⌂</span><span>Home</span></a>
+  <a class="active" href="#dashboard" data-view="invoice"><span class="navicon">⌂</span><span>Home</span></a>
   <a href="#analytics"><span class="navicon">▥</span><span>Analytics</span></a>
   <a href="#reports"><span class="navicon">▤</span><span>Reports</span></a>
-  <a href="#pickingLineStatus"><span class="navicon">▦</span><span>Picking Line Status</span></a>
+  <a href="#picking-dashboard" data-view="picking"><span class="navicon">▦</span><span>Picking Line Status</span></a>
   <a href="#settings"><span class="navicon">⚙</span><span>Settings</span></a>
  </nav>
  <div class="side-bottom"><div class="side-status"><i></i> System ready</div><div class="side-foot"><div class="side-avatar">OP</div><div>Operations Team<br><b>Monitor Profile</b></div></div></div>
 </aside>
 <main class="main" id="dashboard">
- <header class="top"><div class="top-title"><h1>Dashboard</h1><span>Operation Picking Overview</span></div><div class="top-actions"><span id="now" style="font-size:10px;color:#829188"></span><label class="theme-control">THEME <select id="themeSelect"><option value="light">Light</option><option value="ocean">Ocean</option><option value="dark">Dark</option></select></label><button class="btn" id="png" disabled>Generate Report</button></div></header>
+ <div id="invoiceDashboardPage" class="view-page active">
+<header class="top"><div class="top-title"><h1>Dashboard</h1><span>Operation Picking Overview</span></div><div class="top-actions"><span id="now" style="font-size:10px;color:#829188"></span><label class="theme-control">THEME <select id="themeSelect"><option value="light">Light</option><option value="ocean">Ocean</option><option value="dark">Dark</option></select></label><button class="btn" id="png" disabled>Generate Report</button></div></header>
  <div class="content">
   <section class="control-panel">
    <div class="control-head"><div><h2>DATA SOURCE</h2><p>Upload Outstation, Local &amp; IKA, or both Excel workbooks.</p></div><span class="live-pill"><i></i> WORKSPACE</span></div>
@@ -925,6 +1023,10 @@ body[data-theme="dark"] #reports table td{color:#e5edf4}
   </section>
   </section>
   <div class="footer">Operation Picking Overview · Monitor Display</div>
+</div>
+
+<div id="pickingDashboardPage" class="view-page">
+ <header class="pls-topbar"><div class="pls-brand"><span class="pls-brand-icon">▣</span><div><b>OPERATION DASHBOARD</b><small>Picking Order Line Status</small></div></div><div class="pls-top-title"><span class="pls-forklift">♟</span><b>OVERALL BLOCK CURRENT ORDER PICKING LINE STATUS</b></div><div class="pls-top-meta"><span>LOCAL &amp; IKA<br><small>Load Plan : <i id="plsPlanDateTop">—</i></small></span><strong id="plsClockTop">--:--:--</strong></div></header>
 
 <section id="pickingLineStatus">
  <div class="pls-head"><div><h2>PICKING ORDER LINE STATUS</h2><p>Block-wise picking line, type, priority and completion overview</p></div><div id="plsClock" style="font-size:11px;font-weight:700;color:#e1edf5"></div></div>
@@ -948,6 +1050,7 @@ body[data-theme="dark"] #reports table td{color:#e5edf4}
   <div class="pls-kpi"><small>SINGLE TO LINES</small><strong>—</strong><span>DOs with one unique TO</span></div>
   <div class="pls-kpi"><small>MULTIPLE TO LINES</small><strong>—</strong><span>DOs with more than one unique TO</span></div>
  </div>
+ <div class="pls-dashboard-grid">
  <div class="pls-main-grid">
   <div class="pls-panel">
    <h3>BLOCK BREAKDOWN · TYPE &amp; PRIORITY REMARK</h3>
@@ -968,7 +1071,8 @@ body[data-theme="dark"] #reports table td{color:#e5edf4}
    <div class="pls-scroll"><table class="pls-summary-table" id="plsPriorityTable"><thead><tr><th>Priority Set</th><th>Block</th><th>TO Line</th></tr></thead><tbody><tr><td colspan="3">Waiting for data</td></tr></tbody></table></div>
   </div>
  </div>
- <div class="pls-panel">
+ </div>
+ <div class="pls-panel pls-do-classification">
   <h3>DO / TO CLASSIFICATION</h3>
   <table class="pls-summary-table" id="plsDoToTable"><thead><tr><th>Classification</th><th>Unique DO</th><th>TO Lines (row count)</th></tr></thead><tbody><tr><td colspan="3">Waiting for data</td></tr></tbody></table>
   <div class="pls-note">Single TO / Multiple TO is determined by the number of distinct Transfer Order Numbers within each Delivery. TO Line totals always count every Raw Data row, including repeated TO numbers.</div>
@@ -978,6 +1082,7 @@ body[data-theme="dark"] #reports table td{color:#e5edf4}
   <textarea id="plsAdditional" rows="2" placeholder="Add operational notes for this Picking Order Line Status report..." style="width:100%;border:1px solid #cbd8e2;border-radius:8px;padding:10px;font:12px Arial;color:#20384b;resize:vertical"></textarea>
  </div>
 </section>
+</div>
 
  </div>
 </main></div>
@@ -1251,4 +1356,31 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
  });
 })();
 </script>
+
+<script>
+(()=>{
+ const invoice=document.getElementById('invoiceDashboardPage');
+ const picking=document.getElementById('pickingDashboardPage');
+ const nav=[...document.querySelectorAll('.nav a')];
+ function setView(which){
+  const isPicking=which==='picking';
+  invoice.classList.toggle('active',!isPicking);
+  picking.classList.toggle('active',isPicking);
+  document.body.dataset.view=isPicking?'picking':'invoice';
+  nav.forEach(a=>a.classList.toggle('active',a.dataset.view===(isPicking?'picking':'invoice')));
+  if(isPicking){location.hash='picking-dashboard';window.scrollTo(0,0)}
+  else {location.hash='dashboard';window.scrollTo(0,0)}
+ }
+ nav.forEach(a=>{if(a.dataset.view){a.addEventListener('click',e=>{e.preventDefault();setView(a.dataset.view)})}});
+ const oldHash=location.hash;
+ if(oldHash==='#picking-dashboard'||oldHash==='#pickingLineStatus')setView('picking');
+ else setView('invoice');
+ const clock=document.getElementById('plsClock');const topClock=document.getElementById('plsClockTop');
+ function syncClock(){if(clock&&topClock)topClock.textContent=clock.textContent.replace(/\s+/g,' ')}
+ setInterval(syncClock,500);syncClock();
+ const planDate=document.querySelector('#plsFilters select[data-pls-filter="Plan Date"]');
+ if(planDate){const update=()=>{const el=document.getElementById('plsPlanDateTop');if(el)el.textContent=planDate.value==='ALL'?'All Dates':planDate.value};planDate.addEventListener('change',update);setInterval(update,1000)}
+})();
+</script>
+
 </body></html>
