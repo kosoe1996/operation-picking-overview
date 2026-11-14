@@ -1025,6 +1025,8 @@ body[data-view="picking"] .content{padding:0!important}
   <div class="footer">Operation Picking Overview · Monitor Display</div>
 </div>
 
+</div>
+
 <div id="pickingDashboardPage" class="view-page">
  <header class="pls-topbar"><div class="pls-brand"><span class="pls-brand-icon">▣</span><div><b>OPERATION DASHBOARD</b><small>Picking Order Line Status</small></div></div><div class="pls-top-title"><span class="pls-forklift">♟</span><b>OVERALL BLOCK CURRENT ORDER PICKING LINE STATUS</b></div><div class="pls-top-meta"><span>LOCAL &amp; IKA<br><small>Load Plan : <i id="plsPlanDateTop">—</i></small></span><strong id="plsClockTop">--:--:--</strong></div></header>
 
@@ -1083,8 +1085,6 @@ body[data-view="picking"] .content{padding:0!important}
  </div>
 </section>
 </div>
-
- </div>
 </main></div>
 <script>
 let records=[],loaded=false,chartObj=null;
@@ -1372,9 +1372,9 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   else {location.hash='dashboard';window.scrollTo(0,0)}
  }
  nav.forEach(a=>{if(a.dataset.view){a.addEventListener('click',e=>{e.preventDefault();setView(a.dataset.view)})}});
- const oldHash=location.hash;
- if(oldHash==='#picking-dashboard'||oldHash==='#pickingLineStatus')setView('picking');
- else setView('invoice');
+ const routeFromHash=()=>setView(location.hash==='#picking-dashboard'||location.hash==='#pickingLineStatus'?'picking':'invoice');
+ routeFromHash();
+ window.addEventListener('hashchange',routeFromHash);
  const clock=document.getElementById('plsClock');const topClock=document.getElementById('plsClockTop');
  function syncClock(){if(clock&&topClock)topClock.textContent=clock.textContent.replace(/\s+/g,' ')}
  setInterval(syncClock,500);syncClock();
