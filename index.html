@@ -1482,21 +1482,33 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
    });
    const bkTotal=rows.filter(r=>String(val(r,'Type')).trim().toUpperCase()==='BK').length;
    const pfTotal=rows.filter(r=>String(val(r,'Type')).trim().toUpperCase()==='PF').length;
-   return `<div class="pls-block"><div class="pls-block-title">BLOCK ${b}<span>${fmt(rows.length)} TO Lines</span></div><table class="pls-subtable pls-pivot-block"><thead><tr><th>Row Labels</th><th>BK</th><th>PF</th><th>Grand Total</th></tr></thead><tbody>${body||'<tr><td colspan="4">No records</td></tr>'}</tbody><tfoot><tr class="pls-subtotal"><td>Grand Total</td><td class="num">${fmt(bkTotal)}</td><td class="num">${fmt(pfTotal)}</td><td class="num">${fmt(rows.length)}</td></tr></tfoot></table></div>`;
+   const selectedStatus=$('plsFilters').querySelector('select[data-pls-filter="Status"]')?.value||'ALL';
+   const countClass=selectedStatus==='ALL'?'':(norm(selectedStatus)==='completedpick'?'is-completed':(norm(selectedStatus)==='pendingpick'?'is-pending':''));
+   return `<div class="pls-block"><div class="pls-block-title">BLOCK ${b}<span class="pls-block-count ${countClass}">${fmt(rows.length)} TO Lines</span></div><table class="pls-subtable pls-pivot-block"><thead><tr><th>Row Labels</th><th>BK</th><th>PF</th><th>Grand Total</th></tr></thead><tbody>${body||'<tr><td colspan="4">No records</td></tr>'}</tbody><tfoot><tr class="pls-subtotal"><td>Grand Total</td><td class="num">${fmt(bkTotal)}</td><td class="num">${fmt(pfTotal)}</td><td class="num">${fmt(rows.length)}</td></tr></tfoot></table></div>`;
   }).join('');
+  // Status summary intentionally ignores only the Status filter; all other filters remain active.
+  const statusSelect=$('plsFilters').querySelector('select[data-pls-filter="Status"]');
+  const statusFiltered=raw.filter(r=>{
+   return [...$('plsFilters').querySelectorAll('select')].every(s=>{
+    if(s.dataset.plsFilter==='Status')return true;
+    return s.value==='ALL'||val(r,s.dataset.plsFilter)===s.value;
+   });
+  });
   const statuses=['COMPLETED PICK','PENDING PICK'];
   let st='';
   statuses.forEach(status=>{
-   const statusRows=filtered.filter(r=>norm(val(r,'Status'))===norm(status));
+   const statusRows=statusFiltered.filter(r=>norm(val(r,'Status'))===norm(status));
    const statusClass=status.startsWith('COMPLETED')?'pls-status-complete':'pls-status-pending';
+   const totalClass=status.startsWith('COMPLETED')?'pls-total-completed':'pls-total-pending';
    st+=`<tr class="pls-group-row"><td class="${statusClass}" colspan="4">${status}</td></tr>`;
    blocks.forEach(b=>{
     const n=statusRows.filter(r=>String(r.Block??'').trim().toUpperCase()===b).length;
-    if(n>0)st+=`<tr><td></td><td>${b}</td><td>${fmt(n)}</td><td>${pct(n,total)}</td></tr>`;
+    if(n>0)st+=`<tr><td></td><td>${b}</td><td>${fmt(n)}</td><td>${pct(n,statusFiltered.length)}</td></tr>`;
    });
-   st+=`<tr class="total"><td>${status} TOTAL</td><td>All</td><td>${fmt(statusRows.length)}</td><td>${pct(statusRows.length,total)}</td></tr>`;
+   st+=`<tr class="${totalClass}"><td>${status} TOTAL</td><td>All</td><td>${fmt(statusRows.length)}</td><td>${pct(statusRows.length,statusFiltered.length)}</td></tr>`;
   });
-  st+=`<tr class="total grand-total"><td>GRAND TOTAL</td><td>All Blocks</td><td>${fmt(total)}</td><td>${pct(total,total)}</td></tr>`;
+  st+=`<tr class="pls-grand-total"><td>GRAND TOTAL</td><td>All Blocks</td><td>${fmt(statusFiltered.length)}</td><td>${pct(statusFiltered.length,statusFiltered.length)}</td></tr>`;
+  $('plsStatusTable').classList.add('pls-status-table');
   $('plsStatusTable').querySelector('tbody').innerHTML=st;
 
   let ty='';
@@ -1639,3 +1651,46 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
 </style>
 
 </body></html>
+<style>
+
+/* V34 refinements: block spacing, filter-aware block totals, status-independent summary */
+#pickingLineStatus .pls-block-grid{
+  row-gap:22px!important;
+  column-gap:10px!important;
+}
+#pickingLineStatus .pls-block-title .pls-block-count{
+  color:#64798a!important;
+  font-weight:500!important;
+}
+#pickingLineStatus .pls-block-title .pls-block-count.is-completed{
+  color:#087b56!important;
+  font-weight:900!important;
+}
+#pickingLineStatus .pls-block-title .pls-block-count.is-pending{
+  color:#bd3948!important;
+  font-weight:900!important;
+}
+#pickingLineStatus .pls-summary-table tr.pls-total-completed td{
+  color:#087b56!important;
+  font-weight:900!important;
+  background:#e8f5ef!important;
+}
+#pickingLineStatus .pls-summary-table tr.pls-total-pending td{
+  color:#bd3948!important;
+  font-weight:900!important;
+  background:#fbecef!important;
+}
+#pickingLineStatus .pls-summary-table tr.pls-grand-total td{
+  color:#173d59!important;
+  font-weight:900!important;
+  background:#e2edf7!important;
+}
+#pickingLineStatus .pls-status-table .pls-group-row td{
+  background:transparent!important;
+  padding-top:7px!important;
+  padding-bottom:3px!important;
+  font-weight:900!important;
+}
+#pickingLineStatus .pls-status-table td:first-child{white-space:nowrap}
+
+</style>
