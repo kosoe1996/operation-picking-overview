@@ -1228,9 +1228,15 @@ body[data-view="picking"] .content{padding:0!important}
   </div>
   <div class="pls-note" id="plsMessage">Upload a workbook. The system reads only the sheet named “Raw Data”; other sheets are ignored.</div>
  </div>
- <div class="pls-filterbox">
-  <div style="font-size:12px;font-weight:850;color:#173d59;margin-bottom:10px">REPORT FILTERS</div>
-  <div class="pls-filters" id="plsFilters"></div>
+ <div class="pls-filter-priority-row">
+  <div class="pls-filterbox">
+   <div style="font-size:12px;font-weight:850;color:#173d59;margin-bottom:10px">REPORT FILTERS</div>
+   <div class="pls-filters" id="plsFilters"></div>
+  </div>
+  <div class="pls-panel pls-priority-top">
+   <h3>PRIORITY NUMBER OF SET</h3>
+   <div class="pls-scroll"><table class="pls-summary-table" id="plsPriorityTable"><thead><tr><th>Row Labels</th><th>Count of TO Line</th></tr></thead><tbody><tr><td colspan="2">Waiting for data</td></tr></tbody></table></div>
+  </div>
  </div>
  <div class="pls-kpis" id="plsKpis">
   <div class="pls-kpi"><small>TOTAL TO LINE</small><strong>—</strong><span>Raw Data rows</span></div>
@@ -1254,10 +1260,6 @@ body[data-view="picking"] .content{padding:0!important}
   <div class="pls-panel">
    <h3>TYPE BY BLOCK · BK / PF</h3>
    <table class="pls-summary-table" id="plsTypeTable"><thead><tr><th>Type</th><th>Block</th><th>TO Line</th><th>Line %</th></tr></thead><tbody><tr><td colspan="4">Waiting for data</td></tr></tbody></table>
-  </div>
-  <div class="pls-panel">
-   <h3>PRIORITY NUMBER OF SET</h3>
-   <div class="pls-scroll"><table class="pls-summary-table" id="plsPriorityTable"><thead><tr><th>Priority Set</th><th>Block</th><th>TO Line</th></tr></thead><tbody><tr><td colspan="3">Waiting for data</td></tr></tbody></table></div>
   </div>
  </div>
  </div>
@@ -1531,18 +1533,22 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   $('plsTypeTable').querySelector('tbody').innerHTML=ty||'<tr><td colspan="4">No records</td></tr>';
 
   let pr='';
-  const sets=[...new Set(filtered.map(r=>val(r,'Priority Set')).filter(v=>v!=='(Blank)'))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
-  sets.forEach(set=>{
-   const setRows=filtered.filter(r=>val(r,'Priority Set')===set);
-   // Show each set total once on the SET heading row.
-   pr+=`<tr class="pls-set-heading"><td>SET ${esc(set)}</td><td>All</td><td>${fmt(setRows.length)}</td></tr>`;
-   blocks.forEach(b=>{
-    const n=setRows.filter(r=>String(r.Block??'').trim().toUpperCase()===b).length;
-    if(n>0)pr+=`<tr><td></td><td>${b}</td><td>${fmt(n)}</td></tr>`;
+  const setBlocks=[...new Set(filtered.map(r=>String(r.Block??'').trim().toUpperCase()).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+  setBlocks.forEach(block=>{
+   const blockRows=filtered.filter(r=>String(r.Block??'').trim().toUpperCase()===block);
+   pr+=`<tr class="pls-set-block"><td>${esc(block)}</td><td>${fmt(blockRows.length)}</td></tr>`;
+   const sets=[...new Set(blockRows.map(r=>val(r,'Priority Set')).filter(v=>v!=='(Blank)'))]
+     .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+   sets.forEach(set=>{
+    const n=blockRows.filter(r=>val(r,'Priority Set')===set).length;
+    pr+=`<tr><td class="pls-set-child">${esc(set)}</td><td>${fmt(n)}</td></tr>`;
    });
+   const blankCount=blockRows.filter(r=>val(r,'Priority Set')==='(Blank)').length;
+   if(blankCount)pr+=`<tr><td class="pls-set-child">(Blank)</td><td>${fmt(blankCount)}</td></tr>`;
   });
-  pr+=`<tr class="total grand-total"><td>GRAND TOTAL</td><td>All</td><td>${fmt(total)}</td></tr>`;
-  $('plsPriorityTable').querySelector('tbody').innerHTML=pr||'<tr><td colspan="3">No Priority Set values</td></tr>';
+  pr+=`<tr class="total grand-total"><td>Grand Total</td><td>${fmt(total)}</td></tr>`;
+  $('plsPriorityTable').querySelector('tbody').innerHTML=pr||'<tr><td colspan="2">No Priority Set values</td></tr>';
   let dc='';
   ['Single TO','Multiple TO'].forEach(c=>{
    const dos=[...classes].filter(([d,x])=>x===c).map(([d])=>d);
@@ -1872,5 +1878,30 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
 }
 @media(max-width:700px){
  #pickingDashboardPage #pickingLineStatus .pls-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+</style>
+
+<style id="v41-priority-pivot-top">
+#pickingLineStatus .pls-filter-priority-row{
+ display:grid!important;
+ grid-template-columns:minmax(0,8fr) minmax(210px,2fr)!important;
+ gap:10px!important;
+ align-items:stretch!important;
+}
+#pickingLineStatus .pls-filter-priority-row>.pls-filterbox,
+#pickingLineStatus .pls-filter-priority-row>.pls-priority-top{min-width:0;margin:0!important}
+#pickingLineStatus .pls-priority-top{padding:10px!important}
+#pickingLineStatus .pls-priority-top h3{margin-bottom:7px!important}
+#pickingLineStatus .pls-priority-top .pls-scroll{max-height:155px!important;overflow:auto}
+#pickingLineStatus #plsPriorityTable{font-size:10px!important}
+#pickingLineStatus #plsPriorityTable th,
+#pickingLineStatus #plsPriorityTable td{padding:3px 5px!important;line-height:1.12}
+#pickingLineStatus #plsPriorityTable td:last-child,
+#pickingLineStatus #plsPriorityTable th:last-child{text-align:right;white-space:nowrap}
+#pickingLineStatus #plsPriorityTable .pls-set-block td{font-weight:900;background:#e5edf5;color:#183a58;border-top:1px solid #cbd8e4}
+#pickingLineStatus #plsPriorityTable .pls-set-child td:first-child{padding-left:18px!important}
+@media(max-width:1100px){
+ #pickingLineStatus .pls-filter-priority-row{grid-template-columns:minmax(0,1fr)!important}
+ #pickingLineStatus .pls-priority-top .pls-scroll{max-height:220px!important}
 }
 </style>
