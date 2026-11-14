@@ -1420,9 +1420,8 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
 (()=>{
  const $=id=>document.getElementById(id);
  const fields=[
-  ['Plan Date','Plan Date'],['Block','Block'],['Priority Remark','Priority Remark'],
-  ['Priority Set','Priority Set'],['Priority Status','Priority Status'],['Type','Type'],
-  ['Order Type','Order Type'],['Status','Status'],['Picking Type','Picking Type']
+  ['Picking Type','Picking Type'],['Type','Type'],['Priority Status','Priority Status'],['Priority Remark','Priority Remark'],
+  ['Block','Block'],['Order Type','Order Type'],['Plan Date','Plan Date'],['Status','Status']
  ];
  let raw=[],filtered=[],workbook=null,headers={};
  const norm=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -1859,5 +1858,19 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
 }
 @media(max-width:700px){
  #pickingLineStatus .pls-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+</style>
+
+<style id="v40-filter-order">
+@media(min-width:701px){
+ #pickingDashboardPage #pickingLineStatus .pls-filters{
+   display:grid!important;
+   grid-template-columns:repeat(4,minmax(0,1fr))!important;
+   column-gap:12px!important;row-gap:9px!important;align-items:end!important;
+ }
+ #pickingDashboardPage #pickingLineStatus .pls-filters label{min-width:0!important;width:100%!important}
+}
+@media(max-width:700px){
+ #pickingDashboardPage #pickingLineStatus .pls-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
 </style>
