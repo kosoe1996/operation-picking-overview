@@ -712,6 +712,48 @@ tfoot td:first-child{border-radius:7px 0 0 7px}tfoot td:last-child{border-radius
   }
 }
 
+
+/* V22 refinements */
+.single-upload .file-field{flex:1 1 420px;max-width:760px}
+.theme-control{display:flex;align-items:center;gap:6px;font-size:8px;font-weight:900;letter-spacing:.5px;color:#637b8c}
+.theme-control select{border:1px solid #cbd9e3;border-radius:8px;padding:8px 24px 8px 9px;background:#fff;color:#173b53;font-size:11px;font-weight:700}
+#reports .panel-title-text{font-size:17px!important;font-weight:900!important;letter-spacing:.25px}
+#reports table th{font-size:12px!important;font-weight:900!important}
+#reports table td{font-size:12px!important;font-weight:750!important}
+#reports table tfoot td{font-size:12px!important;font-weight:900!important}
+.additional-editor{min-height:112px;width:100%;padding:13px 14px;border:1px solid #cad9e4;border-radius:9px;background:#f8fbfd;color:#24445a;font-size:13px;line-height:1.55;outline:none;white-space:pre-wrap;overflow-wrap:anywhere}
+.additional-editor:empty:before{content:attr(data-placeholder);color:#8a9aa6;pointer-events:none}
+.additional-editor:focus{border-color:#3d91b4;box-shadow:0 0 0 3px rgba(61,145,180,.12)}
+.rich-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:10px 0 7px;padding:7px;background:#edf3f7;border:1px solid #d7e2e9;border-radius:9px}
+.rich-toolbar button,.rich-toolbar select{border:1px solid #cbd9e3;border-radius:6px;background:#fff;color:#24445a;padding:6px 9px;font-size:11px;font-weight:750;cursor:pointer}
+.rich-toolbar button:hover{background:#dcecf4}
+.rich-toolbar .color-tool{display:flex;align-items:center;gap:5px;padding:4px 7px;border:1px solid #cbd9e3;border-radius:6px;background:#fff;color:#405c70;font-size:10px;font-weight:750}
+.rich-toolbar input[type=color]{width:22px;height:20px;padding:0;border:0;background:transparent;cursor:pointer}
+body[data-theme="ocean"]{background:#eaf3f8;color:#15364d}
+body[data-theme="ocean"] .main{background:linear-gradient(120deg,#f3f8fc,#e4eff6)}
+body[data-theme="ocean"] .top{background:#f8fbfe;border-color:#d4e1ea}
+body[data-theme="ocean"] .control-panel,body[data-theme="ocean"] .panel,body[data-theme="ocean"] .additional-info{background:#fff;border-color:#cbdce8}
+body[data-theme="ocean"] .filter-row{background:#e3edf5;border-color:#cfdeea}
+body[data-theme="ocean"] .card{background:#f5f9fc;border-color:#d4e2eb}
+body[data-theme="ocean"] .additional-editor{background:#f7fbff;color:#173b53}
+body[data-theme="dark"]{background:#101d2b;color:#e7f0f7}
+body[data-theme="dark"] .main{background:linear-gradient(120deg,#142337,#101b2a)}
+body[data-theme="dark"] .top{background:#17283b;border-color:#2a4055}
+body[data-theme="dark"] .top h1,body[data-theme="dark"] .top-title span{color:#edf5fb}
+body[data-theme="dark"] .control-panel,body[data-theme="dark"] .panel,body[data-theme="dark"] .additional-info{background:#1c3045;border-color:#304b63;color:#e6f0f7}
+body[data-theme="dark"] .control-head h2,body[data-theme="dark"] .panel h2,body[data-theme="dark"] .additional-info h2{color:#f2f7fb}
+body[data-theme="dark"] .control-head p,body[data-theme="dark"] .filter-title small,body[data-theme="dark"] .additional-info p{color:#b4c5d2}
+body[data-theme="dark"] .filter-row{background:#243b52;border-color:#36516a}
+body[data-theme="dark"] .filters select,body[data-theme="dark"] .theme-control select{background:#102338;color:#edf5fb;border-color:#46627a}
+body[data-theme="dark"] .card{background:#20364b;border-color:#3a566e;color:#f0f6fb}
+body[data-theme="dark"] .card span,body[data-theme="dark"] .card small{color:#c3d2de}
+body[data-theme="dark"] .notice{background:#233b50;color:#d4e2ec;border-color:#38546c}
+body[data-theme="dark"] .additional-editor{background:#12263a;color:#f0f6fb;border-color:#49647b}
+body[data-theme="dark"] .rich-toolbar{background:#243b52;border-color:#3c5870}
+body[data-theme="dark"] .rich-toolbar button,body[data-theme="dark"] .rich-toolbar select,body[data-theme="dark"] .rich-toolbar .color-tool{background:#13283d;color:#e9f2f8;border-color:#48647b}
+body[data-theme="dark"] #reports table td{color:#e5edf4}
+@media(max-width:700px){.theme-control{font-size:7px}.theme-control select{font-size:10px;padding:6px 18px 6px 6px}.rich-toolbar{gap:4px}.rich-toolbar button{padding:6px 7px}}
+
 </style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
@@ -725,17 +767,16 @@ tfoot td:first-child{border-radius:7px 0 0 7px}tfoot td:last-child{border-radius
  <div class="side-bottom"><div class="side-status"><i></i> System ready</div><div class="side-foot"><div class="side-avatar">OP</div><div>Operations Team<br><b>Monitor Profile</b></div></div></div>
 </aside>
 <main class="main" id="dashboard">
- <header class="top"><div class="top-title"><h1>Dashboard</h1><span>Operation Picking Overview</span></div><div class="top-actions"><span id="now" style="font-size:10px;color:#829188"></span><button class="btn" id="png" disabled>Generate Report</button></div></header>
+ <header class="top"><div class="top-title"><h1>Dashboard</h1><span>Operation Picking Overview</span></div><div class="top-actions"><span id="now" style="font-size:10px;color:#829188"></span><label class="theme-control">THEME <select id="themeSelect"><option value="light">Light</option><option value="ocean">Ocean</option><option value="dark">Dark</option></select></label><button class="btn" id="png" disabled>Generate Report</button></div></header>
  <div class="content">
   <section class="control-panel">
    <div class="control-head"><div><h2>DATA SOURCE</h2><p>Upload Outstation, Local &amp; IKA, or both Excel workbooks.</p></div><span class="live-pill"><i></i> WORKSPACE</span></div>
-   <div class="upload">
-    <div class="file-field"><label>OUTSTATION EXCEL</label><input type="file" id="outFile" accept=".xlsx,.xls"></div>
-    <div class="file-field"><label>LOCAL &amp; IKA EXCEL</label><input type="file" id="localFile" accept=".xlsx,.xls"></div>
+   <div class="upload single-upload">
+    <div class="file-field"><label>OUTSTATION / LOCAL &amp; IKA EXCEL</label><input type="file" id="sourceFile" accept=".xlsx,.xls"></div>
     <button class="btn" id="load">↻ Process &amp; Refresh</button>
     <button class="btn light" id="export" disabled>Export Excel</button>
    </div>
-   <div class="notice" id="msg">Upload one workbook independently, or upload both to combine the data. Header-based mapping is enabled.</div>
+   <div class="notice" id="msg">Upload one Excel workbook: Outstation or Local &amp; IKA. Header-based mapping detects the load plan automatically.</div>
   </section>
   <section id="whatsappReport" class="whatsapp-report-capture">
    <div class="full-report-toolbar"><div><b>WHATSAPP REPORT</b><small>Capture the complete report below, including Additional Information.</small></div><button class="copy-image-btn full-copy-btn" type="button" data-capture="whatsappReport" data-name="Full-WhatsApp-Report">▣ Copy Full Report Image</button></div>
@@ -782,7 +823,13 @@ tfoot td:first-child{border-radius:7px 0 0 7px}tfoot td:last-child{border-radius
    </div>
    <section class="additional-info capture-panel" id="additionalInfo">
     <div class="additional-head"><div><span class="additional-kicker">REPORT NOTES</span><h2>ADDITIONAL INFORMATION</h2><p>Add shift updates, operational notes, issues, or important messages for the WhatsApp report.</p></div></div>
-    <textarea id="additionalText" rows="3" placeholder="Example: Shift update: Block E pending invoice is being followed up. Please prioritize outstanding DOs before cutoff."></textarea>
+    <div class="rich-toolbar" id="richToolbar">
+     <button type="button" data-cmd="bold" title="Bold"><b>B</b></button><button type="button" data-cmd="italic" title="Italic"><i>I</i></button><button type="button" data-cmd="underline" title="Underline"><u>U</u></button>
+     <select id="fontSizeSelect" aria-label="Font size"><option value="2">Small</option><option value="3" selected>Normal</option><option value="4">Large</option><option value="5">Extra Large</option><option value="6">Title</option></select>
+     <label class="color-tool">Text <input type="color" id="textColor" value="#24445a"></label><label class="color-tool">Highlight <input type="color" id="highlightColor" value="#fff19a"></label>
+     <button type="button" id="applyHighlight">▰ Highlight</button><button type="button" id="clearFormat">Clear</button>
+    </div>
+    <div id="additionalText" class="additional-editor" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Example: Shift update: Block E pending invoice is being followed up. Please prioritize outstanding DOs before cutoff."></div>
     <div class="additional-foot"><span>These notes are for reporting only and do not change Excel calculations.</span><span id="additionalCount">0 characters</span></div>
    </section>
   </section>
@@ -849,7 +896,7 @@ updateReportDateTime();setInterval(updateReportDateTime,1000);
 function render(){
  let rows=filtered(),a=aggregate(rows),completed=a.groups[0],pending=a.groups[1];
  let card=(label,value,sub,cls='')=>{let ico=label==='TOTAL DO'?'▤':label==='COMPLETED INVOICED'?'✓':label==='PENDING INVOICE'?'◷':'▦';return `<div class="card ${cls}"><div class="card-top"><small>${label}</small><span class="kpi-icon">${ico}</span></div><b>${value}</b><span>${sub}</span></div>`};
- let htmlCards=`<div class="cards">${card('TOTAL DO',fmt(a.total),'Unique DO numbers')}${card('COMPLETED INVOICED',fmt(completed.do),fmt(completed.carton)+' Cartons · '+completed.pct.toFixed(1)+'% DO','green')}${card('PENDING INVOICE',fmt(pending.do),fmt(pending.carton)+' Cartons · '+pending.pct.toFixed(1)+'% DO','red')}${card('TOTAL CARTONS',fmt(a.allCarton),'Selected load plan','gold')}</div>`;
+ let htmlCards=`<div class="cards">${card('TOTAL DO',fmt(a.total),fmt(a.allLine)+' DO Lines · Unique DO numbers')}${card('COMPLETED INVOICED',fmt(completed.do),fmt(completed.line)+' Lines · '+fmt(completed.carton)+' Cartons · '+completed.pct.toFixed(1)+'% DO','green')}${card('PENDING INVOICE',fmt(pending.do),fmt(pending.line)+' Lines · '+fmt(pending.carton)+' Cartons · '+pending.pct.toFixed(1)+'% DO','red')}${card('TOTAL CARTONS',fmt(a.allCarton),fmt(a.allLine)+' Total DO Lines · Selected load plan','gold')}</div>`;
  $('report').querySelector('.cards').outerHTML=htmlCards;
  let blocks=['E','F','G','H'];
  let blockSummary=blocks.map(block=>{
@@ -885,7 +932,7 @@ function render(){
  ];
 }
 function updateDates(){let old=$('dateFilter').value;let ds=[...new Set(records.map(r=>r.date).filter(Boolean))].sort();$('dateFilter').innerHTML='<option value="ALL">All Dates</option>'+ds.map(d=>`<option value="${d}">${d}</option>`).join('');$('dateFilter').value=ds.includes(old)?old:'ALL'}
-$('load').onclick=async()=>{try{let of=$('outFile').files[0],lf=$('localFile').files[0];if(!of&&!lf)throw new Error('Outstation သို့မဟုတ် Local & IKA Excel ဖိုင် အနည်းဆုံး တစ်ခု Upload လုပ်ပါ။');let a=of?await readFile(of,'Outstation'):[],b=lf?await readFile(lf,'LOCAL & IKA'):[];records=[...a,...b];if(!records.length)throw new Error('ဖိုင်ထဲမှာ အသုံးပြုနိုင်တဲ့ DO Data မတွေ့ပါ။');loaded=true;updateDates();render();$('png').disabled=false;$('export').disabled=false;let parts=[];if(of)parts.push('Outstation '+fmt(a.length));if(lf)parts.push('Local & IKA '+fmt(b.length));$('msg').textContent=`Loaded ${fmt(records.length)} DO rows: ${parts.join(' · ')}. Header mapping successful.`;}catch(e){$('msg').textContent='Upload error: '+e.message;alert(e.message)}};
+$('load').onclick=async()=>{try{let file=$('sourceFile').files[0];if(!file)throw new Error('Outstation သို့မဟုတ် Local & IKA Excel ဖိုင် တစ်ခု Upload လုပ်ပါ။');let fallback=/outstation/i.test(file.name)?'Outstation':(/local|ika/i.test(file.name)?'LOCAL & IKA':'AUTO');let parsed=await readFile(file,fallback);records=parsed;if(!records.length)throw new Error('ဖိုင်ထဲမှာ အသုံးပြုနိုင်တဲ့ DO Data မတွေ့ပါ။');loaded=true;updateDates();render();$('png').disabled=false;$('export').disabled=false;let types=[...new Set(records.map(r=>r.loadType))];$('msg').textContent=`Loaded ${fmt(records.length)} DO rows: ${types.join(' + ')}. Header mapping successful.`;}catch(e){$('msg').textContent='Upload error: '+e.message;alert(e.message)}}
 $('typeFilter').onchange=()=>{if(loaded)render()};$('dateFilter').onchange=()=>{if(loaded)render()};$('reset').onclick=()=>{$('typeFilter').value='ALL';$('dateFilter').value='ALL';if(loaded)render()};
 async function captureSection(id,name){
  const target=$(id); if(!target) return;
@@ -904,8 +951,28 @@ async function captureSection(id,name){
  finally{setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent=old}},1600)}
 }
 document.querySelectorAll('[data-capture]').forEach(btn=>btn.addEventListener('click',()=>captureSection(btn.dataset.capture,btn.dataset.name||btn.dataset.capture)));
-$('additionalText').addEventListener('input',()=>{$('additionalCount').textContent=$('additionalText').value.length.toLocaleString('en-US')+' characters'});
+$('additionalText').addEventListener('input',()=>{$('additionalCount').textContent=$('additionalText').innerText.length.toLocaleString('en-US')+' characters'});
 $('png').onclick=async()=>{await captureSection('whatsappReport','Full-WhatsApp-Report')};
 $('export').onclick=()=>{let rows=filtered(),a=aggregate(rows),out=XLSX.utils.book_new();let summary=[];for(let g of a.groups){summary.push({'Invoice Status':g.kind,'Block':'Overall','DO No':g.do,'DO Line':g.line,'Est Total Carton':g.carton,'DO Percentage':g.pct/100});for(let b of g.blocks)summary.push({'Invoice Status':g.kind,'Block':b.block,'DO No':b.do,'DO Line':b.line,'Est Total Carton':b.carton,'DO Percentage':b.pct/100})}summary.push({'Invoice Status':'Grand Total','Block':'All','DO No':a.total,'DO Line':a.allLine,'Est Total Carton':a.allCarton,'DO Percentage':1});XLSX.utils.book_append_sheet(out,XLSX.utils.json_to_sheet(summary),'Invoice Stats');XLSX.utils.book_append_sheet(out,XLSX.utils.json_to_sheet(rows),'Filtered Source Data');XLSX.writeFile(out,'Operation-Picking-Overview.xlsx')};
 setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});},1000);
+
+// V22 theme switch + rich text note editor
+(function(){
+ const theme=$('themeSelect');
+ if(theme){
+   let saved='light';try{saved=localStorage.getItem('op-theme')||'light'}catch(e){}
+   theme.value=saved;document.body.setAttribute('data-theme',saved);
+   theme.addEventListener('change',()=>{document.body.setAttribute('data-theme',theme.value);try{localStorage.setItem('op-theme',theme.value)}catch(e){}});
+ }
+ const editor=$('additionalText'),toolbar=$('richToolbar');
+ if(!editor||!toolbar)return;
+ const run=(cmd,val=null)=>{editor.focus();document.execCommand(cmd,false,val);};
+ toolbar.querySelectorAll('[data-cmd]').forEach(btn=>btn.addEventListener('click',()=>run(btn.dataset.cmd)));
+ $('fontSizeSelect').addEventListener('change',e=>run('fontSize',e.target.value));
+ $('textColor').addEventListener('input',e=>run('foreColor',e.target.value));
+ $('applyHighlight').addEventListener('click',()=>{editor.focus();const c=$('highlightColor').value;try{document.execCommand('hiliteColor',false,c)}catch(e){document.execCommand('backColor',false,c)}});
+ $('clearFormat').addEventListener('click',()=>run('removeFormat'));
+ editor.addEventListener('input',()=>{$('additionalCount').textContent=editor.innerText.length+' characters'});
+})();
+
 </script></body></html>
