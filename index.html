@@ -1809,3 +1809,18 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
  }
 }
 </style>
+
+
+<style id="v37-picking-status-total-colors">
+/* V37: force the two total rows in Picking Status by Block to show their status colors */
+#pickingLineStatus table#plsStatusTable.pls-summary-table.pls-status-table tbody tr.pls-total-completed > td{
+ color:#087b56!important;
+ background:#e8f5ef!important;
+ font-weight:950!important;
+}
+#pickingLineStatus table#plsStatusTable.pls-summary-table.pls-status-table tbody tr.pls-total-pending > td{
+ color:#bd3948!important;
+ background:#fbecef!important;
+ font-weight:950!important;
+}
+</style>
