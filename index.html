@@ -800,6 +800,49 @@ body[data-theme="dark"] #reports table td{color:#e5edf4}
   .upload #load{min-width:0!important;max-width:none!important;padding:9px 11px!important}
 }
 
+
+/* V26 Picking Order Line Status — restrained corporate navy/white UI */
+#pickingLineStatus{margin-top:24px;scroll-margin-top:16px}
+#pickingLineStatus .pls-head{background:#123b5b;color:#fff;border-radius:12px;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+#pickingLineStatus .pls-head h2{margin:0;font-size:19px;font-weight:800;letter-spacing:.2px}
+#pickingLineStatus .pls-head p{margin:4px 0 0;color:#d5e4ef;font-size:11px}
+#pickingLineStatus .pls-source,#pickingLineStatus .pls-filterbox,#pickingLineStatus .pls-panel{background:#fff;border:1px solid #d9e3eb;border-radius:12px;padding:14px;margin-top:12px;box-shadow:0 3px 12px #183a5010}
+#pickingLineStatus .pls-source-row{display:flex;align-items:end;gap:12px;flex-wrap:wrap}
+#pickingLineStatus .pls-source label,#pickingLineStatus .pls-filters label{display:flex;flex-direction:column;gap:5px;font-size:10px;font-weight:800;color:#36536a;letter-spacing:.35px;min-width:130px;flex:1}
+#pickingLineStatus input[type=file],#pickingLineStatus select{width:100%;min-height:36px;border:1px solid #cbd8e2;border-radius:7px;background:#f9fbfd;color:#20384b;padding:7px 9px;font-size:12px}
+#pickingLineStatus .pls-btn{border:0;border-radius:8px;background:#0d7658;color:white;padding:10px 16px;font-weight:800;font-size:12px;cursor:pointer;min-height:36px}
+#pickingLineStatus .pls-btn.secondary{background:#eaf0f5;color:#25445c;border:1px solid #d2dee8}
+#pickingLineStatus .pls-note{font-size:10px;color:#60778a;margin-top:8px}
+#pickingLineStatus .pls-filters{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:10px}
+#pickingLineStatus .pls-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:12px}
+#pickingLineStatus .pls-kpi{background:#fff;border:1px solid #dbe4eb;border-top:3px solid #285d7d;border-radius:10px;padding:12px 14px;min-width:0}
+#pickingLineStatus .pls-kpi:nth-child(2){border-top-color:#16845f}#pickingLineStatus .pls-kpi:nth-child(3){border-top-color:#c64753}#pickingLineStatus .pls-kpi:nth-child(4){border-top-color:#66829a}#pickingLineStatus .pls-kpi:nth-child(5){border-top-color:#8b6a32}
+#pickingLineStatus .pls-kpi small{display:block;color:#425c70;font-size:9px;font-weight:800;letter-spacing:.45px}
+#pickingLineStatus .pls-kpi strong{display:block;color:#173d59;font-size:25px;line-height:1.25;margin-top:5px;font-weight:850}
+#pickingLineStatus .pls-kpi span{display:block;color:#64798a;font-size:10px;margin-top:3px}
+#pickingLineStatus .pls-main-grid{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(280px,1fr);gap:12px;margin-top:12px}
+#pickingLineStatus .pls-panel h3{margin:0 0 10px;color:#173d59;font-size:13px;font-weight:850;letter-spacing:.25px}
+#pickingLineStatus .pls-block-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#pickingLineStatus .pls-block{border:1px solid #dce5ec;border-radius:9px;overflow:hidden;background:#fff}
+#pickingLineStatus .pls-block-title{background:#edf3f7;padding:9px 11px;display:flex;justify-content:space-between;align-items:center;color:#183e59;font-size:12px;font-weight:850}
+#pickingLineStatus .pls-block-title span{font-size:10px;color:#60778a;font-weight:650}
+#pickingLineStatus .pls-subtable{width:100%;border-collapse:collapse;font-size:10px}
+#pickingLineStatus .pls-subtable th{background:#f5f8fa;color:#526a7c;text-align:left;font-weight:800;padding:6px 8px}
+#pickingLineStatus .pls-subtable td{padding:5px 8px;color:#314b60;border-top:1px solid #edf1f4}
+#pickingLineStatus .pls-subtable td:last-child,#pickingLineStatus .pls-subtable th:last-child{text-align:right;font-variant-numeric:tabular-nums}
+#pickingLineStatus .pls-subtotal{font-weight:850;background:#f0f5f8}
+#pickingLineStatus .pls-summary-table{width:100%;border-collapse:separate;border-spacing:0 4px;font-size:10px}
+#pickingLineStatus .pls-summary-table th{background:#eaf0f5;color:#304d63;text-align:left;padding:8px;font-weight:850}
+#pickingLineStatus .pls-summary-table td{background:#f7f9fb;padding:7px 8px;color:#29465b}
+#pickingLineStatus .pls-summary-table tr.total td{background:#dce9f1;color:#123b5b;font-weight:850}
+#pickingLineStatus .pls-status-complete{color:#087b56;font-weight:850}
+#pickingLineStatus .pls-status-pending{color:#bd3948;font-weight:850}
+#pickingLineStatus .pls-priority{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#pickingLineStatus .pls-scroll{overflow:auto;max-height:430px}
+#pickingLineStatus .pls-empty{padding:28px 12px;text-align:center;color:#6b8091;font-size:12px}
+@media(max-width:1100px){#pickingLineStatus .pls-filters{grid-template-columns:repeat(3,minmax(0,1fr))}#pickingLineStatus .pls-main-grid{grid-template-columns:1fr}}
+@media(max-width:700px){#pickingLineStatus .pls-filters{grid-template-columns:repeat(2,minmax(0,1fr))}#pickingLineStatus .pls-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#pickingLineStatus .pls-block-grid{grid-template-columns:1fr}#pickingLineStatus .pls-priority{grid-template-columns:1fr}#pickingLineStatus .pls-head{align-items:flex-start;flex-direction:column}}
+
 </style></head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
@@ -808,6 +851,7 @@ body[data-theme="dark"] #reports table td{color:#e5edf4}
   <a class="active" href="#dashboard"><span class="navicon">⌂</span><span>Home</span></a>
   <a href="#analytics"><span class="navicon">▥</span><span>Analytics</span></a>
   <a href="#reports"><span class="navicon">▤</span><span>Reports</span></a>
+  <a href="#pickingLineStatus"><span class="navicon">▦</span><span>Picking Line Status</span></a>
   <a href="#settings"><span class="navicon">⚙</span><span>Settings</span></a>
  </nav>
  <div class="side-bottom"><div class="side-status"><i></i> System ready</div><div class="side-foot"><div class="side-avatar">OP</div><div>Operations Team<br><b>Monitor Profile</b></div></div></div>
@@ -881,6 +925,60 @@ body[data-theme="dark"] #reports table td{color:#e5edf4}
   </section>
   </section>
   <div class="footer">Operation Picking Overview · Monitor Display</div>
+
+<section id="pickingLineStatus">
+ <div class="pls-head"><div><h2>PICKING ORDER LINE STATUS</h2><p>Block-wise picking line, type, priority and completion overview</p></div><div id="plsClock" style="font-size:11px;font-weight:700;color:#e1edf5"></div></div>
+ <div class="pls-source">
+  <div style="font-size:12px;font-weight:850;color:#173d59;margin-bottom:9px">DATA SOURCE · RAW DATA ONLY</div>
+  <div class="pls-source-row">
+   <label>EXCEL WORKBOOK<input id="plsFile" type="file" accept=".xlsx,.xls"></label>
+   <button class="pls-btn" id="plsProcess">Process &amp; Refresh</button>
+   <button class="pls-btn secondary" id="plsExport" disabled>Export Excel</button>
+  </div>
+  <div class="pls-note" id="plsMessage">Upload a workbook. The system reads only the sheet named “Raw Data”; other sheets are ignored.</div>
+ </div>
+ <div class="pls-filterbox">
+  <div style="font-size:12px;font-weight:850;color:#173d59;margin-bottom:10px">REPORT FILTERS</div>
+  <div class="pls-filters" id="plsFilters"></div>
+ </div>
+ <div class="pls-kpis" id="plsKpis">
+  <div class="pls-kpi"><small>TOTAL TO LINE</small><strong>—</strong><span>Raw Data rows</span></div>
+  <div class="pls-kpi"><small>COMPLETED PICK</small><strong>—</strong><span>Rows completed</span></div>
+  <div class="pls-kpi"><small>PENDING PICK</small><strong>—</strong><span>Rows pending</span></div>
+  <div class="pls-kpi"><small>SINGLE TO LINES</small><strong>—</strong><span>DOs with one unique TO</span></div>
+  <div class="pls-kpi"><small>MULTIPLE TO LINES</small><strong>—</strong><span>DOs with more than one unique TO</span></div>
+ </div>
+ <div class="pls-main-grid">
+  <div class="pls-panel">
+   <h3>BLOCK BREAKDOWN · TYPE &amp; PRIORITY REMARK</h3>
+   <div class="pls-block-grid" id="plsBlocks"><div class="pls-empty">Upload Raw Data to display block breakdown.</div></div>
+  </div>
+  <div class="pls-panel">
+   <h3>PICKING STATUS BY BLOCK</h3>
+   <div class="pls-scroll"><table class="pls-summary-table" id="plsStatusTable"><thead><tr><th>Status</th><th>Block</th><th>TO Line</th><th>Line %</th></tr></thead><tbody><tr><td colspan="4">Waiting for data</td></tr></tbody></table></div>
+  </div>
+ </div>
+ <div class="pls-main-grid">
+  <div class="pls-panel">
+   <h3>TYPE BY BLOCK · BK / PF</h3>
+   <table class="pls-summary-table" id="plsTypeTable"><thead><tr><th>Type</th><th>Block</th><th>TO Line</th><th>Line %</th></tr></thead><tbody><tr><td colspan="4">Waiting for data</td></tr></tbody></table>
+  </div>
+  <div class="pls-panel">
+   <h3>PRIORITY NUMBER OF SET</h3>
+   <div class="pls-scroll"><table class="pls-summary-table" id="plsPriorityTable"><thead><tr><th>Priority Set</th><th>Block</th><th>TO Line</th></tr></thead><tbody><tr><td colspan="3">Waiting for data</td></tr></tbody></table></div>
+  </div>
+ </div>
+ <div class="pls-panel">
+  <h3>DO / TO CLASSIFICATION</h3>
+  <table class="pls-summary-table" id="plsDoToTable"><thead><tr><th>Classification</th><th>Unique DO</th><th>TO Lines (row count)</th></tr></thead><tbody><tr><td colspan="3">Waiting for data</td></tr></tbody></table>
+  <div class="pls-note">Single TO / Multiple TO is determined by the number of distinct Transfer Order Numbers within each Delivery. TO Line totals always count every Raw Data row, including repeated TO numbers.</div>
+ </div>
+ <div class="pls-panel">
+  <h3>ADDITIONAL INFORMATION</h3>
+  <textarea id="plsAdditional" rows="2" placeholder="Add operational notes for this Picking Order Line Status report..." style="width:100%;border:1px solid #cbd8e2;border-radius:8px;padding:10px;font:12px Arial;color:#20384b;resize:vertical"></textarea>
+ </div>
+</section>
+
  </div>
 </main></div>
 <script>
@@ -1025,4 +1123,132 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
  editor.addEventListener('input',()=>{$('additionalCount').textContent=editor.innerText.length+' characters'});
 })();
 
-</script></body></html>
+</script>
+<script>
+(()=>{
+ const $=id=>document.getElementById(id);
+ const fields=[
+  ['Plan Date','Plan Date'],['Block','Block'],['Priority Remark','Priority Remark'],
+  ['Priority Set','Priority Set'],['Priority Status','Priority Status'],['Type','Type'],
+  ['Order Type','Order Type'],['Status','Status'],['Picking Type','Picking Type']
+ ];
+ let raw=[],filtered=[],workbook=null,headers={};
+ const norm=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]/g,'');
+ const fmt=n=>Number(n||0).toLocaleString('en-US');
+ const pct=(n,d)=>d?((n/d)*100).toFixed(1)+'%':'0.0%';
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const val=(r,k)=>{const x=r[k];return x===null||x===undefined||String(x).trim()===''?'(Blank)':String(x).trim()};
+ function clock(){ $('plsClock').textContent=new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+ clock();setInterval(clock,1000);
+ function resolveHeaders(row){
+  const keys=Object.keys(row),wanted=['Delivery','Transfer Order Number','Priority Remark','Priority Set','Priority Status','Type','Order Type','Plan Date','Status','Picking Type','Block'];
+  const map={};wanted.forEach(w=>{map[w]=keys.find(k=>norm(k)===norm(w))||null;});
+  const missing=wanted.filter(w=>!map[w]);
+  return {map,missing};
+ }
+ function buildFilters(){
+  const box=$('plsFilters');box.innerHTML='';
+  fields.forEach(([label,key])=>{
+   const values=[...new Set(raw.map(r=>val(r,key)).filter(v=>v!=='(Blank)'))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+   const options=values.length?values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join(''):'';
+   box.insertAdjacentHTML('beforeend',`<label>${esc(label)}<select data-pls-filter="${esc(key)}"><option value="ALL">All</option>${options}</select></label>`);
+  });
+  box.querySelectorAll('select').forEach(s=>s.addEventListener('change',render));
+ }
+ function applyFilters(){
+  const selected={};$('plsFilters').querySelectorAll('select').forEach(s=>selected[s.dataset.plsFilter]=s.value);
+  filtered=raw.filter(r=>Object.entries(selected).every(([k,v])=>v==='ALL'||val(r,k)===v));
+ }
+ function render(){
+  applyFilters();
+  const total=filtered.length, completed=filtered.filter(r=>norm(val(r,'Status')).includes('completed')).length;
+  const pending=filtered.filter(r=>norm(val(r,'Status')).includes('pending')).length;
+  const doMap=new Map();
+  filtered.forEach(r=>{
+   const d=String(r['Delivery']??'').trim(),t=String(r['Transfer Order Number']??'').trim();
+   if(!doMap.has(d))doMap.set(d,new Set());
+   if(t)doMap.get(d).add(t);
+  });
+  const classes=new Map([...doMap].map(([d,s])=>[d,s.size>1?'Multiple TO':'Single TO']));
+  let singleRows=0,multipleRows=0;
+  filtered.forEach(r=>{if(classes.get(String(r.Delivery??'').trim())==='Multiple TO')multipleRows++;else singleRows++;});
+  $('plsKpis').innerHTML=[
+   ['TOTAL TO LINE',total,'Raw Data rows'],['COMPLETED PICK',completed,'Rows completed'],['PENDING PICK',pending,'Rows pending'],
+   ['SINGLE TO LINES',singleRows,'Rows belonging to Single TO DOs'],['MULTIPLE TO LINES',multipleRows,'Rows belonging to Multiple TO DOs']
+  ].map((x,i)=>`<div class="pls-kpi"><small>${x[0]}</small><strong>${fmt(x[1])}</strong><span>${x[2]}</span></div>`).join('');
+  const blocks=['E','F','G','H'];
+  $('plsBlocks').innerHTML=blocks.map(b=>{
+   const rows=filtered.filter(r=>String(r.Block??'').trim().toUpperCase()===b);
+   const types=[...new Set(rows.map(r=>val(r,'Type')))].sort();
+   let body='';
+   types.forEach(t=>{
+    const tr=rows.filter(r=>val(r,'Type')===t);
+    body+=`<tr class="pls-subtotal"><td>${esc(t)}</td><td>${fmt(tr.length)}</td></tr>`;
+    const remarks=[...new Set(tr.map(r=>val(r,'Priority Remark')))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+    remarks.forEach(p=>{const n=tr.filter(r=>val(r,'Priority Remark')===p).length;body+=`<tr><td style="padding-left:20px">${esc(p)}</td><td>${fmt(n)}</td></tr>`;});
+   });
+   return `<div class="pls-block"><div class="pls-block-title">BLOCK ${b}<span>${fmt(rows.length)} TO Lines</span></div><table class="pls-subtable"><thead><tr><th>Type / Priority Remark</th><th>Count of TO Line</th></tr></thead><tbody>${body||'<tr><td colspan="2">No records</td></tr>'}</tbody><tfoot><tr class="pls-subtotal"><td>Grand Total</td><td>${fmt(rows.length)}</td></tr></tfoot></table></div>`;
+  }).join('');
+  const statuses=['COMPLETED PICK','PENDING PICK'];
+  let st='';
+  statuses.forEach(s=>{
+   const all=filtered.filter(r=>norm(val(r,'Status'))===norm(s));
+   blocks.forEach(b=>{const n=all.filter(r=>String(r.Block??'').trim().toUpperCase()===b).length;st+=`<tr><td class="${s.startsWith('COMPLETED')?'pls-status-complete':'pls-status-pending'}">${s}</td><td>${b}</td><td>${fmt(n)}</td><td>${pct(n,total)}</td></tr>`;});
+   st+=`<tr class="total"><td>${s} TOTAL</td><td>All</td><td>${fmt(all.length)}</td><td>${pct(all.length,total)}</td></tr>`;
+  });
+  st+=`<tr class="total"><td>GRAND TOTAL</td><td>All Blocks</td><td>${fmt(total)}</td><td>${pct(total,total)}</td></tr>`;
+  $('plsStatusTable').querySelector('tbody').innerHTML=st;
+  let ty='';
+  [...new Set(filtered.map(r=>val(r,'Type')))].sort().forEach(t=>{
+   blocks.forEach(b=>{const n=filtered.filter(r=>val(r,'Type')===t&&String(r.Block??'').trim().toUpperCase()===b).length;ty+=`<tr><td>${esc(t)}</td><td>${b}</td><td>${fmt(n)}</td><td>${pct(n,total)}</td></tr>`;});
+   const n=filtered.filter(r=>val(r,'Type')===t).length;ty+=`<tr class="total"><td>${esc(t)} TOTAL</td><td>All</td><td>${fmt(n)}</td><td>${pct(n,total)}</td></tr>`;
+  });
+  $('plsTypeTable').querySelector('tbody').innerHTML=ty||'<tr><td colspan="4">No records</td></tr>';
+  let pr='';
+  const sets=[...new Set(filtered.map(r=>val(r,'Priority Set')).filter(v=>v!=='(Blank)'))].sort((a,b)=>Number(a)-Number(b));
+  sets.forEach(s=>{
+   blocks.forEach(b=>{const n=filtered.filter(r=>val(r,'Priority Set')===s&&String(r.Block??'').trim().toUpperCase()===b).length;if(n)pr+=`<tr><td>${esc(s)}</td><td>${b}</td><td>${fmt(n)}</td></tr>`;});
+   const n=filtered.filter(r=>val(r,'Priority Set')===s).length;pr+=`<tr class="total"><td>SET ${esc(s)} TOTAL</td><td>All</td><td>${fmt(n)}</td></tr>`;
+  });
+  $('plsPriorityTable').querySelector('tbody').innerHTML=pr||'<tr><td colspan="3">No Priority Set values</td></tr>';
+  let dc='';
+  ['Single TO','Multiple TO'].forEach(c=>{
+   const dos=[...classes].filter(([d,x])=>x===c).map(([d])=>d);
+   const lines=filtered.filter(r=>dos.includes(String(r.Delivery??'').trim())).length;
+   dc+=`<tr><td>${c}</td><td>${fmt(dos.length)}</td><td>${fmt(lines)}</td></tr>`;
+  });
+  $('plsDoToTable').querySelector('tbody').innerHTML=dc;
+ }
+ async function process(){
+  const file=$('plsFile').files[0];if(!file){$('plsMessage').textContent='Please choose an Excel workbook first.';return;}
+  if(typeof XLSX==='undefined'){$('plsMessage').textContent='Excel reader library did not load. Please check internet connection and reload.';return;}
+  try{
+   const buf=await file.arrayBuffer();workbook=XLSX.read(buf,{type:'array',cellDates:true});
+   const sheetName=workbook.SheetNames.find(n=>norm(n)==='rawdata');
+   if(!sheetName)throw new Error('Raw Data sheet was not found. Please name the source sheet “Raw Data”. Other sheets are ignored.');
+   const ws=workbook.Sheets[sheetName];const rows=XLSX.utils.sheet_to_json(ws,{defval:null,raw:false});
+   if(!rows.length)throw new Error('Raw Data sheet is empty.');
+   const {map,missing}=resolveHeaders(rows[0]);
+   if(missing.length)throw new Error('Missing required headers: '+missing.join(', '));
+   raw=rows.map(r=>{
+    const o={};Object.entries(map).forEach(([target,source])=>o[target]=r[source]);
+    return o;
+   }).filter(r=>r.Delivery!==null&&r.Delivery!==undefined&&String(r.Delivery).trim()!=='');
+   if(!raw.length)throw new Error('No valid Raw Data rows found.');
+   buildFilters();render();$('plsExport').disabled=false;
+   $('plsMessage').textContent=`Loaded ${fmt(raw.length)} Raw Data rows from “${sheetName}”. Other ${workbook.SheetNames.length-1} sheet(s) ignored. Line count uses every row.`;
+  }catch(e){$('plsMessage').textContent='Unable to process workbook: '+e.message;raw=[];$('plsExport').disabled=true;}
+ }
+ $('plsProcess').addEventListener('click',process);
+ $('plsExport').addEventListener('click',()=>{
+  if(!filtered.length)return;
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(filtered),'Filtered Raw Data');
+  const summary=[];
+  ['COMPLETED PICK','PENDING PICK'].forEach(s=>['E','F','G','H'].forEach(b=>summary.push({Status:s,Block:b,TO_Line:filtered.filter(r=>norm(val(r,'Status'))===norm(s)&&String(r.Block??'').trim().toUpperCase()===b).length})));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(summary),'Status Summary');
+  XLSX.writeFile(wb,'Picking_Order_Line_Status.xlsx');
+ });
+})();
+</script>
+</body></html>
