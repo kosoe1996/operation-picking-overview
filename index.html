@@ -1663,6 +1663,55 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
 @media(max-width:560px){#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{grid-template-columns:1fr!important}}
 </style>
 
+<style id="v43-claymorphism">
+/* V43 — Claymorphism visual refresh (Picking dashboard only; data logic untouched) */
+#pickingDashboardPage{background:linear-gradient(135deg,#f8f6ef 0%,#edf3f7 48%,#f5edf0 100%)!important}
+#pickingDashboardPage .pls-topbar{background:linear-gradient(110deg,#173c78 0%,#176d91 58%,#38a99e 100%)!important;border:0!important;border-radius:0 0 18px 18px!important;box-shadow:0 8px 18px rgba(33,79,128,.22),inset 0 -3px rgba(255,255,255,.22)!important}
+#pickingDashboardPage .pls-brand-icon,#pickingDashboardPage .pls-forklift{filter:drop-shadow(0 3px 3px rgba(0,0,0,.18))}
+#pickingDashboardPage .pls-top-meta{background:rgba(255,255,255,.13)!important;border:1px solid rgba(255,255,255,.3)!important;border-radius:15px!important;box-shadow:inset 2px 2px 5px rgba(255,255,255,.16),0 4px 10px rgba(0,0,0,.12)!important}
+#pickingDashboardPage #pickingLineStatus{background:transparent!important;padding:12px 14px 22px!important}
+#pickingDashboardPage #pickingLineStatus .pls-source,
+#pickingDashboardPage #pickingLineStatus .pls-filterbox,
+#pickingDashboardPage #pickingLineStatus .pls-priority-top,
+#pickingDashboardPage #pickingLineStatus .pls-panel,
+#pickingDashboardPage #pickingLineStatus .pls-kpi{background:linear-gradient(145deg,#fffefa,#edf2f8)!important;border:1px solid rgba(255,255,255,.95)!important;border-radius:17px!important;box-shadow:7px 7px 16px rgba(47,66,91,.13),-5px -5px 13px rgba(255,255,255,.9),inset 1px 1px 2px rgba(255,255,255,.9)!important}
+#pickingDashboardPage #pickingLineStatus .pls-source{padding:11px 14px!important}
+#pickingDashboardPage #pickingLineStatus input[type=file],
+#pickingDashboardPage #pickingLineStatus select{background:linear-gradient(145deg,#fff,#f0f3f7)!important;border:1px solid #dce3eb!important;border-radius:12px!important;box-shadow:inset 2px 2px 5px rgba(50,68,91,.08),2px 2px 5px rgba(255,255,255,.9)!important;color:#203957!important}
+#pickingDashboardPage #pickingLineStatus .pls-btn{border-radius:12px!important;background:linear-gradient(145deg,#20bd8c,#07845f)!important;box-shadow:4px 4px 9px rgba(7,132,95,.22),inset 1px 1px 2px rgba(255,255,255,.35)!important}
+#pickingDashboardPage #pickingLineStatus .pls-btn.secondary{background:linear-gradient(145deg,#f9fbff,#dce8f7)!important;color:#23456c!important;border:1px solid #d5e0ef!important;box-shadow:4px 4px 9px rgba(48,74,109,.12),inset 1px 1px 2px #fff!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi{padding:12px 14px!important;min-height:88px!important;border-top:3px solid #3b8bd4!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi:nth-child(2){border-top-color:#21ad78!important;background:linear-gradient(145deg,#f4fff8,#d8f5e4)!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi:nth-child(3){border-top-color:#e35c78!important;background:linear-gradient(145deg,#fff8fa,#f9dfe7)!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi:nth-child(4){border-top-color:#3b9ed2!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi:nth-child(5){border-top-color:#d49a3d!important;background:linear-gradient(145deg,#fffaf1,#f7e8cf)!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi strong{color:#173b68!important;text-shadow:0 1px 0 #fff}
+#pickingDashboardPage #pickingLineStatus .pls-kpi:nth-child(2) strong{color:#13885e!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi:nth-child(3) strong{color:#c43f5b!important}
+#pickingDashboardPage #pickingLineStatus .pls-panel h3{background:linear-gradient(100deg,#244e9b,#237d91)!important;border-radius:12px!important;padding:9px 12px!important;box-shadow:inset 1px 1px 2px rgba(255,255,255,.35),3px 4px 8px rgba(34,75,128,.18)!important}
+#pickingDashboardPage #pickingLineStatus .pls-block{background:linear-gradient(145deg,#fff,#f0f4f8)!important;border:1px solid #e1e8f0!important;border-radius:12px!important;box-shadow:3px 3px 8px rgba(42,62,87,.08)!important}
+#pickingDashboardPage #pickingLineStatus .pls-block-title{background:linear-gradient(100deg,#e4edf9,#f5f2ee)!important;border-bottom:1px solid #e0e7ef!important}
+#pickingDashboardPage #pickingLineStatus .pls-block-title span{font-size:12px!important;font-weight:900!important;color:#c14b62!important}
+#pickingDashboardPage #pickingLineStatus .pls-subtable th,
+#pickingDashboardPage #pickingLineStatus .pls-summary-table th{background:#e4edf8!important;color:#25456c!important}
+#pickingDashboardPage #pickingLineStatus .pls-subtable td,
+#pickingDashboardPage #pickingLineStatus .pls-summary-table td{background:rgba(255,255,255,.65)!important}
+#pickingDashboardPage #pickingLineStatus .pls-summary-table tr.total td{background:#dff3e8!important;color:#14724f!important;font-weight:900!important}
+#pickingDashboardPage #pickingLineStatus .pls-status-complete{color:#11865c!important}
+#pickingDashboardPage #pickingLineStatus .pls-status-pending{color:#c33d59!important}
+#pickingDashboardPage #pickingLineStatus .pls-priority-top{padding:10px!important}
+#pickingDashboardPage #pickingLineStatus .pls-priority-top h3{margin-bottom:8px!important}
+#pickingDashboardPage #pickingLineStatus .pls-scroll{scrollbar-color:#9db6d3 #edf1f6;scrollbar-width:thin}
+@media(max-width:720px){
+ #pickingDashboardPage #pickingLineStatus{padding:8px!important}
+ #pickingDashboardPage .pls-topbar{border-radius:0 0 13px 13px!important}
+ #pickingDashboardPage #pickingLineStatus .pls-source,
+ #pickingDashboardPage #pickingLineStatus .pls-filterbox,
+ #pickingDashboardPage #pickingLineStatus .pls-panel,
+ #pickingDashboardPage #pickingLineStatus .pls-kpi{border-radius:12px!important}
+ #pickingDashboardPage #pickingLineStatus .pls-kpi{min-height:74px!important;padding:8px!important}
+}
+</style>
 </body></html>
 <style>
 
@@ -1903,5 +1952,40 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
 @media(max-width:1100px){
  #pickingLineStatus .pls-filter-priority-row{grid-template-columns:minmax(0,1fr)!important}
  #pickingLineStatus .pls-priority-top .pls-scroll{max-height:220px!important}
+}
+</style>
+
+<style id="v42-compact-filter-priority-row">
+@media(min-width:1101px){
+ #pickingDashboardPage #pickingLineStatus .pls-filter-priority-row{
+   display:grid!important;
+   grid-template-columns:minmax(0,8fr) minmax(210px,2fr)!important;
+   align-items:start!important;gap:10px!important;
+ }
+ #pickingDashboardPage #pickingLineStatus .pls-filter-priority-row>.pls-filterbox{
+   height:auto!important;min-height:0!important;align-self:start!important;padding:8px 10px!important;
+ }
+ #pickingDashboardPage #pickingLineStatus .pls-filter-priority-row>.pls-priority-top{
+   height:auto!important;min-height:0!important;max-height:205px!important;
+   align-self:start!important;padding:8px!important;overflow:hidden!important;
+ }
+ #pickingDashboardPage #pickingLineStatus .pls-priority-top .pls-scroll{
+   height:auto!important;max-height:150px!important;min-height:0!important;
+   overflow-y:auto!important;overflow-x:hidden!important;
+ }
+ #pickingDashboardPage #pickingLineStatus .pls-priority-top h3{margin:0 0 6px!important}
+ #pickingDashboardPage #pickingLineStatus .pls-kpis{margin-top:10px!important}
+}
+@media(max-width:1100px){
+ #pickingDashboardPage #pickingLineStatus .pls-filter-priority-row{align-items:start!important}
+ #pickingDashboardPage #pickingLineStatus .pls-filter-priority-row>.pls-filterbox{
+   height:auto!important;min-height:0!important;align-self:start!important;
+ }
+ #pickingDashboardPage #pickingLineStatus .pls-filter-priority-row>.pls-priority-top{
+   height:auto!important;min-height:0!important;max-height:250px!important;align-self:start!important;
+ }
+ #pickingDashboardPage #pickingLineStatus .pls-priority-top .pls-scroll{
+   max-height:195px!important;overflow-y:auto!important;
+ }
 }
 </style>
