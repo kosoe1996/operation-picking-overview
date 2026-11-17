@@ -1127,7 +1127,82 @@ body[data-view="picking"] .content{padding:0!important}
 }
 @media(max-width:480px){#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{grid-template-columns:1fr!important}}
 
-</style></head><body><div class="app-shell">
+</style>
+
+<style id="v46-by-block-status-layout">
+/* V46: restore the full Picking Line Status dashboard and use the right-side space for By Block Status. */
+#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{
+ display:grid!important;
+ grid-template-columns:minmax(0,1.32fr) minmax(250px,.92fr) minmax(260px,.86fr)!important;
+ grid-template-rows:auto auto!important;
+ gap:9px!important;
+ align-items:start!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid{display:contents!important}
+#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:first-child{
+ grid-column:1!important;grid-row:1 / span 2!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:nth-child(2){
+ grid-column:2!important;grid-row:1!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:first-child{
+ grid-column:2!important;grid-row:2!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-by-block-status{
+ grid-column:3!important;grid-row:1 / span 2!important;
+ max-height:540px;overflow:auto;
+}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-list{display:flex;flex-direction:column;gap:8px}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-item{
+ padding:10px 11px;border:1px solid #dce6ed;border-radius:8px;background:#f8fbfd;
+}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-head{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;
+ color:#173d59;font-size:11px;font-weight:900;
+}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-head b{
+ color:#13815f;font-size:14px;font-weight:900;font-variant-numeric:tabular-nums;
+}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-meta{
+ display:flex;flex-wrap:wrap;justify-content:space-between;gap:5px;
+ font-size:9px;color:#536b7d;font-weight:700;
+}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-track{
+ height:8px;background:#e7edf1;border-radius:20px;overflow:hidden;margin-top:7px;
+}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-track i{
+ display:block;height:100%;background:linear-gradient(90deg,#24a477,#087e5b);border-radius:20px;
+}
+@media(max-width:1100px){
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{
+  grid-template-columns:minmax(0,1fr) minmax(240px,.9fr)!important;
+ }
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:first-child{
+  grid-column:1!important;grid-row:1 / span 2!important;
+ }
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:nth-child(2){
+  grid-column:2!important;grid-row:1!important;
+ }
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:first-child{
+  grid-column:2!important;grid-row:2!important;
+ }
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-by-block-status{
+  grid-column:1/-1!important;grid-row:auto!important;max-height:none;
+ }
+}
+@media(max-width:720px){
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{grid-template-columns:1fr!important}
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-dashboard-grid,
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:first-child,
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:nth-child(2),
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:first-child,
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-by-block-status{
+  grid-column:1!important;grid-row:auto!important;
+ }
+}
+</style>
+
+</head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
  <div class="navlabel">MAIN MENU</div>
@@ -1257,6 +1332,11 @@ body[data-view="picking"] .content{padding:0!important}
    <h3>TYPE BY BLOCK · BK / PF</h3>
    <table class="pls-summary-table" id="plsTypeTable"><thead><tr><th>Type</th><th>Block</th><th>TO Line</th><th>Line %</th></tr></thead><tbody><tr><td colspan="4">Waiting for data</td></tr></tbody></table>
   </div>
+ </div>
+ <div class="pls-panel pls-by-block-status">
+  <h3>BY BLOCK STATUS</h3>
+  <div id="plsByBlockStatus" class="pls-by-block-list"><div class="pls-empty">Upload Picking Line Status data to display block status.</div></div>
+  <div class="pls-note">Updates with the selected filters, excluding the Status filter.</div>
  </div>
  </div>
  <div class="pls-panel pls-do-classification">
@@ -1518,6 +1598,25 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   st+=`<tr class="pls-grand-total"><td colspan="2">GRAND TOTAL</td><td>${fmt(statusFiltered.length)}</td><td>${pct(statusFiltered.length,statusFiltered.length)}</td></tr>`;
   $('plsStatusTable').classList.add('pls-status-table');
   $('plsStatusTable').querySelector('tbody').innerHTML=st;
+
+  // By Block Status: always show Completed and Pending together, regardless of the Status dropdown.
+  const byBlock=statusFiltered.map(r=>{
+   const block=String(r.Block??'').trim().toUpperCase();
+   const kind=statusKind(val(r,'Status'));
+   return {block,kind};
+  });
+  $('plsByBlockStatus').innerHTML=blocks.map(b=>{
+   const rows=byBlock.filter(x=>x.block===b);
+   const completedCount=rows.filter(x=>x.kind==='completed').length;
+   const pendingCount=rows.filter(x=>x.kind==='pending').length;
+   const totalCount=rows.length;
+   const completion=totalCount?completedCount/totalCount*100:0;
+   return `<div class="pls-by-block-item">
+     <div class="pls-by-block-head"><strong>BLOCK ${b}</strong><b>${completion.toFixed(1)}%</b></div>
+     <div class="pls-by-block-meta"><span>${fmt(totalCount)} TO Lines</span><span class="pls-status-complete">Completed ${fmt(completedCount)}</span><span class="pls-status-pending">Pending ${fmt(pendingCount)}</span></div>
+     <div class="pls-by-block-track"><i style="width:${completion.toFixed(2)}%"></i></div>
+    </div>`;
+  }).join('');
 
   let ty='';
   [...new Set(filtered.map(r=>val(r,'Type')).filter(t=>t!=='(Blank)'))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).forEach(type=>{
