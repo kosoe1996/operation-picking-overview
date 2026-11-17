@@ -1220,26 +1220,22 @@ body[data-view="picking"] .content{padding:0!important}
 <section id="pickingLineStatus">
  <div class="pls-head"><div><h2>PICKING ORDER LINE STATUS</h2><p>Block-wise picking line, type, priority and completion overview</p></div><div id="plsClock" style="font-size:11px;font-weight:700;color:#e1edf5"></div></div>
  <div class="pls-source">
-  <div style="font-size:12px;font-weight:850;color:#173d59;margin-bottom:9px">DATA SOURCE · RAW DATA ONLY</div>
+  <div style="font-size:12px;font-weight:850;color:#173d59;margin-bottom:9px">DATA SOURCE · PICKING LINE STATUS ONLY</div>
   <div class="pls-source-row">
    <label>EXCEL WORKBOOK<input id="plsFile" type="file" accept=".xlsx,.xls"></label>
    <button class="pls-btn" id="plsProcess">Process &amp; Refresh</button>
    <button class="pls-btn secondary" id="plsExport" disabled>Export Excel</button>
   </div>
-  <div class="pls-note" id="plsMessage">Upload a workbook. The system reads only the sheet named “Raw Data”; other sheets are ignored.</div>
+  <div class="pls-note" id="plsMessage">Upload a workbook. The system reads only the sheet named “Picking Line Status”; other sheets are ignored.</div>
  </div>
  <div class="pls-filter-priority-row">
   <div class="pls-filterbox">
    <div style="font-size:12px;font-weight:850;color:#173d59;margin-bottom:10px">REPORT FILTERS</div>
    <div class="pls-filters" id="plsFilters"></div>
   </div>
-  <div class="pls-panel pls-priority-top">
-   <h3>PRIORITY NUMBER OF SET</h3>
-   <div class="pls-scroll"><table class="pls-summary-table" id="plsPriorityTable"><thead><tr><th>Row Labels</th><th>Count of TO Line</th></tr></thead><tbody><tr><td colspan="2">Waiting for data</td></tr></tbody></table></div>
-  </div>
  </div>
  <div class="pls-kpis" id="plsKpis">
-  <div class="pls-kpi"><small>TOTAL TO LINE</small><strong>—</strong><span>Raw Data rows</span></div>
+  <div class="pls-kpi"><small>TOTAL TO LINE</small><strong>—</strong><span>Picking Line Status rows</span></div>
   <div class="pls-kpi"><small>COMPLETED PICK</small><strong>—</strong><span>Rows completed</span></div>
   <div class="pls-kpi"><small>PENDING PICK</small><strong>—</strong><span>Rows pending</span></div>
   <div class="pls-kpi"><small>SINGLE TO LINES</small><strong>—</strong><span>DOs with one unique TO</span></div>
@@ -1249,7 +1245,7 @@ body[data-view="picking"] .content{padding:0!important}
  <div class="pls-main-grid">
   <div class="pls-panel">
    <h3>BLOCK BREAKDOWN · TYPE &amp; PRIORITY REMARK</h3>
-   <div class="pls-block-grid" id="plsBlocks"><div class="pls-empty">Upload Raw Data to display block breakdown.</div></div>
+   <div class="pls-block-grid" id="plsBlocks"><div class="pls-empty">Upload Picking Line Status data to display block breakdown.</div></div>
   </div>
   <div class="pls-panel">
    <h3>PICKING STATUS BY BLOCK</h3>
@@ -1266,7 +1262,7 @@ body[data-view="picking"] .content{padding:0!important}
  <div class="pls-panel pls-do-classification">
   <h3>DO / TO CLASSIFICATION</h3>
   <table class="pls-summary-table" id="plsDoToTable"><thead><tr><th>Classification</th><th>Unique DO</th><th>TO Lines (row count)</th></tr></thead><tbody><tr><td colspan="3">Waiting for data</td></tr></tbody></table>
-  <div class="pls-note">Single TO / Multiple TO is determined by the number of distinct Transfer Order Numbers within each Delivery. TO Line totals always count every Raw Data row, including repeated TO numbers.</div>
+  <div class="pls-note">Single TO / Multiple TO is determined by the number of distinct Transfer Order Numbers within each Delivery. TO Line totals always count every Picking Line Status row, including repeated TO numbers.</div>
  </div>
  <div class="pls-panel">
   <h3>ADDITIONAL INFORMATION</h3>
@@ -1289,9 +1285,9 @@ function cleanType(v, fallback){let s=String(v??'').trim().toUpperCase();if(s.in
 function excelDate(v){if(v instanceof Date&&!isNaN(v))return v.toISOString().slice(0,10);if(typeof v==='number'){let d=XLSX.SSF.parse_date_code(v);if(d)return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;}let s=String(v??'').trim();let m=s.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})$/);if(m)return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;let d=new Date(s);return isNaN(d)?s:d.toISOString().slice(0,10)}
 async function readFile(file, fallback){
  let wb=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:true});
- const rawSheetName=wb.SheetNames.find(n=>String(n).trim().toLowerCase().replace(/[^a-z0-9]/g,'')==='rawdata');
+ const rawSheetName=wb.SheetNames.find(n=>String(n).trim().toLowerCase().replace(/[^a-z0-9]/g,'')==='pickinglinestatus');
  if(!rawSheetName){
-  throw new Error(file.name+' ထဲမှာ "Raw Data" Sheet မတွေ့ပါ။ ရှိတဲ့ Sheet များ: '+wb.SheetNames.join(', '));
+  throw new Error(file.name+' ထဲမှာ "Picking Line Status" Sheet မတွေ့ပါ။ ရှိတဲ့ Sheet များ: '+wb.SheetNames.join(', '));
  }
  let sheet=wb.Sheets[rawSheetName];
  let matrix=XLSX.utils.sheet_to_json(sheet,{header:1,defval:'',raw:true});
@@ -1472,7 +1468,7 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   let singleRows=0,multipleRows=0;
   filtered.forEach(r=>{if(classes.get(String(r.Delivery??'').trim())==='Multiple TO')multipleRows++;else singleRows++;});
   $('plsKpis').innerHTML=[
-   `<div class="pls-kpi"><div class="pls-kpi-head"><small>TOTAL TO LINE</small><b class="pls-kpi-percent neutral">100.0%</b></div><strong>${fmt(total)}</strong><span>Raw Data rows</span><div class="pls-kpi-track"><i class="neutral-fill" style="width:100%"></i></div></div>`,
+   `<div class="pls-kpi"><div class="pls-kpi-head"><small>TOTAL TO LINE</small><b class="pls-kpi-percent neutral">100.0%</b></div><strong>${fmt(total)}</strong><span>Picking Line Status rows</span><div class="pls-kpi-track"><i class="neutral-fill" style="width:100%"></i></div></div>`,
    `<div class="pls-kpi"><div class="pls-kpi-head"><small>COMPLETED PICK</small><b class="pls-kpi-percent completed">${completedPct.toFixed(1)}%</b></div><strong>${fmt(completed)}</strong><span>Rows completed</span><div class="pls-kpi-track"><i class="completed-fill" style="width:${completedPct}%"></i></div></div>`,
    `<div class="pls-kpi"><div class="pls-kpi-head"><small>PENDING PICK</small><b class="pls-kpi-percent pending">${pendingPct.toFixed(1)}%</b></div><strong>${fmt(pending)}</strong><span>Rows pending</span><div class="pls-kpi-track"><i class="pending-fill" style="width:${pendingPct}%"></i></div></div>`,
    `<div class="pls-kpi"><small>SINGLE TO LINES</small><strong>${fmt(singleRows)}</strong><span>Rows belonging to Single TO DOs</span></div>`,
@@ -1532,23 +1528,6 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   });
   $('plsTypeTable').querySelector('tbody').innerHTML=ty||'<tr><td colspan="4">No records</td></tr>';
 
-  let pr='';
-  const setBlocks=[...new Set(filtered.map(r=>String(r.Block??'').trim().toUpperCase()).filter(Boolean))]
-    .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
-  setBlocks.forEach(block=>{
-   const blockRows=filtered.filter(r=>String(r.Block??'').trim().toUpperCase()===block);
-   pr+=`<tr class="pls-set-block"><td>${esc(block)}</td><td>${fmt(blockRows.length)}</td></tr>`;
-   const sets=[...new Set(blockRows.map(r=>val(r,'Priority Set')).filter(v=>v!=='(Blank)'))]
-     .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
-   sets.forEach(set=>{
-    const n=blockRows.filter(r=>val(r,'Priority Set')===set).length;
-    pr+=`<tr><td class="pls-set-child">${esc(set)}</td><td>${fmt(n)}</td></tr>`;
-   });
-   const blankCount=blockRows.filter(r=>val(r,'Priority Set')==='(Blank)').length;
-   if(blankCount)pr+=`<tr><td class="pls-set-child">(Blank)</td><td>${fmt(blankCount)}</td></tr>`;
-  });
-  pr+=`<tr class="total grand-total"><td>Grand Total</td><td>${fmt(total)}</td></tr>`;
-  $('plsPriorityTable').querySelector('tbody').innerHTML=pr||'<tr><td colspan="2">No Priority Set values</td></tr>';
   let dc='';
   ['Single TO','Multiple TO'].forEach(c=>{
    const dos=[...classes].filter(([d,x])=>x===c).map(([d])=>d);
@@ -1562,26 +1541,26 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   if(typeof XLSX==='undefined'){$('plsMessage').textContent='Excel reader library did not load. Please check internet connection and reload.';return;}
   try{
    const buf=await file.arrayBuffer();workbook=XLSX.read(buf,{type:'array',cellDates:true});
-   const sheetName=workbook.SheetNames.find(n=>norm(n)==='rawdata');
-   if(!sheetName)throw new Error('Raw Data sheet was not found. Please name the source sheet “Raw Data”. Other sheets are ignored.');
+   const sheetName=workbook.SheetNames.find(n=>norm(n)==='pickinglinestatus');
+   if(!sheetName)throw new Error('Picking Line Status sheet was not found. Please name the source sheet “Picking Line Status”. Other sheets are ignored.');
    const ws=workbook.Sheets[sheetName];const rows=XLSX.utils.sheet_to_json(ws,{defval:null,raw:false});
-   if(!rows.length)throw new Error('Raw Data sheet is empty.');
+   if(!rows.length)throw new Error('Picking Line Status sheet is empty.');
    const {map,missing}=resolveHeaders(rows[0]);
    if(missing.length)throw new Error('Missing required headers: '+missing.join(', '));
    raw=rows.map(r=>{
     const o={};Object.entries(map).forEach(([target,source])=>o[target]=r[source]);
     return o;
    }).filter(r=>r.Delivery!==null&&r.Delivery!==undefined&&String(r.Delivery).trim()!=='');
-   if(!raw.length)throw new Error('No valid Raw Data rows found.');
+   if(!raw.length)throw new Error('No valid Picking Line Status rows found.');
    buildFilters();render();$('plsExport').disabled=false;
-   $('plsMessage').textContent=`Loaded ${fmt(raw.length)} Raw Data rows from “${sheetName}”. Other ${workbook.SheetNames.length-1} sheet(s) ignored. Line count uses every row.`;
+   $('plsMessage').textContent=`Loaded ${fmt(raw.length)} rows from “${sheetName}”. Other ${workbook.SheetNames.length-1} sheet(s) ignored. Line count uses every row.`;
   }catch(e){$('plsMessage').textContent='Unable to process workbook: '+e.message;raw=[];$('plsExport').disabled=true;}
  }
  $('plsProcess').addEventListener('click',process);
  $('plsExport').addEventListener('click',()=>{
   if(!filtered.length)return;
   const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(filtered),'Filtered Raw Data');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(filtered),'Filtered Picking Line Status');
   const summary=[];
   ['COMPLETED PICK','PENDING PICK'].forEach(s=>['E','F','G','H'].forEach(b=>summary.push({Status:s,Block:b,TO_Line:filtered.filter(r=>norm(val(r,'Status'))===norm(s)&&String(r.Block??'').trim().toUpperCase()===b).length})));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(summary),'Status Summary');
@@ -1988,4 +1967,15 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
    max-height:195px!important;overflow-y:auto!important;
  }
 }
+</style>
+
+<style id="v44-remove-priority-set-table">
+/* Priority Number of Set table removed; filters use the full available row. */
+#pickingDashboardPage #pickingLineStatus .pls-filter-priority-row{
+ display:block!important; width:100%!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-filter-priority-row>.pls-filterbox{
+ width:100%!important; min-width:0!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-kpis{margin-top:10px!important}
 </style>
