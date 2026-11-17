@@ -1215,7 +1215,7 @@ body[data-view="picking"] .content{padding:0!important}
 </div>
 
 <div id="pickingDashboardPage" class="view-page">
- <header class="pls-topbar"><div class="pls-brand"><span class="pls-brand-icon">▣</span><div><b>OPERATION DASHBOARD</b><small>Picking Order Line Status</small></div></div><div class="pls-top-title"><span class="pls-forklift">♟</span><b>OVERALL BLOCK CURRENT ORDER PICKING LINE STATUS</b></div><div class="pls-top-meta"><span>LOCAL &amp; IKA<br><small>Load Plan : <i id="plsPlanDateTop">—</i></small></span><strong id="plsClockTop">--:--:--</strong></div></header>
+ <header class="pls-topbar"><div class="pls-brand"><span class="pls-brand-icon">▣</span><div><b>OPERATION DASHBOARD</b><small>Picking Order Line Status</small></div></div><div class="pls-top-title"><span class="pls-forklift">♟</span><b>OVERALL BLOCK CURRENT ORDER PICKING LINE STATUS</b></div><div class="pls-top-meta"><strong id="plsClockTop">--:--:--</strong></div></header>
 
 <section id="pickingLineStatus">
  <div class="pls-head"><div><h2>PICKING ORDER LINE STATUS</h2><p>Block-wise picking line, type, priority and completion overview</p></div><div id="plsClock" style="font-size:11px;font-weight:700;color:#e1edf5"></div></div>
@@ -1285,9 +1285,9 @@ function cleanType(v, fallback){let s=String(v??'').trim().toUpperCase();if(s.in
 function excelDate(v){if(v instanceof Date&&!isNaN(v))return v.toISOString().slice(0,10);if(typeof v==='number'){let d=XLSX.SSF.parse_date_code(v);if(d)return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;}let s=String(v??'').trim();let m=s.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})$/);if(m)return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;let d=new Date(s);return isNaN(d)?s:d.toISOString().slice(0,10)}
 async function readFile(file, fallback){
  let wb=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:true});
- const rawSheetName=wb.SheetNames.find(n=>String(n).trim().toLowerCase().replace(/[^a-z0-9]/g,'')==='pickinglinestatus');
+ const rawSheetName=wb.SheetNames.find(n=>String(n).trim().toLowerCase().replace(/[^a-z0-9]/g,'')==='rawdata');
  if(!rawSheetName){
-  throw new Error(file.name+' ထဲမှာ "Picking Line Status" Sheet မတွေ့ပါ။ ရှိတဲ့ Sheet များ: '+wb.SheetNames.join(', '));
+  throw new Error(file.name+' ထဲမှာ "Raw Data" Sheet မတွေ့ပါ။ ရှိတဲ့ Sheet များ: '+wb.SheetNames.join(', '));
  }
  let sheet=wb.Sheets[rawSheetName];
  let matrix=XLSX.utils.sheet_to_json(sheet,{header:1,defval:'',raw:true});
@@ -1442,7 +1442,10 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
    const options=values.length?values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join(''):'';
    box.insertAdjacentHTML('beforeend',`<label>${esc(label)}<select data-pls-filter="${esc(key)}"><option value="ALL">All</option>${options}</select></label>`);
   });
-  box.querySelectorAll('select').forEach(s=>s.addEventListener('change',render));
+  box.querySelectorAll('select').forEach(s=>{
+    const syncStatus=()=>{if(s.dataset.plsFilter!=='Status')return;s.classList.remove('pls-filter-status-all','pls-filter-status-completed','pls-filter-status-pending');const v=norm(s.value);s.classList.add(v==='all'?'pls-filter-status-all':v.includes('completed')?'pls-filter-status-completed':v.includes('pending')?'pls-filter-status-pending':'pls-filter-status-all');};
+    syncStatus();s.addEventListener('change',()=>{syncStatus();render();});
+  });
  }
  function applyFilters(){
   const selected={};$('plsFilters').querySelectorAll('select').forEach(s=>selected[s.dataset.plsFilter]=s.value);
@@ -1978,4 +1981,31 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
  width:100%!important; min-width:0!important;
 }
 #pickingDashboardPage #pickingLineStatus .pls-kpis{margin-top:10px!important}
+</style>
+
+<style id="v45-filter-table-and-source-fixes">
+/* Keep the right-hand X-marked area intentionally empty; align all eight filters in the left dashboard column. */
+@media(min-width:1101px){
+ #pickingDashboardPage #pickingLineStatus .pls-filter-priority-row{display:block!important;width:75%!important;max-width:75%!important;margin:0!important}
+ #pickingDashboardPage #pickingLineStatus .pls-filter-priority-row>.pls-filterbox{width:100%!important;max-width:none!important;margin:0!important}
+ #pickingDashboardPage #pickingLineStatus .pls-filters{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:9px 12px!important}
+}
+@media(max-width:1100px){
+ #pickingDashboardPage #pickingLineStatus .pls-filter-priority-row{width:100%!important;max-width:100%!important}
+ #pickingDashboardPage #pickingLineStatus .pls-filters{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:700px){#pickingDashboardPage #pickingLineStatus .pls-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+/* Table and table-card edges are square, not rounded. */
+#pickingDashboardPage #pickingLineStatus .pls-block,
+#pickingDashboardPage #pickingLineStatus .pls-panel:has(.pls-summary-table),
+#pickingDashboardPage #pickingLineStatus .pls-panel:has(.pls-subtable){border-radius:0!important}
+#pickingDashboardPage #pickingLineStatus .pls-block{overflow:hidden!important}
+#pickingDashboardPage #pickingLineStatus .pls-subtable,
+#pickingDashboardPage #pickingLineStatus .pls-summary-table{border-radius:0!important}
+/* Status filter state colours: All is neutral; only explicit statuses use green/red. */
+#pickingDashboardPage #pickingLineStatus select[data-pls-filter="Status"].pls-filter-status-all{color:#203957!important;border-color:#dce3eb!important;background:#fff!important;box-shadow:inset 2px 2px 5px rgba(50,68,91,.06)!important}
+#pickingDashboardPage #pickingLineStatus select[data-pls-filter="Status"].pls-filter-status-completed{color:#087b56!important;border-color:#55b995!important;background:#effaf4!important}
+#pickingDashboardPage #pickingLineStatus select[data-pls-filter="Status"].pls-filter-status-pending{color:#bd3948!important;border-color:#df8792!important;background:#fff2f4!important}
+/* The header keeps its live clock only; the Local & IKA / Load Plan badge is removed. */
+#pickingDashboardPage .pls-top-meta{justify-content:flex-end!important;min-width:120px!important}
 </style>
