@@ -1518,11 +1518,17 @@ body[data-view="picking"] .side-foot>div:last-child{display:none!important}
    <div style="font-size:12px;font-weight:850;color:#173d59;margin-bottom:10px">REPORT FILTERS</div>
    <div class="pls-filters" id="plsFilters"></div>
   </div>
+  <aside class="pls-share-box" data-html2canvas-ignore="true">
+   <div class="pls-share-title">WHATSAPP REPORT</div>
+   <p>Copy the full Picking Line Status dashboard as a high-resolution image.</p>
+   <button type="button" class="pls-copy-image-btn" id="plsCopyImage">▣ Copy as Image (HD)</button>
+   <small id="plsCopyMessage">Ready to copy after loading your workbook.</small>
+  </aside>
  </div>
  <div class="pls-kpis" id="plsKpis">
-  <div class="pls-kpi"><small>TOTAL TO LINE</small><strong>—</strong><span>Picking Line Status rows</span></div>
-  <div class="pls-kpi"><small>COMPLETED PICK</small><strong>—</strong><span>Rows completed</span></div>
-  <div class="pls-kpi"><small>PENDING PICK</small><strong>—</strong><span>Rows pending</span></div>
+  <div class="pls-kpi"><small>TOTAL TO LINE</small><strong>—</strong><span>TO Lines</span></div>
+  <div class="pls-kpi"><small>COMPLETED PICK</small><strong>—</strong><span>TO Lines completed</span></div>
+  <div class="pls-kpi"><small>PENDING PICK</small><strong>—</strong><span>TO Lines pending</span></div>
   <div class="pls-kpi"><small>SINGLE TO LINES</small><strong>—</strong><span>DOs with one unique TO</span></div>
   <div class="pls-kpi"><small>MULTIPLE TO LINES</small><strong>—</strong><span>DOs with more than one unique TO</span></div>
  </div>
@@ -1548,11 +1554,6 @@ body[data-view="picking"] .side-foot>div:last-child{display:none!important}
   <div id="plsByBlockStatus" class="pls-by-block-list"><div class="pls-empty">Upload Picking Line Status data to display block status.</div></div>
   <div class="pls-note">Updates with the selected filters, excluding the Status filter.</div>
  </div>
- </div>
- <div class="pls-panel pls-do-classification">
-  <h3>DO / TO CLASSIFICATION</h3>
-  <table class="pls-summary-table" id="plsDoToTable"><thead><tr><th>Classification</th><th>Unique DO</th><th>TO Lines (row count)</th></tr></thead><tbody><tr><td colspan="3">Waiting for data</td></tr></tbody></table>
-  <div class="pls-note">Single TO / Multiple TO is determined by the number of distinct Transfer Order Numbers within each Delivery. TO Line totals always count every Picking Line Status row, including repeated TO numbers.</div>
  </div>
  <div class="pls-panel">
   <h3>ADDITIONAL INFORMATION</h3>
@@ -1760,12 +1761,16 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   const classes=new Map([...doMap].map(([d,s])=>[d,s.size>1?'Multiple TO':'Single TO']));
   let singleRows=0,multipleRows=0;
   filtered.forEach(r=>{if(classes.get(String(r.Delivery??'').trim())==='Multiple TO')multipleRows++;else singleRows++;});
+  const blockLineCounts=(kind)=>['E','F','G','H'].map(b=>{
+   const n=kpiRows.filter(r=>String(r.Block??'').trim().toUpperCase()===b && statusKind(val(r,'Status'))===kind).length;
+   return `<span class="pls-kpi-block-count"><b>${b}</b> ${fmt(n)}</span>`;
+  }).join('');
   $('plsKpis').innerHTML=[
-   `<div class="pls-kpi"><div class="pls-kpi-head"><small>TOTAL TO LINE</small><b class="pls-kpi-percent neutral">100.0%</b></div><strong>${fmt(total)}</strong><span>Picking Line Status rows</span><div class="pls-kpi-track"><i class="neutral-fill" style="width:100%"></i></div></div>`,
-   `<div class="pls-kpi"><div class="pls-kpi-head"><small>COMPLETED PICK</small><b class="pls-kpi-percent completed">${completedPct.toFixed(1)}%</b></div><strong>${fmt(completed)}</strong><span>Rows completed</span><div class="pls-kpi-track"><i class="completed-fill" style="width:${completedPct}%"></i></div></div>`,
-   `<div class="pls-kpi"><div class="pls-kpi-head"><small>PENDING PICK</small><b class="pls-kpi-percent pending">${pendingPct.toFixed(1)}%</b></div><strong>${fmt(pending)}</strong><span>Rows pending</span><div class="pls-kpi-track"><i class="pending-fill" style="width:${pendingPct}%"></i></div></div>`,
-   `<div class="pls-kpi"><small>SINGLE TO LINES</small><strong>${fmt(singleRows)}</strong><span>Rows belonging to Single TO DOs</span></div>`,
-   `<div class="pls-kpi"><small>MULTIPLE TO LINES</small><strong>${fmt(multipleRows)}</strong><span>Rows belonging to Multiple TO DOs</span></div>`
+   `<div class="pls-kpi"><div class="pls-kpi-head"><small>TOTAL TO LINES</small><b class="pls-kpi-percent neutral">100.0%</b></div><strong>${fmt(total)}</strong><span>TO Lines</span><div class="pls-kpi-track"><i class="neutral-fill" style="width:100%"></i></div></div>`,
+   `<div class="pls-kpi"><div class="pls-kpi-head"><small>COMPLETED PICK</small><b class="pls-kpi-percent completed">${completedPct.toFixed(1)}%</b></div><strong>${fmt(completed)}</strong><span>TO Lines completed</span><div class="pls-kpi-track"><i class="completed-fill" style="width:${completedPct}%"></i></div><div class="pls-kpi-blocks">${blockLineCounts('completed')}</div></div>`,
+   `<div class="pls-kpi"><div class="pls-kpi-head"><small>PENDING PICK</small><b class="pls-kpi-percent pending">${pendingPct.toFixed(1)}%</b></div><strong>${fmt(pending)}</strong><span>TO Lines pending</span><div class="pls-kpi-track"><i class="pending-fill" style="width:${pendingPct}%"></i></div><div class="pls-kpi-blocks">${blockLineCounts('pending')}</div></div>`,
+   `<div class="pls-kpi"><small>SINGLE TO LINES</small><strong>${fmt(singleRows)}</strong><span>TO Lines belonging to Single TO DOs</span></div>`,
+   `<div class="pls-kpi"><small>MULTIPLE TO LINES</small><strong>${fmt(multipleRows)}</strong><span>TO Lines belonging to Multiple TO DOs</span></div>`
   ].join('');
   const blocks=['E','F','G','H'];
   $('plsBlocks').innerHTML=blocks.map(b=>{
@@ -1782,7 +1787,7 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
    const bkTotal=rows.filter(r=>String(val(r,'Type')).trim().toUpperCase()==='BK').length;
    const pfTotal=rows.filter(r=>String(val(r,'Type')).trim().toUpperCase()==='PF').length;
    const selectedStatus=$('plsFilters').querySelector('select[data-pls-filter="Status"]')?.value||'ALL';
-   const countClass=selectedStatus==='ALL'?'':(norm(selectedStatus)==='completedpick'?'is-completed':(norm(selectedStatus)==='pendingpick'?'is-pending':''));
+   const countClass=rows.length===0||selectedStatus==='ALL'?'':(norm(selectedStatus)==='completedpick'?'is-completed':(norm(selectedStatus)==='pendingpick'?'is-pending':''));
    return `<div class="pls-block"><div class="pls-block-title">BLOCK ${b}<span class="pls-block-count ${countClass}">${fmt(rows.length)} TO Lines</span></div><table class="pls-subtable pls-pivot-block"><thead><tr><th>Row Labels</th><th>BK</th><th>PF</th><th>Grand Total</th></tr></thead><tbody>${body||'<tr><td colspan="4">No records</td></tr>'}</tbody><tfoot><tr class="pls-subtotal"><td>Grand Total</td><td class="num">${fmt(bkTotal)}</td><td class="num">${fmt(pfTotal)}</td><td class="num">${fmt(rows.length)}</td></tr></tfoot></table></div>`;
   }).join('');
   // Status summary ignores the Status filter only. All other selected filters still apply.
@@ -1840,13 +1845,7 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   });
   $('plsTypeTable').querySelector('tbody').innerHTML=ty||'<tr><td colspan="4">No records</td></tr>';
 
-  let dc='';
-  ['Single TO','Multiple TO'].forEach(c=>{
-   const dos=[...classes].filter(([d,x])=>x===c).map(([d])=>d);
-   const lines=filtered.filter(r=>dos.includes(String(r.Delivery??'').trim())).length;
-   dc+=`<tr><td>${c}</td><td>${fmt(dos.length)}</td><td>${fmt(lines)}</td></tr>`;
-  });
-  $('plsDoToTable').querySelector('tbody').innerHTML=dc;
+
  }
  async function process(){
   const file=$('plsFile').files[0];if(!file){$('plsMessage').textContent='Please choose an Excel workbook first.';return;}
@@ -1869,6 +1868,22 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   }catch(e){$('plsMessage').textContent='Unable to process workbook: '+e.message;raw=[];$('plsExport').disabled=true;}
  }
  $('plsProcess').addEventListener('click',process);
+ $('plsCopyImage').addEventListener('click',async()=>{
+  const btn=$('plsCopyImage'),msg=$('plsCopyMessage'),target=$('pickingDashboardPage');
+  if(!raw.length){msg.textContent='Please load a workbook first.';return;}
+  if(typeof html2canvas==='undefined'){msg.textContent='Image library did not load. Reload the page and try again.';return;}
+  btn.disabled=true;btn.textContent='Preparing HD image…';msg.textContent='Rendering dashboard at high resolution…';
+  try{
+   const canvas=await html2canvas(target,{scale:3,backgroundColor:'#f1f6f1',useCORS:true,logging:false,windowWidth:Math.max(document.documentElement.clientWidth,target.scrollWidth),scrollX:0,scrollY:0});
+   const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+   if(!blob)throw new Error('Could not create PNG image.');
+   if(navigator.clipboard && window.ClipboardItem){
+    try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.textContent='HD dashboard image copied. Paste it into WhatsApp.';}
+    catch(copyErr){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Picking_Line_Status_HD.png';a.click();URL.revokeObjectURL(a.href);msg.textContent='Clipboard permission unavailable; HD PNG downloaded instead.';}
+   }else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Picking_Line_Status_HD.png';a.click();URL.revokeObjectURL(a.href);msg.textContent='HD PNG downloaded. Share it in WhatsApp.';}
+  }catch(e){msg.textContent='Image export failed: '+e.message;}
+  finally{btn.disabled=false;btn.textContent='▣ Copy as Image (HD)';}
+ });
  $('plsExport').addEventListener('click',()=>{
   if(!filtered.length)return;
   const wb=XLSX.utils.book_new();
@@ -2222,6 +2237,46 @@ html,body{background:#f0f5f1!important}
  #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:first-child,
  #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-by-block-status{grid-column:1!important;grid-row:auto!important;max-height:none!important}
  #pickingDashboardPage #pickingLineStatus .pls-block-grid{grid-template-columns:1fr!important}
+}
+</style>
+
+<style id="v52-layout-and-whatsapp-fixes">
+/* V52: widen the navigation rail and the breakdown area; keep summary panels slightly right. */
+@media(min-width:1151px){
+ .side{width:132px!important;min-width:132px!important;flex:0 0 132px!important}
+ .main{width:calc(100% - 132px)!important}
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{grid-template-columns:minmax(0,1.72fr) minmax(250px,.88fr) minmax(250px,.88fr)!important;column-gap:14px!important}
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:first-child{grid-column:1!important}
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:first-child>.pls-panel:nth-child(2),
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-main-grid:nth-child(2)>.pls-panel:first-child{margin-left:3px!important}
+ #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-by-block-status{margin-left:3px!important}
+}
+@media(min-width:1151px){
+ #pickingDashboardPage #pickingLineStatus .pls-filter-priority-row{display:grid!important;grid-template-columns:minmax(0,3fr) minmax(235px,1fr)!important;gap:12px!important;align-items:stretch!important;width:100%!important;max-width:100%!important}
+ #pickingDashboardPage #pickingLineStatus .pls-filter-priority-row>.pls-filterbox{width:100%!important;max-width:none!important}
+}
+#pickingDashboardPage #pickingLineStatus .pls-share-box{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:14px 16px;border:1px solid #d8e6df;border-radius:10px;background:linear-gradient(145deg,#f7fbf8,#edf5f0);box-shadow:0 2px 8px rgba(28,66,42,.04)}
+#pickingDashboardPage #pickingLineStatus .pls-share-title{font-size:10px;font-weight:900;letter-spacing:.55px;color:#315a48}
+#pickingDashboardPage #pickingLineStatus .pls-share-box p{margin:0;color:#6c8074;font-size:9px;line-height:1.45}
+#pickingDashboardPage #pickingLineStatus .pls-copy-image-btn{width:100%;min-height:36px;border:0;border-radius:8px;background:linear-gradient(100deg,#087454,#159b80);color:#fff;font-size:10px;font-weight:850;cursor:pointer;box-shadow:0 3px 8px rgba(8,116,84,.16)}
+#pickingDashboardPage #pickingLineStatus .pls-copy-image-btn:disabled{opacity:.65;cursor:wait}
+#pickingDashboardPage #pickingLineStatus #plsCopyMessage{font-size:8px;color:#718378;line-height:1.35}
+#pickingDashboardPage #pickingLineStatus .pls-kpi-blocks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;margin-top:6px}
+#pickingDashboardPage #pickingLineStatus .pls-kpi-block-count{display:flex;justify-content:center;gap:3px;padding:3px 2px;border-radius:4px;background:#e6f3eb;color:#216b4e;font-size:8px!important;white-space:nowrap}
+#pickingDashboardPage #pickingLineStatus .pls-kpi:nth-child(3) .pls-kpi-block-count{background:#fae9ec;color:#a83e50}
+#pickingDashboardPage #pickingLineStatus .pls-kpi-block-count b{font-weight:900}
+#pickingDashboardPage #pickingLineStatus .pls-kpi{min-height:100px!important}
+#pickingDashboardPage #pickingLineStatus .pls-block-count.is-completed{color:#16845f!important;background:transparent!important}
+#pickingDashboardPage #pickingLineStatus .pls-block-count.is-pending{color:#c64753!important;background:transparent!important}
+#pickingDashboardPage #pickingLineStatus .pls-block-count:not(.is-completed):not(.is-pending){color:#75877b!important;background:transparent!important}
+#pickingDashboardPage #pickingLineStatus .pls-do-classification{display:none!important}
+@media(max-width:1150px){
+ #pickingDashboardPage #pickingLineStatus .pls-filter-priority-row{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important}
+ #pickingDashboardPage #pickingLineStatus .pls-share-box{min-height:100px}
+}
+@media(max-width:700px){
+ #pickingDashboardPage #pickingLineStatus .pls-kpi{min-height:95px!important}
+ #pickingDashboardPage #pickingLineStatus .pls-kpi-block-count{font-size:7px!important}
 }
 </style>
 </body></html>
