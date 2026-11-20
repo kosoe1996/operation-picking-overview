@@ -1874,7 +1874,15 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   if(typeof html2canvas==='undefined'){msg.textContent='Image library did not load. Reload the page and try again.';return;}
   btn.disabled=true;btn.textContent='Preparing HD image…';msg.textContent='Rendering dashboard at high resolution…';
   try{
-   const canvas=await html2canvas(target,{scale:3,backgroundColor:'#f1f6f1',useCORS:true,logging:false,windowWidth:Math.max(document.documentElement.clientWidth,target.scrollWidth),scrollX:0,scrollY:0});
+   const canvas=await html2canvas(target,{scale:3,backgroundColor:'#f1f6f1',useCORS:true,logging:false,windowWidth:Math.max(document.documentElement.clientWidth,target.scrollWidth),scrollX:0,scrollY:0,onclone:(doc)=>{
+    const page=doc.getElementById('pickingDashboardPage');
+    if(page){
+     /* WhatsApp capture: exclude workbook upload/source and report filters only. */
+     page.querySelectorAll('#pickingLineStatus > .pls-source, #pickingLineStatus > .pls-filter-priority-row').forEach(el=>el.style.setProperty('display','none','important'));
+     page.querySelectorAll('.pls-share-box,[data-html2canvas-ignore="true"]').forEach(el=>el.style.setProperty('display','none','important'));
+     page.style.height='auto';page.style.minHeight='0';page.style.overflow='visible';
+    }
+   }});
    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
    if(!blob)throw new Error('Could not create PNG image.');
    if(navigator.clipboard && window.ClipboardItem){
