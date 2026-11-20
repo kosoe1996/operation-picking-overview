@@ -2625,3 +2625,59 @@ html,body{background:#f0f5f1!important}
 /* The header keeps its live clock only; the Local & IKA / Load Plan badge is removed. */
 #pickingDashboardPage .pls-top-meta{justify-content:flex-end!important;min-width:120px!important}
 </style>
+
+
+<style id="v55-sidebar-refinement">
+/* V55: widen the desktop navigation and restore readable horizontal labels. */
+@media (min-width: 1101px) {
+  .app-shell { display:flex!important; }
+  .side {
+    width:190px!important; min-width:190px!important; max-width:190px!important;
+    flex:0 0 190px!important; padding:14px 10px!important;
+    overflow:visible!important;
+  }
+  .main {
+    margin-left:0!important; width:calc(100% - 190px)!important;
+    flex:1 1 calc(100% - 190px)!important; min-width:0!important;
+  }
+  .side .brand {
+    height:76px!important; padding:8px 9px 14px!important;
+    justify-content:flex-start!important; gap:10px!important;
+  }
+  .side .brand>div:last-child {
+    display:block!important; min-width:0!important;
+  }
+  .side .brand>div:last-child * {
+    white-space:normal!important;
+  }
+  .side .navlabel { display:block!important; }
+  .side .nav { padding:12px 0!important; gap:7px!important; }
+  .side .nav a {
+    min-height:46px!important; height:auto!important;
+    padding:10px 11px!important; gap:11px!important;
+    display:flex!important; flex-direction:row!important;
+    justify-content:flex-start!important; align-items:center!important;
+    text-align:left!important; white-space:nowrap!important;
+    border-radius:9px!important; font-size:11px!important; line-height:1.2!important;
+  }
+  .side .navicon {
+    display:grid!important; place-items:center!important;
+    width:22px!important; min-width:22px!important;
+    font-size:17px!important; line-height:1!important;
+  }
+  .side .nav a>span:last-child {
+    display:block!important; max-width:none!important;
+    white-space:nowrap!important; overflow:visible!important;
+  }
+  .side .side-bottom { padding:12px 8px!important; text-align:left!important; }
+  .side .side-status { font-size:10px!important; margin:0 0 10px!important; }
+  .side .side-status i { margin-right:6px!important; }
+  .side .side-foot { justify-content:flex-start!important; gap:9px!important; }
+  .side .side-foot>div:last-child { display:block!important; }
+  .side .side-avatar { width:32px!important; height:32px!important; }
+}
+@media (max-width:1100px) and (min-width:701px) {
+  .side { width:88px!important; min-width:88px!important; flex:0 0 88px!important; }
+  .main { margin-left:0!important; width:calc(100% - 88px)!important; }
+}
+</style>
