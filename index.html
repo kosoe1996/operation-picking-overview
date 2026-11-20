@@ -1875,12 +1875,12 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
  }
  $('plsProcess').addEventListener('click',process);
  $('plsCopyImage').addEventListener('click',async()=>{
-  const btn=$('plsCopyImage'),msg=$('plsCopyMessage'),target=$('pickingDashboardPage');
+  const btn=$('plsCopyImage'),msg=$('plsCopyMessage'),target=$('pickingLineStatus');
   if(!raw.length){msg.textContent='Please load a workbook first.';return;}
   if(typeof html2canvas==='undefined'){msg.textContent='Image library did not load. Reload the page and try again.';return;}
   btn.disabled=true;btn.textContent='Preparing HD image…';msg.textContent='Rendering dashboard at high resolution…';
   try{
-   const canvas=await html2canvas(target,{scale:3,backgroundColor:'#f1f6f1',useCORS:true,logging:false,windowWidth:Math.max(document.documentElement.clientWidth,target.scrollWidth),scrollX:0,scrollY:0});
+   const canvas=await html2canvas(target,{scale:3,backgroundColor:'#f1f6f1',useCORS:true,logging:false,windowWidth:Math.max(document.documentElement.clientWidth,target.scrollWidth),scrollX:0,scrollY:0,onclone:(doc)=>{const root=doc.getElementById('pickingLineStatus');if(root){root.querySelectorAll('.pls-source,.pls-filter-priority-row,.pls-share-box').forEach(el=>el.style.setProperty('display','none','important'));root.style.width=target.scrollWidth+'px';root.style.maxWidth='none';root.style.overflow='visible';}doc.querySelectorAll('.pls-copy-image-btn').forEach(el=>el.remove());}});
    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
    if(!blob)throw new Error('Could not create PNG image.');
    if(navigator.clipboard && window.ClipboardItem){
@@ -2652,5 +2652,43 @@ html,body{background:#f0f5f1!important}
   .side .side-foot {justify-content:flex-start!important;gap:9px!important}
   .side .side-foot>div:last-child {display:block!important}
   .side .side-avatar {width:32px!important;height:32px!important}
+}
+</style>
+
+
+<style id="v57-overall-completion-and-image-fix">
+/* V57: WhatsApp capture excludes workbook controls and filters. */
+#pickingDashboardPage #pickingLineStatus .pls-overall-completion{
+  background:linear-gradient(135deg,#173f68 0%,#245b78 58%,#167d78 100%)!important;
+  border:1px solid #174d69!important;
+  border-left:5px solid #f0b64c!important;
+  color:#fff!important;
+  box-shadow:0 5px 14px rgba(18,57,82,.20)!important;
+  padding:13px 12px!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-overall-completion .pls-by-block-head,
+#pickingDashboardPage #pickingLineStatus .pls-overall-completion .pls-by-block-head strong{
+  color:#fff!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-overall-completion .pls-by-block-head b{
+  color:#ffe08a!important;font-size:17px!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-overall-completion .pls-by-block-meta{
+  color:#e7f1f8!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-overall-completion .pls-status-complete{
+  color:#9ff0c9!important;font-weight:900!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-overall-completion .pls-status-pending{
+  color:#ffc0c8!important;font-weight:900!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-overall-completion .pls-by-block-track{
+  background:rgba(255,255,255,.23)!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-overall-completion .pls-by-block-track i{
+  background:linear-gradient(90deg,#ffe08a,#78e0c0)!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-item:not(.pls-overall-completion){
+  background:#f8fbfd!important;border-color:#dce6ed!important;
 }
 </style>
