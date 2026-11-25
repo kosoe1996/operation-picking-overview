@@ -1770,7 +1770,7 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
    `<div class="pls-kpi"><div class="pls-kpi-head"><small>TOTAL TO LINES</small><b class="pls-kpi-percent neutral">100.0%</b></div><strong>${fmt(total)}</strong><span class="pls-total-meta">${esc((($('plsFilters').querySelector('select[data-pls-filter="Order Type"]')?.value||'ALL')==='ALL'?'All Order Types':$('plsFilters').querySelector('select[data-pls-filter="Order Type"]').value))} · Plan Date: ${esc((($('plsFilters').querySelector('select[data-pls-filter="Plan Date"]')?.value||'ALL')==='ALL'?'All Dates':$('plsFilters').querySelector('select[data-pls-filter="Plan Date"]').value))}</span><div class="pls-kpi-track"><i class="neutral-fill" style="width:100%"></i></div></div>`,
    `<div class="pls-kpi"><div class="pls-kpi-head"><small>COMPLETED PICK</small><b class="pls-kpi-percent completed">${completedPct.toFixed(1)}%</b></div><strong>${fmt(completed)}</strong><span>TO Lines completed</span><div class="pls-kpi-track"><i class="completed-fill" style="width:${completedPct}%"></i></div><div class="pls-kpi-blocks">${blockLineCounts('completed')}</div></div>`,
    `<div class="pls-kpi"><div class="pls-kpi-head"><small>PENDING PICK</small><b class="pls-kpi-percent pending">${pendingPct.toFixed(1)}%</b></div><strong>${fmt(pending)}</strong><span>TO Lines pending</span><div class="pls-kpi-track"><i class="pending-fill" style="width:${pendingPct}%"></i></div><div class="pls-kpi-blocks">${blockLineCounts('pending')}</div></div>`,
-   `<div class="pls-kpi"><small>SINGLE TO LINES</small><strong>${fmt(singleRows)}</strong><span>TO Lines belonging to Single TO DOs</span></div>`,
+   `<div class="pls-kpi"><small>SINGLE TO LINES</small><strong>${fmt(singleRows+multipleRows)}</strong><span>TO Lines belonging to Single &amp; Multiple TO DOs</span></div>`,
    `<div class="pls-kpi"><small>MULTIPLE TO LINES</small><strong>${fmt(multipleRows)}</strong><span>TO Lines belonging to Multiple TO DOs</span></div>`
   ].join('');
   const blocks=['E','F','G','H'];
@@ -1909,8 +1909,9 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
      style.textContent=`
       #pickingDashboardPage #pickingLineStatus,
       #pickingDashboardPage #pickingLineStatus *{box-sizing:border-box}
-      #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{height:auto!important;min-height:0!important;max-height:none!important;grid-template-rows:max-content max-content!important;grid-auto-rows:max-content!important;align-content:start!important;align-items:start!important;overflow:visible!important}
-      #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-by-block-status{grid-column:3!important;grid-row:1 / span 2!important;height:max-content!important;min-height:0!important;max-height:none!important;overflow:visible!important;align-self:start!important}
+      #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{height:auto!important;min-height:0!important;max-height:none!important;grid-template-columns:minmax(0,1.12fr) minmax(0,.92fr)!important;grid-template-rows:max-content max-content!important;grid-auto-rows:max-content!important;align-content:start!important;align-items:start!important;overflow:visible!important}
+      /* The crossed-out right-hand By Block Status panel is intentionally excluded from the copied report. */
+      #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-by-block-status{display:none!important}
       #pickingDashboardPage #pickingLineStatus .pls-by-block-list{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;display:flex!important;flex-direction:column!important}
       #pickingDashboardPage #pickingLineStatus .pls-by-block-item{display:block!important;visibility:visible!important;opacity:1!important;height:auto!important;max-height:none!important;overflow:visible!important;break-inside:avoid!important}
       #pickingDashboardPage #pickingLineStatus .pls-scroll,
@@ -1925,8 +1926,8 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
       #pickingDashboardPage #pickingLineStatus .pls-by-block-item{padding:12px!important;margin-bottom:9px!important}
       #pickingDashboardPage #pickingLineStatus .pls-overall-completion{padding:16px!important}
       #pickingDashboardPage #pickingLineStatus>.pls-panel:last-child{height:auto!important;min-height:0!important;max-height:none!important;margin:10px 0 0!important;padding:10px!important}
-      #pickingDashboardPage #pickingLineStatus>.pls-by-block-horizontal-panel{display:block!important;width:100%!important;grid-column:1/-1!important}
-      #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important}
+      #pickingDashboardPage #pickingLineStatus>.pls-by-block-horizontal-panel,#pickingDashboardPage #pickingLineStatus>.pls-additional-bottom{display:block!important;width:calc((100% - 9px) * .92 / 2.04)!important;margin-left:calc((100% - 9px) * 1.12 / 2.04 + 9px)!important;grid-column:auto!important}
+      #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
      `;
      root.appendChild(style);
      root.querySelectorAll('.pls-copy-image-btn').forEach(el=>el.remove());
@@ -2853,4 +2854,20 @@ html,body{background:#f0f5f1!important}
 #pickingDashboardPage #pickingLineStatus>.pls-additional-bottom textarea{min-height:48px!important;height:52px!important;max-height:100px!important}
 @media(max-width:900px){#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:520px){#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{grid-template-columns:1fr 1fr!important}}
+
+/* V64: align the new horizontal status and notes with the Type by Block column. */
+#pickingDashboardPage #pickingLineStatus>.pls-by-block-horizontal-panel,
+#pickingDashboardPage #pickingLineStatus>.pls-additional-bottom{
+ display:block!important;box-sizing:border-box!important;width:calc((100% - 18px) * .92 / 2.76)!important;
+ margin:10px 0 0 calc((100% - 18px) * 1.12 / 2.76 + 9px)!important;
+ min-height:0!important;height:auto!important;max-height:none!important;overflow:visible!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal .pls-by-block-item{min-width:0!important;padding:9px!important;min-height:90px!important;box-shadow:0 3px 9px rgba(20,48,70,.08)!important;}
+#pickingDashboardPage #pickingLineStatus>.pls-additional-bottom textarea{display:block!important;width:100%!important;min-height:54px!important;height:54px!important;}
+@media(max-width:900px){
+ #pickingDashboardPage #pickingLineStatus>.pls-by-block-horizontal-panel,
+ #pickingDashboardPage #pickingLineStatus>.pls-additional-bottom{width:100%!important;margin:10px 0 0!important;}
+ #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
 </style>
