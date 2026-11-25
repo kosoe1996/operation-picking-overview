@@ -1878,47 +1878,68 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   const btn=$('plsCopyImage'),msg=$('plsCopyMessage'),target=$('pickingLineStatus');
   if(!raw.length){msg.textContent='Please load a workbook first.';return;}
   if(typeof html2canvas==='undefined'){msg.textContent='Image library did not load. Reload the page and try again.';return;}
-  btn.disabled=true;btn.textContent='Preparing HD image…';msg.textContent='Rendering dashboard at high resolution…';
+  btn.disabled=true;btn.textContent='Preparing Ultra HD image…';msg.textContent='Rendering full report at high resolution…';
   try{
-   const captureWidth=Math.max(1600,target.scrollWidth);
-   const canvas=await html2canvas(target,{scale:4,backgroundColor:'#f1f6f1',useCORS:true,logging:false,windowWidth:captureWidth,windowHeight:Math.max(700,target.scrollHeight),height:target.scrollHeight,scrollX:0,scrollY:0,onclone:(doc)=>{const root=doc.getElementById('pickingLineStatus');if(root){root.querySelectorAll('.pls-source,.pls-filter-priority-row,.pls-share-box').forEach(el=>el.style.setProperty('display','none','important'));root.style.width=captureWidth+'px';root.style.maxWidth='none';root.style.minWidth=captureWidth+'px';root.style.height='fit-content';root.style.minHeight='0';root.style.maxHeight='none';root.style.marginBottom='0';root.style.paddingBottom='10px';root.style.overflow='visible';const style=doc.createElement('style');style.textContent=`
-#pickingLineStatus{font-size:14px!important;line-height:1.3!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0 0 2px!important;overflow:visible!important;}
-#pickingLineStatus .pls-dashboard-grid{grid-template-rows:auto!important;grid-auto-rows:max-content!important;align-content:start!important;align-items:start!important;height:auto!important;min-height:0!important;}
-#pickingLineStatus .pls-dashboard-grid>.pls-by-block-status{max-height:none!important;height:auto!important;min-height:0!important;overflow:visible!important;grid-row:1 / span 2!important;}
-#pickingLineStatus .pls-by-block-list{height:auto!important;max-height:none!important;overflow:visible!important;}
-#pickingLineStatus .pls-by-block-item{break-inside:avoid!important;}
-#pickingLineStatus .pls-scroll{max-height:none!important;height:auto!important;overflow:visible!important;}
-#pickingLineStatus .pls-panel{height:auto!important;min-height:0!important;}
-#pickingLineStatus>.pls-panel:last-child{margin-top:10px!important;margin-bottom:0!important;}
-#pickingLineStatus .pls-kpis{margin-top:15px!important;gap:12px!important}
-#pickingLineStatus .pls-kpi{padding:16px 16px!important;min-height:132px!important}
-#pickingLineStatus .pls-kpi small{font-size:13px!important;letter-spacing:.5px!important}
-#pickingLineStatus .pls-kpi strong{font-size:34px!important;line-height:1.14!important;margin-top:7px!important}
-#pickingLineStatus .pls-kpi span{font-size:13px!important;margin-top:5px!important}
-#pickingLineStatus .pls-panel{padding:14px 15px!important}
-#pickingLineStatus .pls-panel h3{font-size:14px!important;padding:10px 12px!important;margin-bottom:10px!important}
-#pickingLineStatus .pls-block-title{font-size:15px!important}
-#pickingLineStatus table{font-size:13px!important}
-#pickingLineStatus th,#pickingLineStatus td{font-size:13px!important;padding:6px 8px!important;line-height:1.28!important}
-#pickingLineStatus .pls-by-block-item{padding:14px!important;margin-bottom:10px!important}
-#pickingLineStatus .pls-by-block-head{font-size:15px!important}
-#pickingLineStatus .pls-by-block-meta{font-size:13px!important}
-#pickingLineStatus .pls-overall-completion{padding:17px!important}
-#pickingLineStatus .pls-empty{font-size:14px!important;padding:20px!important}
-#pickingLineStatus .pls-dashboard-grid{gap:13px!important}
-#pickingLineStatus .pls-main-grid{gap:13px!important}
-#pickingLineStatus>.pls-panel:last-child{margin-bottom:0!important}
-#pickingLineStatus .pls-dashboard-grid>.pls-by-block-status .pls-by-block-item{display:block!important;visibility:visible!important;opacity:1!important}
-#pickingLineStatus .pls-dashboard-grid>.pls-by-block-status .pls-by-block-item:not(.pls-overall-completion){max-height:none!important;overflow:visible!important}
-#pickingLineStatus .pls-dashboard-grid>.pls-by-block-status .pls-note{display:block!important}
-`;
-root.appendChild(style);}doc.querySelectorAll('.pls-copy-image-btn').forEach(el=>el.remove());}});
+   const captureWidth=Math.max(1800,target.scrollWidth);
+   const canvas=await html2canvas(target,{
+    scale:4,backgroundColor:'#f1f6f1',useCORS:true,logging:false,
+    windowWidth:captureWidth,windowHeight:Math.max(900,target.scrollHeight),
+    scrollX:0,scrollY:0,
+    onclone:(doc)=>{
+     const root=doc.getElementById('pickingLineStatus');
+     if(!root)return;
+     root.querySelectorAll('.pls-source,.pls-filter-priority-row,.pls-share-box').forEach(el=>el.style.setProperty('display','none','important'));
+     root.style.setProperty('width',captureWidth+'px','important');
+     root.style.setProperty('min-width',captureWidth+'px','important');
+     root.style.setProperty('max-width','none','important');
+     root.style.setProperty('height','auto','important');
+     root.style.setProperty('min-height','0','important');
+     root.style.setProperty('max-height','none','important');
+     root.style.setProperty('overflow','visible','important');
+     root.style.setProperty('margin','0','important');
+     root.style.setProperty('padding','0 0 8px','important');
+     const style=doc.createElement('style');
+     style.textContent=`
+      #pickingDashboardPage #pickingLineStatus,
+      #pickingDashboardPage #pickingLineStatus *{box-sizing:border-box}
+      #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid{height:auto!important;min-height:0!important;max-height:none!important;grid-template-rows:max-content max-content!important;grid-auto-rows:max-content!important;align-content:start!important;align-items:start!important;overflow:visible!important}
+      #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-by-block-status{grid-column:3!important;grid-row:1 / span 2!important;height:max-content!important;min-height:0!important;max-height:none!important;overflow:visible!important;align-self:start!important}
+      #pickingDashboardPage #pickingLineStatus .pls-by-block-list{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;display:flex!important;flex-direction:column!important}
+      #pickingDashboardPage #pickingLineStatus .pls-by-block-item{display:block!important;visibility:visible!important;opacity:1!important;height:auto!important;max-height:none!important;overflow:visible!important;break-inside:avoid!important}
+      #pickingDashboardPage #pickingLineStatus .pls-scroll,
+      #pickingDashboardPage #pickingLineStatus .pls-panel{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important}
+      #pickingDashboardPage #pickingLineStatus .pls-dashboard-grid>.pls-by-block-status .pls-note{display:block!important}
+      #pickingDashboardPage #pickingLineStatus .pls-kpis{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+      #pickingDashboardPage #pickingLineStatus .pls-kpi{min-height:132px!important;padding:16px!important}
+      #pickingDashboardPage #pickingLineStatus .pls-kpi strong{font-size:36px!important}
+      #pickingDashboardPage #pickingLineStatus table{font-size:14px!important}
+      #pickingDashboardPage #pickingLineStatus th,
+      #pickingDashboardPage #pickingLineStatus td{font-size:14px!important;padding:6px 8px!important;line-height:1.25!important}
+      #pickingDashboardPage #pickingLineStatus .pls-by-block-item{padding:12px!important;margin-bottom:9px!important}
+      #pickingDashboardPage #pickingLineStatus .pls-overall-completion{padding:16px!important}
+      #pickingDashboardPage #pickingLineStatus>.pls-panel:last-child{height:auto!important;min-height:0!important;margin:10px 0 0!important;padding:10px!important}
+     `;
+     root.appendChild(style);
+     root.querySelectorAll('.pls-copy-image-btn').forEach(el=>el.remove());
+     /* Crop the exported canvas at the actual bottom of Additional Information,
+        not at the page/container minimum height. */
+     const note=root.querySelector('.additional-info');
+     if(note){
+      const rootRect=root.getBoundingClientRect(),noteRect=note.getBoundingClientRect();
+      const exactBottom=Math.ceil(noteRect.bottom-rootRect.top+10);
+      root.style.setProperty('height',exactBottom+'px','important');
+      root.style.setProperty('min-height',exactBottom+'px','important');
+      root.style.setProperty('max-height',exactBottom+'px','important');
+     }
+    }
+   });
+   /* Safety crop: trim any remaining container tail below the Additional Information panel. */
    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
    if(!blob)throw new Error('Could not create PNG image.');
    if(navigator.clipboard && window.ClipboardItem){
-    try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.textContent='HD dashboard image copied. Paste it into WhatsApp.';}
-    catch(copyErr){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Picking_Line_Status_HD.png';a.click();URL.revokeObjectURL(a.href);msg.textContent='Clipboard permission unavailable; HD PNG downloaded instead.';}
-   }else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Picking_Line_Status_HD.png';a.click();URL.revokeObjectURL(a.href);msg.textContent='HD PNG downloaded. Share it in WhatsApp.';}
+    try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.textContent=`Ultra HD report copied (${canvas.width} × ${canvas.height}px). Paste it into WhatsApp.`;}
+    catch(copyErr){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Picking_Line_Status_ULTRA_HD.png';a.click();URL.revokeObjectURL(a.href);msg.textContent='Clipboard permission unavailable; Ultra HD PNG downloaded instead.';}
+   }else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Picking_Line_Status_ULTRA_HD.png';a.click();URL.revokeObjectURL(a.href);msg.textContent='Ultra HD PNG downloaded. Share it in WhatsApp.';}
   }catch(e){msg.textContent='Image export failed: '+e.message;}
   finally{btn.disabled=false;btn.textContent='▣ Copy as Image (HD)';}
  });
