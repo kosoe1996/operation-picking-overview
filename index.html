@@ -1552,7 +1552,11 @@ body[data-view="picking"] .side-foot>div:last-child{display:none!important}
   <div class="pls-note">Updates with the selected filters, excluding the Status filter.</div>
  </div>
  </div>
- <div class="pls-panel">
+ <div class="pls-panel pls-by-block-horizontal-panel">
+  <h3>BY BLOCK STATUS · OVERALL &amp; BLOCK E / F / G / H</h3>
+  <div id="plsByBlockStatusHorizontal" class="pls-by-block-horizontal"><div class="pls-empty">Upload Picking Line Status data to display block completion.</div></div>
+ </div>
+ <div class="pls-panel pls-additional-bottom">
   <h3>ADDITIONAL INFORMATION</h3>
   <textarea id="plsAdditional" rows="2" placeholder="Add operational notes for this Picking Order Line Status report..." style="width:100%;border:1px solid #cbd8e2;border-radius:8px;padding:10px;font:12px Arial;color:#20384b;resize:vertical"></textarea>
  </div>
@@ -1826,7 +1830,7 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
      <div class="pls-by-block-meta"><span>${fmt(overallTotal)} TO Lines</span><span class="pls-status-complete">Completed ${fmt(overallCompleted)}</span><span class="pls-status-pending">Pending ${fmt(overallPending)}</span></div>
      <div class="pls-by-block-track"><i style="width:${overallPct.toFixed(2)}%"></i></div>
     </div>`;
-  $('plsByBlockStatus').innerHTML=overallCard+blocks.map(b=>{
+  const blockCards=blocks.map(b=>{
    const rows=byBlock.filter(x=>x.block===b);
    const completedCount=rows.filter(x=>x.kind==='completed').length;
    const pendingCount=rows.filter(x=>x.kind==='pending').length;
@@ -1838,6 +1842,9 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
      <div class="pls-by-block-track"><i style="width:${completion.toFixed(2)}%"></i></div>
     </div>`;
   }).join('');
+  /* Preserve the original vertical By Block Status and add a separate horizontal summary. */
+  $('plsByBlockStatus').innerHTML=overallCard+blockCards;
+  $('plsByBlockStatusHorizontal').innerHTML=overallCard+blockCards;
 
   let ty='';
   [...new Set(filtered.map(r=>val(r,'Type')).filter(t=>t!=='(Blank)'))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).forEach(type=>{
@@ -1917,13 +1924,15 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
       #pickingDashboardPage #pickingLineStatus td{font-size:14px!important;padding:6px 8px!important;line-height:1.25!important}
       #pickingDashboardPage #pickingLineStatus .pls-by-block-item{padding:12px!important;margin-bottom:9px!important}
       #pickingDashboardPage #pickingLineStatus .pls-overall-completion{padding:16px!important}
-      #pickingDashboardPage #pickingLineStatus>.pls-panel:last-child{height:auto!important;min-height:0!important;margin:10px 0 0!important;padding:10px!important}
+      #pickingDashboardPage #pickingLineStatus>.pls-panel:last-child{height:auto!important;min-height:0!important;max-height:none!important;margin:10px 0 0!important;padding:10px!important}
+      #pickingDashboardPage #pickingLineStatus>.pls-by-block-horizontal-panel{display:block!important;width:100%!important;grid-column:1/-1!important}
+      #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important}
      `;
      root.appendChild(style);
      root.querySelectorAll('.pls-copy-image-btn').forEach(el=>el.remove());
      /* Crop the exported canvas at the actual bottom of Additional Information,
         not at the page/container minimum height. */
-     const note=root.querySelector('.additional-info');
+     const note=root.querySelector('.pls-additional-bottom');
      if(note){
       const rootRect=root.getBoundingClientRect(),noteRect=note.getBoundingClientRect();
       const exactBottom=Math.ceil(noteRect.bottom-rootRect.top+10);
@@ -2827,4 +2836,21 @@ html,body{background:#f0f5f1!important}
 <style id="v60-whatsapp-crop-and-scale">
 /* V60: crop the exported landscape report to its actual content and improve phone readability. */
 #pickingDashboardPage #pickingLineStatus{height:auto!important;min-height:0!important;}
+
+/* V63: duplicate By Block Status as a horizontal report row; preserve original panel. */
+#pickingDashboardPage #pickingLineStatus>.pls-by-block-horizontal-panel,
+#pickingDashboardPage #pickingLineStatus>.pls-additional-bottom{display:block!important;width:100%!important;margin:10px 0 0!important;min-height:0!important;height:auto!important;max-height:none!important;overflow:visible!important;grid-column:auto!important;grid-row:auto!important}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important;align-items:stretch!important}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal .pls-by-block-item{min-width:0!important;margin:0!important;padding:12px!important;border:1px solid #dce6ed!important;border-radius:10px!important;background:linear-gradient(180deg,#fff,#f7fafc)!important;box-shadow:0 3px 10px rgba(20,48,70,.07)!important;display:flex!important;flex-direction:column!important;justify-content:center!important;min-height:112px!important}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal .pls-overall-completion{background:linear-gradient(115deg,#123d5d,#176f79)!important;border-left:5px solid #e9b84e!important;color:#fff!important}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal .pls-overall-completion .pls-by-block-head,
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal .pls-overall-completion .pls-by-block-meta{color:#fff!important}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal .pls-overall-completion .pls-by-block-head b{color:#ffd978!important}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal .pls-by-block-head{display:flex!important;justify-content:space-between!important;gap:6px!important;font-size:12px!important}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal .pls-by-block-head b{font-size:19px!important;color:#087e60!important;white-space:nowrap!important}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal .pls-by-block-meta{display:flex!important;flex-wrap:wrap!important;gap:5px 9px!important;margin:9px 0!important;font-size:10px!important}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal .pls-by-block-track{height:9px!important;margin-top:2px!important}
+#pickingDashboardPage #pickingLineStatus>.pls-additional-bottom textarea{min-height:48px!important;height:52px!important;max-height:100px!important}
+@media(max-width:900px){#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:520px){#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{grid-template-columns:1fr 1fr!important}}
 </style>
