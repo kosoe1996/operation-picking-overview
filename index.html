@@ -1576,7 +1576,7 @@ body[data-view="picking"] .side-foot>div:last-child{display:none!important}
 <div id="pickerKpiPage" class="view-page">
  <header class="pls-topbar"><div class="pls-brand"><span class="pls-brand-icon">◫</span><div><b>OPERATION DASHBOARD</b><small>Picker KPI</small></div></div><div class="pls-top-title"><span class="pls-forklift">♟</span><b>PICKER KPI · PERFORMANCE OVERVIEW</b></div><div class="pls-top-meta"><strong id="kpiClock">--:--:--</strong></div></header>
  <section id="pickerKpiWorkspace" class="pkpi-wrap">
-  <div class="pkpi-intro"><div><h2>PICKER KPI</h2><p>Shared target for every picker across all blocks</p></div><span class="pkpi-source-tag">EXCEL SOURCE · KPI</span></div>
+  <div class="pkpi-intro"><div><h2>PICKER KPI</h2><p>Shared target for every picker across all blocks</p></div><span class="pkpi-source-tag">EXCEL SOURCE · KPI</span><div class="pkpi-source-meta" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:#38556b"><span>OPERATION DATE: <b id="pkpiOperationDate">—</b></span><span>SHIFT: <b id="pkpiOperationShift">—</b></span></div></div>
   <section class="pkpi-calculator">
    <div class="pkpi-section-title"><div><b>TARGET LINE CALCULATOR</b><small>Target is applied to every picker in every block</small></div><span class="pkpi-live">LIVE CALCULATION</span></div>
    <div class="pkpi-fields">
@@ -2483,21 +2483,42 @@ html,body{background:#f0f5f1!important}
    const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});
    const sheetName=wb.SheetNames.find(n=>String(n).trim().toLowerCase()==='kpi');if(!sheetName)throw new Error('Worksheet “KPI” was not found. Available sheets: '+wb.SheetNames.join(', '));
    const ws=wb.Sheets[sheetName],matrix=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:true});
-   // This workbook's KPI layout: headers are on Excel row 9, data starts on row 10, columns B:G.
-   const headers=(matrix[8]||[]).slice(1,7).map(v=>String(v??'').trim());
+   // Detect the header row by its labels instead of assuming a fixed row/range.
    const expected=['BLOCK','Picker Name-Night','User2','Total TO Picking','Total Line Picking','Actual Picking Ctn'];
-   if(!expected.every((h,i)=>headers[i].toLowerCase()===h.toLowerCase()))throw new Error('KPI headers do not match the expected B:G layout on row 9. Found: '+headers.join(' | '));
+   const norm=v=>String(v??'').trim().toLowerCase().replace(/\s+/g,' ');
+   let headerRow=-1,cols=[];
+   for(let ri=0;ri<matrix.length;ri++){
+    const row=matrix[ri]||[];
+    for(let ci=0;ci<=row.length-expected.length;ci++){
+     const candidate=expected.map((_,j)=>norm(row[ci+j]));
+     if(expected.every((h,j)=>candidate[j]===norm(h))){headerRow=ri;cols=expected.map((_,j)=>ci+j);break;}
+    }
+    if(headerRow>=0)break;
+   }
+   if(headerRow<0)throw new Error('Could not locate the six KPI column headers. Please confirm the worksheet contains BLOCK, Picker Name-Night, User2, Total TO Picking, Total Line Picking and Actual Picking Ctn.');
+   // Operation date and shift are read directly from the KPI worksheet labels.
+   let opDate='',opShift='';
+   for(let ri=0;ri<matrix.length;ri++){
+    const row=matrix[ri]||[];
+    for(let ci=0;ci<row.length;ci++){
+     const label=norm(row[ci]);
+     if(label==='operation date')opDate=row[ci+1]??'';
+     if(label==='operation shift')opShift=row[ci+1]??'';
+    }
+   }
+   const dateText=v=>{if(v instanceof Date&&!isNaN(v))return v.toLocaleDateString('en-GB');if(typeof v==='number'&&v>20000){const d=XLSX.SSF.parse_date_code(v);return d?`${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')}/${d.y}`:String(v)}return String(v??'').trim()};
+   $('pkpiOperationDate').textContent=dateText(opDate)||'—';$('pkpiOperationShift').textContent=String(opShift??'').trim()||'—';
    const out=[];let currentBlock='';
-   for(let i=9;i<matrix.length;i++){
-    const row=matrix[i]||[],block=String(row[1]??'').trim(),picker=String(row[2]??'').trim(),user=String(row[3]??'').trim();
+   for(let i=headerRow+1;i<matrix.length;i++){
+    const row=matrix[i]||[],block=String(row[cols[0]]??'').trim(),picker=String(row[cols[1]]??'').trim(),user=String(row[cols[2]]??'').trim();
     if(block)currentBlock=block;
     if(!picker||/\btotal\s*$/i.test(block)||/^grand total$/i.test(block)||/total\s*$/i.test(picker))continue;
-    const to=Number(String(row[4]??0).replace(/,/g,''))||0,line=Number(String(row[5]??0).replace(/,/g,''))||0,carton=Number(String(row[6]??0).replace(/,/g,''))||0;
+    const to=Number(String(row[cols[3]]??0).replace(/,/g,''))||0,line=Number(String(row[cols[4]]??0).replace(/,/g,''))||0,carton=Number(String(row[cols[5]]??0).replace(/,/g,''))||0;
     if(!currentBlock||(!to&&!line&&!carton))continue;
     out.push({block:currentBlock,picker,user,to,line,carton});
    }
-   if(!out.length)throw new Error('KPI sheet was found, but no picker data rows were detected below row 9.');
-   pickerRows=out;window.pickerKpiRawRows=out;msg.textContent=`Loaded successfully · ${out.length} pickers · ${new Set(out.map(r=>r.block)).size} blocks · Source: ${sheetName}`;calc();
+   if(!out.length)throw new Error('KPI sheet was found, but no picker data rows were detected beneath the header row.');
+   pickerRows=out;window.pickerKpiRawRows=out;msg.textContent=`Loaded successfully · ${out.length} pickers · ${new Set(out.map(r=>r.block)).size} blocks · Header row ${headerRow+1} · Source: ${sheetName}`;calc();
   }catch(e){msg.textContent='Unable to process KPI workbook: '+e.message;$('pkpiResults').className='pkpi-empty';$('pkpiResults').textContent=e.message;}
   finally{btn.disabled=false;}
  });
