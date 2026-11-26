@@ -1574,15 +1574,12 @@ function alignPickingReportSections(){
  const horizontal=root.querySelector('.pls-by-block-horizontal-panel');
  const additional=root.querySelector('.pls-additional-bottom');
  if(!typeTable||!horizontal||!additional)return;
- if(window.matchMedia('(max-width:1100px)').matches){
-  root.style.setProperty('--pls-report-span','100%');
-  return;
- }
  const rootRect=root.getBoundingClientRect();
  const typePanel=typeTable.closest('.pls-panel');
  if(!typePanel)return;
+ // Both lower report sections end exactly at the right edge of Type by Block.
  const typeRect=typePanel.getBoundingClientRect();
- const span=Math.max(0,Math.round(typeRect.right-rootRect.left));
+ const span=Math.max(0,Math.ceil(typeRect.right-rootRect.left));
  if(span>0)root.style.setProperty('--pls-report-span',span+'px');
 }
 
@@ -2904,10 +2901,7 @@ html,body{background:#f0f5f1!important}
 #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important;width:100%!important;}
 #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal .pls-by-block-item{min-width:0!important;padding:9px!important;min-height:90px!important;box-shadow:0 3px 9px rgba(20,48,70,.08)!important;}
 #pickingDashboardPage #pickingLineStatus>.pls-additional-bottom textarea{display:block!important;box-sizing:border-box!important;width:100%!important;min-height:54px!important;height:54px!important;}
-@media(max-width:1100px){
- #pickingDashboardPage #pickingLineStatus{--pls-report-span:100%!important}
- #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-}
+/* Keep the lower report width aligned to Type by Block at every desktop/tablet width. */
 </style>
 
 <style id="v67-single-multiple-kpi">
@@ -2917,4 +2911,29 @@ html,body{background:#f0f5f1!important}
 #pickingDashboardPage #pickingLineStatus .pls-kpi-single-multiple .pls-kpi-dual em{font-size:9px!important;font-style:normal!important;color:#70818a!important;font-weight:750!important}
 #pickingDashboardPage #pickingLineStatus .pls-kpi-single-multiple .pls-kpi-dual>i{display:block!important;width:1px!important;height:32px!important;background:#dce5e9!important}
 @media(max-width:1100px){#pickingDashboardPage #pickingLineStatus .pls-kpi-single-multiple .pls-kpi-dual b{font-size:20px!important}}
+</style>
+
+<style id="v68-exact-report-span-five-cards">
+/* V68: By Block Status + Additional Information share the exact span from
+   the left edge of Block Breakdown to the right edge of Type by Block. */
+#pickingDashboardPage #pickingLineStatus>.pls-by-block-horizontal-panel,
+#pickingDashboardPage #pickingLineStatus>.pls-additional-bottom{
+ display:block!important;box-sizing:border-box!important;
+ width:var(--pls-report-span)!important;max-width:var(--pls-report-span)!important;
+ min-width:0!important;margin:10px 0 0 0!important;
+ height:auto!important;min-height:0!important;max-height:none!important;
+ grid-column:auto!important;overflow:visible!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{
+ display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ gap:8px!important;width:100%!important;align-items:stretch!important;
+}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal>.pls-by-block-item{
+ min-width:0!important;width:auto!important;margin:0!important;
+ padding:9px!important;min-height:88px!important;
+}
+#pickingDashboardPage #pickingLineStatus>.pls-additional-bottom textarea{
+ display:block!important;box-sizing:border-box!important;width:100%!important;
+ min-height:54px!important;height:54px!important;
+}
 </style>
