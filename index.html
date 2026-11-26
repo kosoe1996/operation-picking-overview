@@ -2650,7 +2650,7 @@ html,body{background:#f0f5f1!important}
   try{
    const canvas=await html2canvas(target,{scale:3,backgroundColor:'#ffffff',useCORS:true,logging:false,windowWidth:Math.max(document.documentElement.clientWidth,target.scrollWidth),onclone:(doc)=>{
     const el=doc.getElementById('pickerKpiWorkspace');if(el){el.style.width=target.scrollWidth+'px';el.style.maxWidth='none';el.style.overflow='visible';el.style.height='auto';}
-    ['.pkpi-calculator','.pkpi-upload','.pkpi-legend','.pkpi-copy-image','.pkpi-copy-message'].forEach(sel=>doc.querySelectorAll(sel).forEach(x=>x.style.display='none'));
+    ['.pkpi-intro','.pkpi-calculator','.pkpi-upload','.pkpi-legend','.pkpi-copy-image','.pkpi-copy-message'].forEach(sel=>doc.querySelectorAll(sel).forEach(x=>x.style.display='none'));
     const page=doc.getElementById('pickerKpiPage');if(page){page.style.display='block';page.style.position='static';page.style.width=target.scrollWidth+'px';}
    }});
    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
@@ -2662,6 +2662,37 @@ html,body{background:#f0f5f1!important}
  });
 })();
 </script>
+
+
+<style id="picker-kpi-v76-refinements">
+/* V76: inset the KPI canvas, emphasize each block total, and omit the intro title from copied images. */
+#pickerKpiPage #pickerKpiWorkspace.pkpi-wrap{
+  width:calc(100% - 32px)!important;max-width:1600px!important;
+  margin-left:auto!important;margin-right:auto!important;
+  box-sizing:border-box!important;
+}
+#pickerKpiPage .pkpi-block-total{
+  min-height:25px!important;padding:5px 8px!important;
+  margin-top:2px!important;border-top:1px solid #c7d5e1!important;
+  background:#e5eef6!important;color:#173c59!important;
+  font-size:10px!important;line-height:1.25!important;
+  font-weight:900!important;border-radius:4px!important;
+}
+#pickerKpiPage .pkpi-block-total b{
+  font-size:11px!important;font-weight:950!important;
+  letter-spacing:.15px!important;color:#123b5a!important;
+}
+#pickerKpiPage .pkpi-block-total span{
+  font-size:10px!important;font-weight:900!important;
+  color:#234b68!important;white-space:nowrap!important;
+}
+@media(max-width:760px){
+ #pickerKpiPage #pickerKpiWorkspace.pkpi-wrap{width:calc(100% - 16px)!important}
+ #pickerKpiPage .pkpi-block-total{align-items:flex-start!important;gap:3px!important}
+ #pickerKpiPage .pkpi-block-total b{font-size:10px!important}
+ #pickerKpiPage .pkpi-block-total span{font-size:9px!important;white-space:normal!important}
+}
+</style>
 
 </body></html>
 <style>
