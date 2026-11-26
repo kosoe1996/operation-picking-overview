@@ -1508,6 +1508,20 @@ body[data-view="picking"] .side-foot>div:last-child{display:none!important}
 @media(max-width:760px){#pickerKpiPage .pkpi-block-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important}#pickerKpiPage .pkpi-data-row{grid-template-columns:minmax(0,1fr)!important;gap:2px!important}#pickerKpiPage .pkpi-picker b{font-size:7px!important}#pickerKpiPage .pkpi-combo{grid-template-columns:.65fr 1fr 1.05fr!important}}
 </style>
 
+
+<style id="picker-kpi-v74-compact-labels-active-users">
+/* Tighter rows for WhatsApp-ready four-block overview */
+#pickerKpiPage .pkpi-data-row{min-height:20px!important;padding:1px 4px!important;gap:3px!important}
+#pickerKpiPage .pkpi-seg{height:15px!important;min-height:15px!important;padding:1px 2px!important}
+#pickerKpiPage .pkpi-seg b{font-size:6px!important}
+#pickerKpiPage .pkpi-seg small{font-size:5px!important}
+#pickerKpiPage .pkpi-picker b{font-size:6.5px!important;line-height:1!important}
+#pickerKpiPage .pkpi-picker .pkpi-person-name{font-size:6px!important}
+#pickerKpiPage .pkpi-block-title{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:4px!important}
+#pickerKpiPage .pkpi-active-users{font-size:7px!important;font-weight:800!important;color:#fff!important;background:#315d7b!important;border-radius:10px!important;padding:2px 5px!important;white-space:nowrap!important}
+@media(max-width:760px){#pickerKpiPage .pkpi-data-row{min-height:19px!important;padding:1px 3px!important}#pickerKpiPage .pkpi-seg{height:14px!important;min-height:14px!important}}
+</style>
+
 </head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
@@ -2548,15 +2562,16 @@ html,body{background:#f0f5f1!important}
   const groups=new Map();for(const r of pickerRows){if(!groups.has(r.block))groups.set(r.block,[]);groups.get(r.block).push(r)}
   let html='<div class="pkpi-data-table pkpi-block-grid">';
   for(const [block,items] of groups){
-   html+=`<section class="pkpi-block-card"><div class="pkpi-block-title">${esc(block)}</div>`;
+   const activeUsers=new Set(items.map(r=>String(r.user||r.picker||'').trim()).filter(Boolean)).size;
+   html+=`<section class="pkpi-block-card"><div class="pkpi-block-title"><span>${esc(block)}</span><span class="pkpi-active-users">ACTIVE USERS - ${activeUsers}</span></div>`;
    let st={to:0,line:0,carton:0};
    for(const r of items){st.to+=r.to;st.line+=r.line;st.carton+=r.carton;const pct=target>0?r.line/target*100:0,met=target>0&&r.line>=target,ctnPct=Math.max(3,r.carton/maxCtn*100);
-    html+=`<div class="pkpi-data-row"><div class="pkpi-picker"><b>${esc(r.user||r.picker)}${r.user&&r.picker?` <span class="pkpi-person-name">( ${esc(r.picker)} )</span>`:''}</b></div><div class="pkpi-combo"><div class="pkpi-seg pkpi-to"><b>TO ${fmt(r.to)}</b></div><div class="pkpi-seg ${met?'pkpi-line-green':'pkpi-line-red'}"><b>LINE ${fmt(r.line)}</b><small>${target?Math.round(pct)+'%':'Target —'}</small></div><div class="pkpi-seg pkpi-carton"><div class="pkpi-carton-fill" style="width:${ctnPct}%"></div><b>CTN ${fmt(r.carton)}</b></div></div></div>`;
+    html+=`<div class="pkpi-data-row"><div class="pkpi-picker"><b>${esc(r.user||r.picker)}${r.user&&r.picker?` <span class="pkpi-person-name">( ${esc(r.picker)} )</span>`:''}</b></div><div class="pkpi-combo"><div class="pkpi-seg pkpi-to"><b>TO - ${fmt(r.to)}</b></div><div class="pkpi-seg ${met?'pkpi-line-green':'pkpi-line-red'}"><b>LINE - ${fmt(r.line)} - ${target?Math.round(pct)+'%':'Target —'}</b></div><div class="pkpi-seg pkpi-carton"><div class="pkpi-carton-fill" style="width:${ctnPct}%"></div><b>CTN - ${fmt(r.carton)}</b></div></div></div>`;
    }
-   html+=`<div class="pkpi-block-total"><b>${esc(block)} TOTAL</b><span>TO ${fmt(st.to)}　 LINE ${fmt(st.line)}　 CTN ${fmt(st.carton)}</span></div></section>`;
+   html+=`<div class="pkpi-block-total"><b>${esc(block)} TOTAL</b><span>TO - ${fmt(st.to)}　 LINE - ${fmt(st.line)}　 CTN - ${fmt(st.carton)}</span></div></section>`;
   }
   const total=pickerRows.reduce((a,r)=>({to:a.to+r.to,line:a.line+r.line,carton:a.carton+r.carton}),{to:0,line:0,carton:0});
-  html+=`<div class="pkpi-grand-total"><b>GRAND TOTAL</b><strong>TO ${fmt(total.to)}　 LINE ${fmt(total.line)}　 CARTON ${fmt(total.carton)}</strong></div></div>`;
+  html+=`<div class="pkpi-grand-total"><b>GRAND TOTAL</b><strong>TO - ${fmt(total.to)}　 LINE - ${fmt(total.line)}　 CARTON - ${fmt(total.carton)}</strong></div></div>`;
   root.className='';root.innerHTML=html;
  }
  ['pkpiStart','pkpiCurrent','pkpiBreak','pkpiRate'].forEach(id=>$(id).addEventListener('input',calc));calc();
