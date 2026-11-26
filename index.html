@@ -1422,6 +1422,74 @@ body[data-view="picking"] .side-foot>div:last-child{display:none!important}
 @media(max-width:600px){#pickerKpiPage{padding:8px}.pkpi-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.pkpi-section-title{align-items:flex-start;flex-direction:column}.pkpi-upload-controls{width:100%}.pkpi-upload-controls input{max-width:100%;width:100%}}
 </style>
 
+
+<style id="picker-kpi-compact-v71">
+/* V71: compact Picker KPI layout for standard laptop screens */
+#pickerKpiPage{padding:7px 9px 12px!important;overflow-x:hidden!important}
+#pickerKpiPage .pkpi-wrap{max-width:100%!important;width:100%!important}
+#pickerKpiPage .pkpi-intro{margin:2px 1px 7px!important}
+#pickerKpiPage .pkpi-intro h2{font-size:15px!important}
+#pickerKpiPage .pkpi-intro p{font-size:9px!important}
+#pickerKpiPage .pkpi-source-tag,#pickerKpiPage .pkpi-live{font-size:8px!important;padding:5px 8px!important}
+#pickerKpiPage .pkpi-calculator,
+#pickerKpiPage .pkpi-upload,
+#pickerKpiPage .pkpi-table-panel{padding:8px 9px!important;margin-bottom:6px!important;border-radius:7px!important;box-shadow:0 1px 4px #203e580b!important}
+#pickerKpiPage .pkpi-section-title b,
+#pickerKpiPage .pkpi-table-head b{font-size:11px!important}
+#pickerKpiPage .pkpi-section-title small,
+#pickerKpiPage .pkpi-table-head small,
+#pickerKpiPage .pkpi-upload small{font-size:8px!important;margin-top:2px!important}
+#pickerKpiPage .pkpi-fields{grid-template-columns:repeat(4,minmax(90px,1fr)) repeat(2,minmax(100px,1fr))!important;gap:6px!important;margin-top:7px!important}
+#pickerKpiPage .pkpi-fields label{font-size:8px!important;gap:3px!important}
+#pickerKpiPage .pkpi-fields input{height:29px!important;font-size:11px!important;padding:0 6px!important}
+#pickerKpiPage .pkpi-result{padding:4px 7px!important}
+#pickerKpiPage .pkpi-result small{font-size:7px!important}
+#pickerKpiPage .pkpi-result strong{font-size:17px!important}
+#pickerKpiPage .pkpi-formula{font-size:8px!important;margin-top:5px!important}
+#pickerKpiPage .pkpi-upload b{font-size:10px!important}
+#pickerKpiPage .pkpi-upload input{font-size:9px!important;max-width:220px!important}
+#pickerKpiPage .pkpi-upload button{font-size:9px!important;padding:7px 10px!important}
+#pickerKpiPage .pkpi-upload p{font-size:8px!important}
+#pickerKpiPage .pkpi-legend{gap:9px!important;padding:6px 8px!important;margin-bottom:6px!important;font-size:8px!important}
+#pickerKpiPage .pkpi-legend i{width:8px!important;height:8px!important}
+#pickerKpiPage .pkpi-table-head{padding-bottom:6px!important}
+#pickerKpiPage .pkpi-data-table{width:100%!important;overflow-x:hidden!important}
+#pickerKpiPage .pkpi-data-header,
+#pickerKpiPage .pkpi-data-row{grid-template-columns:minmax(145px, .62fr) minmax(0, 2fr)!important;gap:7px!important}
+#pickerKpiPage .pkpi-data-header{padding:5px 7px!important;font-size:8px!important}
+#pickerKpiPage .pkpi-block-title{margin-top:5px!important;padding:5px 7px!important;font-size:10px!important}
+#pickerKpiPage .pkpi-data-row{padding:3px 7px!important;min-height:34px!important}
+#pickerKpiPage .pkpi-picker{gap:1px!important}
+#pickerKpiPage .pkpi-picker b{font-size:9px!important;line-height:1.1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#pickerKpiPage .pkpi-picker small{font-size:7px!important;line-height:1.05!important}
+#pickerKpiPage .pkpi-combo{grid-template-columns:minmax(65px,.72fr) minmax(95px,1fr) minmax(110px,1.15fr)!important;gap:3px!important}
+#pickerKpiPage .pkpi-seg{min-height:23px!important;height:23px!important;padding:2px 4px!important;border-radius:4px!important;font-size:8px!important;gap:3px!important}
+#pickerKpiPage .pkpi-seg b{font-size:8px!important;line-height:1!important}
+#pickerKpiPage .pkpi-seg small{font-size:7px!important;line-height:1!important}
+#pickerKpiPage .pkpi-carton b{margin-left:3px!important}
+#pickerKpiPage .pkpi-block-total,
+#pickerKpiPage .pkpi-grand-total{padding:5px 7px!important;font-size:8px!important;gap:5px!important}
+#pickerKpiPage .pkpi-grand-total{font-size:9px!important;margin-top:5px!important}
+@media(max-width:900px){
+ #pickerKpiPage .pkpi-fields{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ #pickerKpiPage .pkpi-data-header,#pickerKpiPage .pkpi-data-row{grid-template-columns:minmax(115px,.55fr) minmax(0,2fr)!important}
+ #pickerKpiPage .pkpi-combo{grid-template-columns:.7fr 1fr 1.1fr!important}
+}
+@media(max-width:650px){
+ #pickerKpiPage .pkpi-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #pickerKpiPage .pkpi-data-header{display:none!important}
+ #pickerKpiPage .pkpi-data-row{grid-template-columns:1fr!important;gap:3px!important}
+ #pickerKpiPage .pkpi-combo{grid-template-columns:.7fr 1fr 1.1fr!important}
+ #pickerKpiPage .pkpi-block-total,#pickerKpiPage .pkpi-grand-total{align-items:flex-start!important;flex-direction:column!important}
+}
+</style>
+
+<style id="picker-kpi-user-display-v72">
+#pickerKpiPage .pkpi-picker{display:flex!important;align-items:center!important;min-width:0!important;white-space:nowrap!important;overflow:hidden!important}
+#pickerKpiPage .pkpi-picker b{font-size:9px!important;line-height:1.15!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#pickerKpiPage .pkpi-picker .pkpi-person-name{font-size:8px!important;font-weight:500!important;color:#64748b!important}
+</style>
+
 </head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
@@ -2465,7 +2533,7 @@ html,body{background:#f0f5f1!important}
    html+=`<div class="pkpi-block-title">${esc(block)}</div>`;
    let st={to:0,line:0,carton:0};
    for(const r of items){st.to+=r.to;st.line+=r.line;st.carton+=r.carton;const pct=target>0?r.line/target*100:0,met=target>0&&r.line>=target,ctnPct=Math.max(3,r.carton/maxCtn*100);
-    html+=`<div class="pkpi-data-row"><div class="pkpi-picker"><b>${esc(r.picker)}</b><small>${esc(r.user)}</small></div><div class="pkpi-combo"><div class="pkpi-seg pkpi-to"><b>TO ${fmt(r.to)}</b></div><div class="pkpi-seg ${met?'pkpi-line-green':'pkpi-line-red'}"><b>LINE ${fmt(r.line)}</b><small>${target?Math.round(pct)+'%':'Target —'}</small></div><div class="pkpi-seg pkpi-carton"><div class="pkpi-carton-fill" style="width:${ctnPct}%"></div><b>CTN ${fmt(r.carton)}</b></div></div></div>`;
+    html+=`<div class="pkpi-data-row"><div class="pkpi-picker"><b>${esc(r.user||r.picker)}${r.user&&r.picker?` <span class="pkpi-person-name">( ${esc(r.picker)} )</span>`:''}</b></div><div class="pkpi-combo"><div class="pkpi-seg pkpi-to"><b>TO ${fmt(r.to)}</b></div><div class="pkpi-seg ${met?'pkpi-line-green':'pkpi-line-red'}"><b>LINE ${fmt(r.line)}</b><small>${target?Math.round(pct)+'%':'Target —'}</small></div><div class="pkpi-seg pkpi-carton"><div class="pkpi-carton-fill" style="width:${ctnPct}%"></div><b>CTN ${fmt(r.carton)}</b></div></div></div>`;
    }
    html+=`<div class="pkpi-block-total"><b>${esc(block)} TOTAL</b><span>TO ${fmt(st.to)}　 LINE ${fmt(st.line)}　 CTN ${fmt(st.carton)}</span></div>`;
   }
