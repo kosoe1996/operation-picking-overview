@@ -1566,6 +1566,26 @@ body[data-view="picking"] .side-foot>div:last-child{display:none!important}
 <script>
 let records=[],loaded=false,chartObj=null;
 const $=id=>document.getElementById(id), num=v=>{let x=Number(String(v??'').replace(/,/g,''));return Number.isFinite(x)?x:0}, fmt=v=>Math.round(num(v)).toLocaleString('en-US');
+// Keep the two new horizontal report sections exactly aligned with the Type by Block panel.
+function alignPickingReportSections(){
+ const root=$('pickingLineStatus');
+ if(!root)return;
+ const typeTable=$('plsTypeTable');
+ const horizontal=root.querySelector('.pls-by-block-horizontal-panel');
+ const additional=root.querySelector('.pls-additional-bottom');
+ if(!typeTable||!horizontal||!additional)return;
+ if(window.matchMedia('(max-width:1100px)').matches){
+  root.style.setProperty('--pls-report-span','100%');
+  return;
+ }
+ const rootRect=root.getBoundingClientRect();
+ const typePanel=typeTable.closest('.pls-panel');
+ if(!typePanel)return;
+ const typeRect=typePanel.getBoundingClientRect();
+ const span=Math.max(0,Math.round(typeRect.right-rootRect.left));
+ if(span>0)root.style.setProperty('--pls-report-span',span+'px');
+}
+
 function norm(s){return String(s??'').trim().toLowerCase().replace(/[\s._/-]+/g,'')}
 const aliases={
 'doNo':['do no'],'esttotalcarton':['est total carton'],'doline':['do line'],'block':['block'],'invstatus':['inv status'],'loadplan':['load plan'],'date':['date']
@@ -1880,6 +1900,13 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
    $('plsMessage').textContent=`Loaded ${fmt(raw.length)} rows from “${sheetName}”. Other ${workbook.SheetNames.length-1} sheet(s) ignored. Line count uses every row.`;
   }catch(e){$('plsMessage').textContent='Unable to process workbook: '+e.message;raw=[];$('plsExport').disabled=true;}
  }
+ // Re-measure after page navigation, data rendering, and viewport changes.
+ const plsAlignObserver=new ResizeObserver(()=>requestAnimationFrame(alignPickingReportSections));
+ const plsAlignRoot=$('pickingLineStatus');if(plsAlignRoot)plsAlignObserver.observe(plsAlignRoot);
+ const plsTypePanel=$('plsTypeTable')?.closest('.pls-panel');if(plsTypePanel)plsAlignObserver.observe(plsTypePanel);
+ window.addEventListener('resize',()=>requestAnimationFrame(alignPickingReportSections));
+ document.querySelectorAll('[data-view="picking"]').forEach(a=>a.addEventListener('click',()=>setTimeout(alignPickingReportSections,80)));
+ setTimeout(alignPickingReportSections,120);
  $('plsProcess').addEventListener('click',process);
  $('plsCopyImage').addEventListener('click',async()=>{
   const btn=$('plsCopyImage'),msg=$('plsCopyMessage'),target=$('pickingLineStatus');
@@ -1926,10 +1953,17 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
       #pickingDashboardPage #pickingLineStatus .pls-by-block-item{padding:12px!important;margin-bottom:9px!important}
       #pickingDashboardPage #pickingLineStatus .pls-overall-completion{padding:16px!important}
       #pickingDashboardPage #pickingLineStatus>.pls-panel:last-child{height:auto!important;min-height:0!important;max-height:none!important;margin:10px 0 0!important;padding:10px!important}
-      /* Horizontal status and notes span the entire visible report area: Block Breakdown through Type by Block. */
-      #pickingDashboardPage #pickingLineStatus>.pls-by-block-horizontal-panel,#pickingDashboardPage #pickingLineStatus>.pls-additional-bottom{display:block!important;box-sizing:border-box!important;width:100%!important;margin:10px 0 0!important;grid-column:1 / -1!important}
-      #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important}
+      /* Capture uses the same measured report span as the live page. */
+      #pickingDashboardPage #pickingLineStatus>.pls-by-block-horizontal-panel,#pickingDashboardPage #pickingLineStatus>.pls-additional-bottom{display:block!important;box-sizing:border-box!important;width:var(--pls-report-span,100%)!important;margin:10px 0 0!important;}
+      #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important;width:100%!important}
      `;
+     const liveRoot=$('pickingLineStatus');
+     const liveType=$('plsTypeTable')?.closest('.pls-panel');
+     if(liveRoot&&liveType){
+      const rr=liveRoot.getBoundingClientRect(),tr=liveType.getBoundingClientRect();
+      const ratio=Math.max(.1,Math.min(1,(tr.right-rr.left)/Math.max(1,rr.width)));
+      root.style.setProperty('--pls-report-span',(captureWidth*ratio)+'px','important');
+     }
      root.appendChild(style);
      root.querySelectorAll('.pls-copy-image-btn').forEach(el=>el.remove());
      /* Crop the exported canvas at the actual bottom of Additional Information,
@@ -2856,21 +2890,20 @@ html,body{background:#f0f5f1!important}
 @media(max-width:900px){#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:520px){#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{grid-template-columns:1fr 1fr!important}}
 
-/* V65: place the new horizontal By Block Status and Additional Information
-   across the full left-and-middle report area (Block Breakdown through Type by Block).
-   Keep the original right-side By Block Status panel untouched. */
+/* V66: precisely align both full-width report sections to the right edge of
+   the Type by Block panel (not the page edge or the old right-hand status panel).
+   The exact width is measured from the rendered Type by Block panel in JS. */
 #pickingDashboardPage #pickingLineStatus>.pls-by-block-horizontal-panel,
 #pickingDashboardPage #pickingLineStatus>.pls-additional-bottom{
- display:block!important;box-sizing:border-box!important;width:calc((100% - 18px) * 2.24 / 3.10 + 9px)!important;
- margin:10px 0 0 0!important;
+ display:block!important;box-sizing:border-box!important;width:var(--pls-report-span,100%)!important;
+ margin:10px 0 0 0!important;min-width:0!important;
  min-height:0!important;height:auto!important;max-height:none!important;overflow:visible!important;
 }
-#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important;}
+#pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important;width:100%!important;}
 #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal .pls-by-block-item{min-width:0!important;padding:9px!important;min-height:90px!important;box-shadow:0 3px 9px rgba(20,48,70,.08)!important;}
-#pickingDashboardPage #pickingLineStatus>.pls-additional-bottom textarea{display:block!important;width:100%!important;min-height:54px!important;height:54px!important;}
+#pickingDashboardPage #pickingLineStatus>.pls-additional-bottom textarea{display:block!important;box-sizing:border-box!important;width:100%!important;min-height:54px!important;height:54px!important;}
 @media(max-width:1100px){
- #pickingDashboardPage #pickingLineStatus>.pls-by-block-horizontal-panel,
- #pickingDashboardPage #pickingLineStatus>.pls-additional-bottom{width:100%!important;margin:10px 0 0!important;}
+ #pickingDashboardPage #pickingLineStatus{--pls-report-span:100%!important}
  #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
 </style>
