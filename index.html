@@ -2443,21 +2443,63 @@ html,body{background:#f0f5f1!important}
 <script id="picker-kpi-calculator">
 (()=>{
  const $=id=>document.getElementById(id);if(!$('pkpiStart'))return;
- const pad=n=>String(n).padStart(2,'0');
+ let pickerRows=[];
+ const fmt=n=>Math.round(Number(n)||0).toLocaleString('en-US');
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function calc(){
-  const [sh,sm]=$('pkpiStart').value.split(':').map(Number),[ch,cm]=$('pkpiCurrent').value.split(':').map(Number);
-  if([sh,sm,ch,cm].some(v=>!Number.isFinite(v)))return;
-  let start=sh*60+sm,current=ch*60+cm;if(current<start)current+=1440;
+  const a=$('pkpiStart').value.split(':').map(Number),b=$('pkpiCurrent').value.split(':').map(Number);
+  if(a.length!==2||b.length!==2||[...a,...b].some(v=>!Number.isFinite(v)))return 0;
+  let start=a[0]*60+a[1],current=b[0]*60+b[1];if(current<start)current+=1440;
   const gross=(current-start)/60,br=Math.max(0,Number($('pkpiBreak').value)||0),hours=Math.max(0,gross-br),rate=Math.max(0,Number($('pkpiRate').value)||0),raw=hours*rate,target=Math.ceil(raw-1e-10);
-  $('pkpiHours').textContent=hours.toFixed(2).replace(/\.?0+$/,'');$('pkpiTarget').textContent=target.toLocaleString('en-US');
+  $('pkpiHours').textContent=hours.toFixed(2).replace(/\.?0+$/,'');$('pkpiTarget').textContent=fmt(target);
   $('pkpiFormula').textContent=`Actual Hours × Per Hour Line = Target Line · ${hours.toFixed(2)} × ${rate} = ${raw.toFixed(2)} → ${target}`;
+  render(target);return target;
+ }
+ function render(target){
+  const root=$('pkpiResults');if(!root)return;
+  if(!pickerRows.length)return;
+  const maxCtn=Math.max(1,...pickerRows.map(r=>r.carton));
+  const groups=new Map();for(const r of pickerRows){if(!groups.has(r.block))groups.set(r.block,[]);groups.get(r.block).push(r)}
+  let html='<div class="pkpi-data-table"><div class="pkpi-data-header"><span>BLOCK</span><span>PICKER / USER</span><span>TO · LINE · CARTON</span></div>';
+  for(const [block,items] of groups){
+   html+=`<div class="pkpi-block-title">${esc(block)}</div>`;
+   let st={to:0,line:0,carton:0};
+   for(const r of items){st.to+=r.to;st.line+=r.line;st.carton+=r.carton;const pct=target>0?r.line/target*100:0,met=target>0&&r.line>=target,ctnPct=Math.max(3,r.carton/maxCtn*100);
+    html+=`<div class="pkpi-data-row"><div class="pkpi-picker"><b>${esc(r.picker)}</b><small>${esc(r.user)}</small></div><div class="pkpi-combo"><div class="pkpi-seg pkpi-to"><b>TO ${fmt(r.to)}</b></div><div class="pkpi-seg ${met?'pkpi-line-green':'pkpi-line-red'}"><b>LINE ${fmt(r.line)}</b><small>${target?Math.round(pct)+'%':'Target —'}</small></div><div class="pkpi-seg pkpi-carton"><div class="pkpi-carton-fill" style="width:${ctnPct}%"></div><b>CTN ${fmt(r.carton)}</b></div></div></div>`;
+   }
+   html+=`<div class="pkpi-block-total"><b>${esc(block)} TOTAL</b><span>TO ${fmt(st.to)}　 LINE ${fmt(st.line)}　 CTN ${fmt(st.carton)}</span></div>`;
+  }
+  const total=pickerRows.reduce((a,r)=>({to:a.to+r.to,line:a.line+r.line,carton:a.carton+r.carton}),{to:0,line:0,carton:0});
+  html+=`<div class="pkpi-grand-total"><b>GRAND TOTAL</b><strong>TO ${fmt(total.to)}　 LINE ${fmt(total.line)}　 CARTON ${fmt(total.carton)}</strong></div></div>`;
+  root.className='';root.innerHTML=html;
  }
  ['pkpiStart','pkpiCurrent','pkpiBreak','pkpiRate'].forEach(id=>$(id).addEventListener('input',calc));calc();
- function clock(){const d=new Date();$('kpiClock').textContent=d.toLocaleTimeString('en-GB')}
- clock();setInterval(clock,1000);
+ function clock(){const el=$('kpiClock');if(el)el.textContent=new Date().toLocaleTimeString('en-GB')}clock();setInterval(clock,1000);
  $('pkpiProcess').addEventListener('click',async()=>{
   const f=$('pkpiFile').files[0],msg=$('pkpiMessage');if(!f){msg.textContent='Please select the Excel workbook containing the KPI sheet.';return}
-  try{const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});if(!wb.Sheets.KPI)throw new Error('Worksheet named exactly “KPI” was not found.');const rows=XLSX.utils.sheet_to_json(wb.Sheets.KPI,{defval:'',raw:false});if(!rows.length)throw new Error('KPI sheet has no data rows.');window.pickerKpiRawRows=rows;msg.textContent=`KPI sheet found · ${rows.length.toLocaleString()} data rows. Source columns are ready for mapping.`;$('pkpiResults').textContent='KPI sheet loaded. Column mapping and picker performance bars will be completed after confirming the source headers.';}catch(e){msg.textContent=e.message}
+  const btn=$('pkpiProcess');btn.disabled=true;msg.textContent='Reading KPI worksheet…';
+  try{
+   if(typeof XLSX==='undefined')throw new Error('Excel reader library could not load. Please connect to the internet and reopen the dashboard.');
+   const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});
+   const sheetName=wb.SheetNames.find(n=>String(n).trim().toLowerCase()==='kpi');if(!sheetName)throw new Error('Worksheet “KPI” was not found. Available sheets: '+wb.SheetNames.join(', '));
+   const ws=wb.Sheets[sheetName],matrix=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:true});
+   // This workbook's KPI layout: headers are on Excel row 9, data starts on row 10, columns B:G.
+   const headers=(matrix[8]||[]).slice(1,7).map(v=>String(v??'').trim());
+   const expected=['BLOCK','Picker Name-Night','User2','Total TO Picking','Total Line Picking','Actual Picking Ctn'];
+   if(!expected.every((h,i)=>headers[i].toLowerCase()===h.toLowerCase()))throw new Error('KPI headers do not match the expected B:G layout on row 9. Found: '+headers.join(' | '));
+   const out=[];let currentBlock='';
+   for(let i=9;i<matrix.length;i++){
+    const row=matrix[i]||[],block=String(row[1]??'').trim(),picker=String(row[2]??'').trim(),user=String(row[3]??'').trim();
+    if(block)currentBlock=block;
+    if(!picker||/\btotal\s*$/i.test(block)||/^grand total$/i.test(block)||/total\s*$/i.test(picker))continue;
+    const to=Number(String(row[4]??0).replace(/,/g,''))||0,line=Number(String(row[5]??0).replace(/,/g,''))||0,carton=Number(String(row[6]??0).replace(/,/g,''))||0;
+    if(!currentBlock||(!to&&!line&&!carton))continue;
+    out.push({block:currentBlock,picker,user,to,line,carton});
+   }
+   if(!out.length)throw new Error('KPI sheet was found, but no picker data rows were detected below row 9.');
+   pickerRows=out;window.pickerKpiRawRows=out;msg.textContent=`Loaded successfully · ${out.length} pickers · ${new Set(out.map(r=>r.block)).size} blocks · Source: ${sheetName}`;calc();
+  }catch(e){msg.textContent='Unable to process KPI workbook: '+e.message;$('pkpiResults').className='pkpi-empty';$('pkpiResults').textContent=e.message;}
+  finally{btn.disabled=false;}
  });
 })();
 </script>
@@ -2994,4 +3036,8 @@ html,body{background:#f0f5f1!important}
  display:block!important;box-sizing:border-box!important;width:100%!important;
  min-height:54px!important;height:54px!important;
 }
+</style>
+
+<style id="picker-kpi-data-render">
+.pkpi-data-table{width:100%;overflow-x:auto}.pkpi-data-header,.pkpi-data-row{display:grid;grid-template-columns:minmax(130px,.75fr) minmax(360px,2fr);gap:10px;align-items:center}.pkpi-data-header{padding:9px 10px;background:#173b5d;color:#fff;font-size:10px;font-weight:900}.pkpi-data-header span:last-child{grid-column:2}.pkpi-block-title{margin-top:10px;padding:8px 10px;background:#e6f0fa;color:#214c70;font-size:12px;font-weight:900}.pkpi-data-row{padding:6px 10px;border-bottom:1px solid #e5ebf1}.pkpi-picker{display:flex;flex-direction:column;gap:3px;min-width:0}.pkpi-picker b{font-size:11px;color:#20364a;overflow-wrap:anywhere}.pkpi-picker small{font-size:9px;color:#7c8b98}.pkpi-combo{display:grid;grid-template-columns:minmax(75px,.75fr) minmax(120px,1.2fr) minmax(140px,1.5fr);gap:4px;min-width:0}.pkpi-seg{position:relative;min-height:29px;border-radius:5px;display:flex;align-items:center;justify-content:center;gap:5px;overflow:hidden;padding:3px 6px;font-size:10px;white-space:nowrap}.pkpi-seg b,.pkpi-seg small{position:relative;z-index:1;font-weight:900}.pkpi-to{background:#dcecff;color:#145d9c;border:1px solid #a9cbed}.pkpi-line-red{background:#f8dddd;color:#a92323;border:1px solid #e9a5a5}.pkpi-line-green{background:#d9f0e1;color:#08743b;border:1px solid #9dd3b0}.pkpi-carton{justify-content:flex-start;background:#fff5d3;color:#795700;border:1px solid #efd27a}.pkpi-carton b{margin-left:5px}.pkpi-carton-fill{position:absolute;left:0;top:0;bottom:0;background:#f4c43f;opacity:.7}.pkpi-block-total,.pkpi-grand-total{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 10px;font-size:10px;background:#edf3f8;color:#29445d}.pkpi-grand-total{margin-top:8px;background:#d9eafa;color:#123c63;font-size:11px}.pkpi-grand-total strong{font-weight:900}@media(max-width:700px){.pkpi-data-header,.pkpi-data-row{grid-template-columns:1fr;gap:5px}.pkpi-data-header span:last-child{grid-column:auto}.pkpi-combo{grid-template-columns:.7fr 1fr 1.2fr}.pkpi-seg{font-size:8px;padding:3px 2px}.pkpi-block-total,.pkpi-grand-total{flex-direction:column;align-items:flex-start}}
 </style>
