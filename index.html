@@ -1790,7 +1790,7 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
    `<div class="pls-kpi"><div class="pls-kpi-head"><small>TOTAL TO LINES</small><b class="pls-kpi-percent neutral">100.0%</b></div><strong>${fmt(total)}</strong><span class="pls-total-meta">${esc((($('plsFilters').querySelector('select[data-pls-filter="Order Type"]')?.value||'ALL')==='ALL'?'All Order Types':$('plsFilters').querySelector('select[data-pls-filter="Order Type"]').value))} · Plan Date: ${esc((($('plsFilters').querySelector('select[data-pls-filter="Plan Date"]')?.value||'ALL')==='ALL'?'All Dates':$('plsFilters').querySelector('select[data-pls-filter="Plan Date"]').value))}</span><div class="pls-kpi-track"><i class="neutral-fill" style="width:100%"></i></div></div>`,
    `<div class="pls-kpi"><div class="pls-kpi-head"><small>COMPLETED PICK</small><b class="pls-kpi-percent completed">${completedPct.toFixed(1)}%</b></div><strong>${fmt(completed)}</strong><span>TO Lines completed</span><div class="pls-kpi-track"><i class="completed-fill" style="width:${completedPct}%"></i></div><div class="pls-kpi-blocks">${blockLineCounts('completed')}</div></div>`,
    `<div class="pls-kpi"><div class="pls-kpi-head"><small>PENDING PICK</small><b class="pls-kpi-percent pending">${pendingPct.toFixed(1)}%</b></div><strong>${fmt(pending)}</strong><span>TO Lines pending</span><div class="pls-kpi-track"><i class="pending-fill" style="width:${pendingPct}%"></i></div><div class="pls-kpi-blocks">${blockLineCounts('pending')}</div></div>`,
-   `<div class="pls-kpi"><small>SINGLE TO LINES</small><strong>${fmt(singleRows+multipleRows)}</strong><span>Total TO Lines · Single + Multiple TO DOs</span></div>`,
+   `<div class="pls-kpi pls-kpi-single-multiple"><small>SINGLE / MULTIPLE TO LINES</small><div class="pls-kpi-dual"><span><b>${fmt(singleRows)}</b><em>Single TO</em></span><i></i><span><b>${fmt(multipleRows)}</b><em>Multiple TO</em></span></div><span>Separate TO Line counts · not combined</span></div>`,
    `<div class="pls-kpi"><small>MULTIPLE TO LINES</small><strong>—</strong><span>Reserved for future use</span></div>`
   ].join('');
   const blocks=['E','F','G','H'];
@@ -1914,9 +1914,15 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
   if(typeof html2canvas==='undefined'){msg.textContent='Image library did not load. Reload the page and try again.';return;}
   btn.disabled=true;btn.textContent='Preparing Ultra HD image…';msg.textContent='Rendering full report at high resolution…';
   try{
-   const captureWidth=Math.max(1800,target.scrollWidth);
+   // Crop at the right edge of Type by Block; omit the unused right-hand X area.
+   const liveRootRect=target.getBoundingClientRect();
+   const liveTypePanel=$('plsTypeTable')?.closest('.pls-panel');
+   if(!liveTypePanel)throw new Error('Type by Block panel could not be located.');
+   const liveTypeRect=liveTypePanel.getBoundingClientRect();
+   const captureWidth=Math.max(900,Math.ceil(liveTypeRect.right-liveRootRect.left));
    const canvas=await html2canvas(target,{
     scale:4,backgroundColor:'#f1f6f1',useCORS:true,logging:false,
+    width:captureWidth,height:Math.max(900,target.scrollHeight),
     windowWidth:captureWidth,windowHeight:Math.max(900,target.scrollHeight),
     scrollX:0,scrollY:0,
     onclone:(doc)=>{
@@ -1925,6 +1931,8 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
      root.querySelectorAll('.pls-source,.pls-filter-priority-row,.pls-share-box').forEach(el=>el.style.setProperty('display','none','important'));
      root.style.setProperty('width',captureWidth+'px','important');
      root.style.setProperty('min-width',captureWidth+'px','important');
+     root.style.setProperty('max-width',captureWidth+'px','important');
+     root.style.setProperty('--pls-report-span',captureWidth+'px','important');
      root.style.setProperty('max-width','none','important');
      root.style.setProperty('height','auto','important');
      root.style.setProperty('min-height','0','important');
@@ -1957,13 +1965,7 @@ setInterval(()=>{if($('now'))$('now').textContent=new Date().toLocaleTimeString(
       #pickingDashboardPage #pickingLineStatus>.pls-by-block-horizontal-panel,#pickingDashboardPage #pickingLineStatus>.pls-additional-bottom{display:block!important;box-sizing:border-box!important;width:var(--pls-report-span,100%)!important;margin:10px 0 0!important;}
       #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important;width:100%!important}
      `;
-     const liveRoot=$('pickingLineStatus');
-     const liveType=$('plsTypeTable')?.closest('.pls-panel');
-     if(liveRoot&&liveType){
-      const rr=liveRoot.getBoundingClientRect(),tr=liveType.getBoundingClientRect();
-      const ratio=Math.max(.1,Math.min(1,(tr.right-rr.left)/Math.max(1,rr.width)));
-      root.style.setProperty('--pls-report-span',(captureWidth*ratio)+'px','important');
-     }
+root.style.setProperty('--pls-report-span',captureWidth+'px','important');
      root.appendChild(style);
      root.querySelectorAll('.pls-copy-image-btn').forEach(el=>el.remove());
      /* Crop the exported canvas at the actual bottom of Additional Information,
@@ -2906,4 +2908,13 @@ html,body{background:#f0f5f1!important}
  #pickingDashboardPage #pickingLineStatus{--pls-report-span:100%!important}
  #pickingDashboardPage #pickingLineStatus .pls-by-block-horizontal{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
+</style>
+
+<style id="v67-single-multiple-kpi">
+#pickingDashboardPage #pickingLineStatus .pls-kpi-single-multiple .pls-kpi-dual{display:flex!important;align-items:center!important;gap:13px!important;margin:7px 0 4px!important;min-height:39px!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi-single-multiple .pls-kpi-dual>span{display:flex!important;flex-direction:column!important;gap:2px!important;min-width:0!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi-single-multiple .pls-kpi-dual b{font-size:25px!important;line-height:1!important;color:#173f35!important;font-weight:900!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi-single-multiple .pls-kpi-dual em{font-size:9px!important;font-style:normal!important;color:#70818a!important;font-weight:750!important}
+#pickingDashboardPage #pickingLineStatus .pls-kpi-single-multiple .pls-kpi-dual>i{display:block!important;width:1px!important;height:32px!important;background:#dce5e9!important}
+@media(max-width:1100px){#pickingDashboardPage #pickingLineStatus .pls-kpi-single-multiple .pls-kpi-dual b{font-size:20px!important}}
 </style>
