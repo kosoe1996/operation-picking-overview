@@ -1490,6 +1490,24 @@ body[data-view="picking"] .side-foot>div:last-child{display:none!important}
 #pickerKpiPage .pkpi-picker .pkpi-person-name{font-size:8px!important;font-weight:500!important;color:#64748b!important}
 </style>
 
+<style id="picker-kpi-v73-4block-compact">
+/* Four block panels: E/F on row one, G/H on row two */
+#pickerKpiPage .pkpi-block-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;overflow:visible!important;align-items:start!important}
+#pickerKpiPage .pkpi-block-card{min-width:0!important;border:1px solid #d7e2ec!important;border-radius:6px!important;background:#fff!important;overflow:hidden!important}
+#pickerKpiPage .pkpi-block-title{margin:0!important;padding:4px 6px!important;font-size:9px!important;line-height:1.1!important}
+#pickerKpiPage .pkpi-data-row{display:grid!important;grid-template-columns:minmax(85px,.8fr) minmax(0,2fr)!important;gap:4px!important;padding:2px 5px!important;min-height:25px!important;align-items:center!important}
+#pickerKpiPage .pkpi-picker{min-width:0!important;display:block!important;overflow:hidden!important}
+#pickerKpiPage .pkpi-picker b{display:block!important;font-size:7px!important;line-height:1.05!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#pickerKpiPage .pkpi-picker .pkpi-person-name{font-size:6.5px!important}
+#pickerKpiPage .pkpi-combo{display:grid!important;grid-template-columns:.65fr 1fr 1.05fr!important;gap:2px!important;min-width:0!important}
+#pickerKpiPage .pkpi-seg{height:17px!important;min-height:17px!important;padding:1px 2px!important;border-radius:3px!important;font-size:6.5px!important;line-height:1!important;gap:1px!important;overflow:hidden!important}
+#pickerKpiPage .pkpi-seg b{font-size:6.5px!important;line-height:1!important;white-space:nowrap!important}
+#pickerKpiPage .pkpi-seg small{font-size:5.5px!important;line-height:1!important}
+#pickerKpiPage .pkpi-block-total{padding:3px 5px!important;font-size:6.5px!important;gap:3px!important;line-height:1.1!important}
+#pickerKpiPage .pkpi-grand-total{grid-column:1/-1!important;margin-top:0!important;padding:5px 7px!important;font-size:8px!important}
+@media(max-width:760px){#pickerKpiPage .pkpi-block-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important}#pickerKpiPage .pkpi-data-row{grid-template-columns:minmax(0,1fr)!important;gap:2px!important}#pickerKpiPage .pkpi-picker b{font-size:7px!important}#pickerKpiPage .pkpi-combo{grid-template-columns:.65fr 1fr 1.05fr!important}}
+</style>
+
 </head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
@@ -2528,14 +2546,14 @@ html,body{background:#f0f5f1!important}
   if(!pickerRows.length)return;
   const maxCtn=Math.max(1,...pickerRows.map(r=>r.carton));
   const groups=new Map();for(const r of pickerRows){if(!groups.has(r.block))groups.set(r.block,[]);groups.get(r.block).push(r)}
-  let html='<div class="pkpi-data-table"><div class="pkpi-data-header"><span>BLOCK</span><span>PICKER / USER</span><span>TO · LINE · CARTON</span></div>';
+  let html='<div class="pkpi-data-table pkpi-block-grid">';
   for(const [block,items] of groups){
-   html+=`<div class="pkpi-block-title">${esc(block)}</div>`;
+   html+=`<section class="pkpi-block-card"><div class="pkpi-block-title">${esc(block)}</div>`;
    let st={to:0,line:0,carton:0};
    for(const r of items){st.to+=r.to;st.line+=r.line;st.carton+=r.carton;const pct=target>0?r.line/target*100:0,met=target>0&&r.line>=target,ctnPct=Math.max(3,r.carton/maxCtn*100);
     html+=`<div class="pkpi-data-row"><div class="pkpi-picker"><b>${esc(r.user||r.picker)}${r.user&&r.picker?` <span class="pkpi-person-name">( ${esc(r.picker)} )</span>`:''}</b></div><div class="pkpi-combo"><div class="pkpi-seg pkpi-to"><b>TO ${fmt(r.to)}</b></div><div class="pkpi-seg ${met?'pkpi-line-green':'pkpi-line-red'}"><b>LINE ${fmt(r.line)}</b><small>${target?Math.round(pct)+'%':'Target —'}</small></div><div class="pkpi-seg pkpi-carton"><div class="pkpi-carton-fill" style="width:${ctnPct}%"></div><b>CTN ${fmt(r.carton)}</b></div></div></div>`;
    }
-   html+=`<div class="pkpi-block-total"><b>${esc(block)} TOTAL</b><span>TO ${fmt(st.to)}　 LINE ${fmt(st.line)}　 CTN ${fmt(st.carton)}</span></div>`;
+   html+=`<div class="pkpi-block-total"><b>${esc(block)} TOTAL</b><span>TO ${fmt(st.to)}　 LINE ${fmt(st.line)}　 CTN ${fmt(st.carton)}</span></div></section>`;
   }
   const total=pickerRows.reduce((a,r)=>({to:a.to+r.to,line:a.line+r.line,carton:a.carton+r.carton}),{to:0,line:0,carton:0});
   html+=`<div class="pkpi-grand-total"><b>GRAND TOTAL</b><strong>TO ${fmt(total.to)}　 LINE ${fmt(total.line)}　 CARTON ${fmt(total.carton)}</strong></div></div>`;
