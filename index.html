@@ -1677,6 +1677,11 @@ body[data-view="picking"] .side-foot>div:last-child{display:none!important}
  <header class="pls-topbar"><div class="pls-brand"><span class="pls-brand-icon">◫</span><div><b>OPERATION DASHBOARD</b><small>Picker KPI</small></div></div><div class="pls-top-title"><span class="pls-forklift">♟</span><b>PICKER KPI · PERFORMANCE OVERVIEW</b></div><div class="pls-top-meta"><strong id="kpiClock">--:--:--</strong></div></header>
  <section id="pickerKpiWorkspace" class="pkpi-wrap">
   <div class="pkpi-intro"><div><h2>PICKER KPI</h2><p>Shared target for every picker across all blocks</p></div><span class="pkpi-source-tag">EXCEL SOURCE · KPI</span><div class="pkpi-source-meta" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:#38556b"><span>OPERATION DATE: <b id="pkpiOperationDate">—</b></span><span>SHIFT: <b id="pkpiOperationShift">—</b></span></div></div>
+  <section class="pkpi-filter-bar" id="pkpiFilterBar" aria-label="Picker KPI filters">
+   <label>OPERATION DATE <select id="pkpiDateFilter"><option value="all">All Dates</option></select></label>
+   <label>SHIFT <select id="pkpiShiftFilter"><option value="all">All Shifts</option></select></label>
+   <span id="pkpiFilterSummary">Select date and shift after loading the KPI sheet.</span>
+  </section>
   <section class="pkpi-calculator">
    <div class="pkpi-section-title"><div><b>TARGET LINE CALCULATOR</b><small>Target is applied to every picker in every block</small></div><span class="pkpi-live">LIVE CALCULATION</span></div>
    <div class="pkpi-fields">
@@ -1691,7 +1696,7 @@ body[data-view="picking"] .side-foot>div:last-child{display:none!important}
   </section>
   <section class="pkpi-upload"><div><b>KPI WORKBOOK</b><small>Only the worksheet named “KPI” will be read.</small></div><div class="pkpi-upload-controls"><input id="pkpiFile" type="file" accept=".xlsx,.xls"><button id="pkpiProcess" type="button">Process KPI Sheet</button></div><p id="pkpiMessage">Upload the Excel workbook containing the KPI sheet to load picker performance.</p></section>
   <section class="pkpi-legend"><b>BAR RULES</b><span><i class="to"></i> TO · Fixed blue</span><span><i class="line-red"></i> LINE · Below target</span><span><i class="line-green"></i> LINE · Target met</span><span><i class="carton"></i> CARTON · Yellow, quantity-scaled</span></section>
-  <section class="pkpi-table-panel"><div class="pkpi-table-head"><b>PICKER PERFORMANCE</b><small>One combined performance bar per picker</small></div><div id="pkpiResults" class="pkpi-empty">Upload the KPI workbook. The source columns will be mapped after reviewing the sheet structure.</div></section>
+  <section class="pkpi-table-panel"><div class="pkpi-table-head"><div><b>PICKER PERFORMANCE</b><small>One combined performance bar per picker</small></div><button type="button" id="pkpiCopyImage" class="pkpi-copy-image">▣ COPY AS IMAGE (HD)</button></div><div id="pkpiResults" class="pkpi-empty">Upload the KPI workbook. The source columns will be mapped after reviewing the sheet structure.</div><p id="pkpiCopyMessage" class="pkpi-copy-message" aria-live="polite"></p></section>
  </section>
 </div>
 </main></div>
@@ -2544,6 +2549,7 @@ html,body{background:#f0f5f1!important}
 (()=>{
  const $=id=>document.getElementById(id);if(!$('pkpiStart'))return;
  let pickerRows=[];
+ let selectedOperationDate='all',selectedOperationShift='all';
  const fmt=n=>Math.round(Number(n)||0).toLocaleString('en-US');
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function calc(){
@@ -2555,11 +2561,13 @@ html,body{background:#f0f5f1!important}
   $('pkpiFormula').textContent=`Actual Hours × Per Hour Line = Target Line · ${hours.toFixed(2)} × ${rate} = ${raw.toFixed(2)} → ${target}`;
   render(target);return target;
  }
+ function filteredPickerRows(){return pickerRows.filter(r=>(selectedOperationDate==='all'||r.operationDate===selectedOperationDate)&&(selectedOperationShift==='all'||r.operationShift===selectedOperationShift));}
  function render(target){
   const root=$('pkpiResults');if(!root)return;
-  if(!pickerRows.length)return;
-  const maxCtn=Math.max(1,...pickerRows.map(r=>r.carton));
-  const groups=new Map();for(const r of pickerRows){if(!groups.has(r.block))groups.set(r.block,[]);groups.get(r.block).push(r)}
+  const visibleRows=filteredPickerRows();
+  if(!visibleRows.length){root.className='pkpi-empty';root.textContent='No picker records match the selected Operation Date and Shift.';$('pkpiFilterSummary').textContent='0 pickers shown';return;}
+  const maxCtn=Math.max(1,...visibleRows.map(r=>r.carton));
+  const groups=new Map();for(const r of visibleRows){if(!groups.has(r.block))groups.set(r.block,[]);groups.get(r.block).push(r)}
   let html='<div class="pkpi-data-table pkpi-block-grid">';
   for(const [block,items] of groups){
    const activeUsers=new Set(items.map(r=>String(r.user||r.picker||'').trim()).filter(Boolean)).size;
@@ -2570,12 +2578,23 @@ html,body{background:#f0f5f1!important}
    }
    html+=`<div class="pkpi-block-total"><b>${esc(block)} TOTAL</b><span>TO - ${fmt(st.to)}　 LINE - ${fmt(st.line)}　 CTN - ${fmt(st.carton)}</span></div></section>`;
   }
-  const total=pickerRows.reduce((a,r)=>({to:a.to+r.to,line:a.line+r.line,carton:a.carton+r.carton}),{to:0,line:0,carton:0});
-  html+=`<div class="pkpi-grand-total"><b>GRAND TOTAL</b><strong>TO - ${fmt(total.to)}　 LINE - ${fmt(total.line)}　 CARTON - ${fmt(total.carton)}</strong></div></div>`;
+  const total=visibleRows.reduce((a,r)=>({to:a.to+r.to,line:a.line+r.line,carton:a.carton+r.carton}),{to:0,line:0,carton:0});
+  html+=`<div class="pkpi-grand-total"><b>GRAND TOTAL</b><strong>TO - ${fmt(total.to)}　 LINE - ${fmt(total.line)}　 CARTON - ${fmt(total.carton)}</strong><small>${visibleRows.length} ACTIVE PICKERS · ${groups.size} BLOCKS</small></div></div>`;
   root.className='';root.innerHTML=html;
+  $('pkpiFilterSummary').textContent=`Showing ${visibleRows.length} pickers · ${groups.size} blocks`;
  }
  ['pkpiStart','pkpiCurrent','pkpiBreak','pkpiRate'].forEach(id=>$(id).addEventListener('input',calc));calc();
  function clock(){const el=$('kpiClock');if(el)el.textContent=new Date().toLocaleTimeString('en-GB')}clock();setInterval(clock,1000);
+ function populateKpiFilters(){
+  const dateSel=$('pkpiDateFilter'),shiftSel=$('pkpiShiftFilter');
+  const dates=[...new Set(pickerRows.map(r=>r.operationDate).filter(Boolean))].sort();
+  const shifts=[...new Set(pickerRows.map(r=>r.operationShift).filter(Boolean))].sort();
+  dateSel.innerHTML='<option value="all">All Dates</option>'+dates.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');
+  shiftSel.innerHTML='<option value="all">All Shifts</option>'+shifts.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');
+  selectedOperationDate='all';selectedOperationShift='all';dateSel.value='all';shiftSel.value='all';
+ }
+ $('pkpiDateFilter').addEventListener('change',e=>{selectedOperationDate=e.target.value;render(calc());});
+ $('pkpiShiftFilter').addEventListener('change',e=>{selectedOperationShift=e.target.value;render(calc());});
  $('pkpiProcess').addEventListener('click',async()=>{
   const f=$('pkpiFile').files[0],msg=$('pkpiMessage');if(!f){msg.textContent='Please select the Excel workbook containing the KPI sheet.';return}
   const btn=$('pkpiProcess');btn.disabled=true;msg.textContent='Reading KPI worksheet…';
@@ -2616,12 +2635,30 @@ html,body{background:#f0f5f1!important}
     if(!picker||/\btotal\s*$/i.test(block)||/^grand total$/i.test(block)||/total\s*$/i.test(picker))continue;
     const to=Number(String(row[cols[3]]??0).replace(/,/g,''))||0,line=Number(String(row[cols[4]]??0).replace(/,/g,''))||0,carton=Number(String(row[cols[5]]??0).replace(/,/g,''))||0;
     if(!currentBlock||(!to&&!line&&!carton))continue;
-    out.push({block:currentBlock,picker,user,to,line,carton});
+    out.push({block:currentBlock,picker,user,to,line,carton,operationDate:dateText(opDate)||'—',operationShift:String(opShift??'').trim()||'—'});
    }
    if(!out.length)throw new Error('KPI sheet was found, but no picker data rows were detected beneath the header row.');
-   pickerRows=out;window.pickerKpiRawRows=out;msg.textContent=`Loaded successfully · ${out.length} pickers · ${new Set(out.map(r=>r.block)).size} blocks · Header row ${headerRow+1} · Source: ${sheetName}`;calc();
+   pickerRows=out;window.pickerKpiRawRows=out;populateKpiFilters();msg.textContent=`Loaded successfully · ${out.length} pickers · ${new Set(out.map(r=>r.block)).size} blocks · Header row ${headerRow+1} · Source: ${sheetName}`;calc();
   }catch(e){msg.textContent='Unable to process KPI workbook: '+e.message;$('pkpiResults').className='pkpi-empty';$('pkpiResults').textContent=e.message;}
   finally{btn.disabled=false;}
+ });
+ $('pkpiCopyImage').addEventListener('click',async()=>{
+  const btn=$('pkpiCopyImage'),msg=$('pkpiCopyMessage'),target=$('pickerKpiWorkspace');
+  if(!pickerRows.length){msg.textContent='Please load the KPI workbook before copying the report.';return;}
+  if(typeof html2canvas==='undefined'){msg.textContent='Image library did not load. Reload the page and try again.';return;}
+  btn.disabled=true;btn.textContent='Preparing HD image…';msg.textContent='Creating high-resolution KPI report image…';
+  try{
+   const canvas=await html2canvas(target,{scale:3,backgroundColor:'#ffffff',useCORS:true,logging:false,windowWidth:Math.max(document.documentElement.clientWidth,target.scrollWidth),onclone:(doc)=>{
+    const el=doc.getElementById('pickerKpiWorkspace');if(el){el.style.width=target.scrollWidth+'px';el.style.maxWidth='none';el.style.overflow='visible';el.style.height='auto';}
+    ['.pkpi-calculator','.pkpi-upload','.pkpi-legend','.pkpi-copy-image','.pkpi-copy-message'].forEach(sel=>doc.querySelectorAll(sel).forEach(x=>x.style.display='none'));
+    const page=doc.getElementById('pickerKpiPage');if(page){page.style.display='block';page.style.position='static';page.style.width=target.scrollWidth+'px';}
+   }});
+   const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+   if(!blob)throw new Error('Could not create PNG image.');
+   if(navigator.clipboard&&window.ClipboardItem){await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.textContent='Copied! HD KPI report image is ready to paste into WhatsApp.';}
+   else{const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Picker-KPI-Report.png';a.click();URL.revokeObjectURL(url);msg.textContent='Image downloaded. Attach Picker-KPI-Report.png in WhatsApp.';}
+  }catch(err){msg.textContent='Unable to copy image: '+err.message;}
+  finally{btn.disabled=false;btn.textContent='▣ COPY AS IMAGE (HD)';}
  });
 })();
 </script>
@@ -3162,4 +3199,29 @@ html,body{background:#f0f5f1!important}
 
 <style id="picker-kpi-data-render">
 .pkpi-data-table{width:100%;overflow-x:auto}.pkpi-data-header,.pkpi-data-row{display:grid;grid-template-columns:minmax(130px,.75fr) minmax(360px,2fr);gap:10px;align-items:center}.pkpi-data-header{padding:9px 10px;background:#173b5d;color:#fff;font-size:10px;font-weight:900}.pkpi-data-header span:last-child{grid-column:2}.pkpi-block-title{margin-top:10px;padding:8px 10px;background:#e6f0fa;color:#214c70;font-size:12px;font-weight:900}.pkpi-data-row{padding:6px 10px;border-bottom:1px solid #e5ebf1}.pkpi-picker{display:flex;flex-direction:column;gap:3px;min-width:0}.pkpi-picker b{font-size:11px;color:#20364a;overflow-wrap:anywhere}.pkpi-picker small{font-size:9px;color:#7c8b98}.pkpi-combo{display:grid;grid-template-columns:minmax(75px,.75fr) minmax(120px,1.2fr) minmax(140px,1.5fr);gap:4px;min-width:0}.pkpi-seg{position:relative;min-height:29px;border-radius:5px;display:flex;align-items:center;justify-content:center;gap:5px;overflow:hidden;padding:3px 6px;font-size:10px;white-space:nowrap}.pkpi-seg b,.pkpi-seg small{position:relative;z-index:1;font-weight:900}.pkpi-to{background:#dcecff;color:#145d9c;border:1px solid #a9cbed}.pkpi-line-red{background:#f8dddd;color:#a92323;border:1px solid #e9a5a5}.pkpi-line-green{background:#d9f0e1;color:#08743b;border:1px solid #9dd3b0}.pkpi-carton{justify-content:flex-start;background:#fff5d3;color:#795700;border:1px solid #efd27a}.pkpi-carton b{margin-left:5px}.pkpi-carton-fill{position:absolute;left:0;top:0;bottom:0;background:#f4c43f;opacity:.7}.pkpi-block-total,.pkpi-grand-total{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 10px;font-size:10px;background:#edf3f8;color:#29445d}.pkpi-grand-total{margin-top:8px;background:#d9eafa;color:#123c63;font-size:11px}.pkpi-grand-total strong{font-weight:900}@media(max-width:700px){.pkpi-data-header,.pkpi-data-row{grid-template-columns:1fr;gap:5px}.pkpi-data-header span:last-child{grid-column:auto}.pkpi-combo{grid-template-columns:.7fr 1fr 1.2fr}.pkpi-seg{font-size:8px;padding:3px 2px}.pkpi-block-total,.pkpi-grand-total{flex-direction:column;align-items:flex-start}}
+</style>
+
+<style id="picker-kpi-v75-refinements">
+/* V75: denser picker rows, prominent totals, date/shift filters and HD image action */
+#pickerKpiPage .pkpi-filter-bar{display:flex!important;align-items:end!important;gap:10px!important;flex-wrap:wrap!important;background:#f5f9fc!important;border:1px solid #d7e2ec!important;border-radius:8px!important;padding:7px 10px!important;margin:0 0 7px!important}
+#pickerKpiPage .pkpi-filter-bar label{display:flex!important;flex-direction:column!important;gap:3px!important;font-size:8px!important;font-weight:900!important;color:#526b7e!important;min-width:145px!important}
+#pickerKpiPage .pkpi-filter-bar select{height:27px!important;min-width:145px!important;border:1px solid #c6d5e1!important;border-radius:5px!important;background:#fff!important;color:#193b54!important;padding:2px 7px!important;font-size:10px!important;font-weight:700!important}
+#pickerKpiPage #pkpiFilterSummary{font-size:9px!important;color:#61788a!important;font-weight:700!important;margin-left:auto!important;padding:0 2px 5px!important}
+#pickerKpiPage .pkpi-table-head{align-items:center!important}
+#pickerKpiPage .pkpi-copy-image{border:0!important;border-radius:6px!important;background:#087454!important;color:#fff!important;padding:7px 10px!important;font-size:9px!important;font-weight:900!important;cursor:pointer!important;white-space:nowrap!important}
+#pickerKpiPage .pkpi-copy-image:disabled{opacity:.65!important;cursor:wait!important}
+#pickerKpiPage .pkpi-copy-message{margin:4px 0 0!important;min-height:12px!important;font-size:9px!important;color:#176b49!important;font-weight:700!important}
+#pickerKpiPage .pkpi-data-row{min-height:16px!important;padding:1px 3px!important;gap:2px!important}
+#pickerKpiPage .pkpi-seg{height:13px!important;min-height:13px!important;padding:1px 2px!important;border-radius:3px!important}
+#pickerKpiPage .pkpi-seg b{font-size:5.8px!important;line-height:1!important}
+#pickerKpiPage .pkpi-picker b{font-size:6px!important;line-height:1!important}
+#pickerKpiPage .pkpi-picker .pkpi-person-name{font-size:5.6px!important}
+#pickerKpiPage .pkpi-block-title{padding:3px 5px!important;font-size:8px!important;margin-top:3px!important}
+#pickerKpiPage .pkpi-active-users{font-size:6.5px!important;padding:1px 4px!important}
+#pickerKpiPage .pkpi-block-total{padding:2px 4px!important;font-size:6px!important;line-height:1!important}
+#pickerKpiPage .pkpi-grand-total{display:flex!important;align-items:center!important;justify-content:space-between!important;flex-wrap:wrap!important;gap:8px!important;background:linear-gradient(100deg,#123f61,#176b87)!important;color:#fff!important;border:2px solid #0e3857!important;border-radius:9px!important;padding:12px 15px!important;margin-top:9px!important;box-shadow:0 3px 10px #123f6128!important}
+#pickerKpiPage .pkpi-grand-total b{font-size:17px!important;font-weight:950!important;letter-spacing:.5px!important;color:#fff!important}
+#pickerKpiPage .pkpi-grand-total strong{font-size:16px!important;font-weight:950!important;line-height:1.35!important;color:#fff!important}
+#pickerKpiPage .pkpi-grand-total small{flex-basis:100%!important;font-size:9px!important;font-weight:800!important;color:#d9edf7!important;letter-spacing:.4px!important}
+@media(max-width:760px){#pickerKpiPage .pkpi-filter-bar{gap:6px!important}#pickerKpiPage .pkpi-filter-bar label,#pickerKpiPage .pkpi-filter-bar select{min-width:120px!important}#pickerKpiPage .pkpi-grand-total{align-items:flex-start!important;flex-direction:column!important}#pickerKpiPage .pkpi-grand-total b{font-size:15px!important}#pickerKpiPage .pkpi-grand-total strong{font-size:13px!important}}
 </style>
