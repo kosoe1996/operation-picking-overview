@@ -2960,19 +2960,25 @@ html,body{background:#f0f5f1!important}
    const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});
    const sheetName=wb.SheetNames.find(n=>String(n).trim().toLowerCase()==='kpi');if(!sheetName)throw new Error('Worksheet “KPI” was not found. Available sheets: '+wb.SheetNames.join(', '));
    const ws=wb.Sheets[sheetName],matrix=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:true});
-   // Detect the header row by its labels instead of assuming a fixed row/range.
+   // Find the KPI header row, then resolve each required column by its own header label.
+   // This avoids relying on the six fields being adjacent or in a fixed column order.
    const expected=['BLOCK','Picker Name-Night','User2','Total TO Picking','Total Line Picking','Actual Picking Ctn'];
    const norm=v=>String(v??'').trim().toLowerCase().replace(/\s+/g,' ');
    let headerRow=-1,cols=[];
    for(let ri=0;ri<matrix.length;ri++){
     const row=matrix[ri]||[];
-    for(let ci=0;ci<=row.length-expected.length;ci++){
-     const candidate=expected.map((_,j)=>norm(row[ci+j]));
-     if(expected.every((h,j)=>candidate[j]===norm(h))){headerRow=ri;cols=expected.map((_,j)=>ci+j);break;}
-    }
-    if(headerRow>=0)break;
+    const found=expected.map(h=>row.findIndex(v=>norm(v)===norm(h)));
+    if(found.every(i=>i>=0) && new Set(found).size===expected.length){headerRow=ri;cols=found;break;}
    }
-   if(headerRow<0)throw new Error('Could not locate the six KPI column headers. Please confirm the worksheet contains BLOCK, Picker Name-Night, User2, Total TO Picking, Total Line Picking and Actual Picking Ctn.');
+   if(headerRow<0)throw new Error('Could not locate all six KPI headers: BLOCK, Picker Name-Night, User2, Total TO Picking, Total Line Picking and Actual Picking Ctn.');
+   const parseQty=v=>{
+    if(typeof v==='number')return Number.isFinite(v)?v:0;
+    const raw=String(v??'').trim();
+    if(!raw)return 0;
+    const cleaned=raw.replace(/,/g,'').replace(/[^\d.+-]/g,'');
+    const n=Number(cleaned);
+    return Number.isFinite(n)?n:0;
+   };
    // Operation date and shift are read directly from the KPI worksheet labels.
    let opDate='',opShift='';
    for(let ri=0;ri<matrix.length;ri++){
@@ -2985,17 +2991,34 @@ html,body{background:#f0f5f1!important}
    }
    const dateText=v=>{if(v instanceof Date&&!isNaN(v))return v.toLocaleDateString('en-GB');if(typeof v==='number'&&v>20000){const d=XLSX.SSF.parse_date_code(v);return d?`${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')}/${d.y}`:String(v)}return String(v??'').trim()};
    $('pkpiOperationDate').textContent=dateText(opDate)||'—';$('pkpiOperationShift').textContent=String(opShift??'').trim()||'—';
-   const out=[];let currentBlock='';
+   const out=[],sourceTotals={};let currentBlock='';
    for(let i=headerRow+1;i<matrix.length;i++){
-    const row=matrix[i]||[],block=String(row[cols[0]]??'').trim(),picker=String(row[cols[1]]??'').trim(),user=String(row[cols[2]]??'').trim();
+    const row=matrix[i]||[];
+    const block=String(row[cols[0]]??'').trim();
+    const picker=String(row[cols[1]]??'').trim();
+    const user=String(row[cols[2]]??'').trim();
     if(block)currentBlock=block;
-    if(!picker||/\btotal\s*$/i.test(block)||/^grand total$/i.test(block)||/total\s*$/i.test(picker))continue;
-    const to=Number(String(row[cols[3]]??0).replace(/,/g,''))||0,line=Number(String(row[cols[4]]??0).replace(/,/g,''))||0,carton=Number(String(row[cols[5]]??0).replace(/,/g,''))||0;
-    if(!currentBlock||(!to&&!line&&!carton))continue;
+    const isTotal=/\btotal\b/i.test(block)||/^grand total$/i.test(block)||/\btotal\b/i.test(picker);
+    if(isTotal){
+     const totalBlock=(block||picker).replace(/\s*total\s*$/i,'').trim();
+     if(totalBlock)sourceTotals[totalBlock]=parseQty(row[cols[5]]);
+     continue;
+    }
+    if(!picker||!currentBlock)continue;
+    const to=parseQty(row[cols[3]]),line=parseQty(row[cols[4]]),carton=parseQty(row[cols[5]]);
+    // Keep legitimate rows with zero carton; do not discard them just because one measure is zero.
+    if(!to&&!line&&!carton)continue;
     out.push({block:currentBlock,picker,user,to,line,carton,operationDate:dateText(opDate)||'—',operationShift:String(opShift??'').trim()||'—'});
    }
    if(!out.length)throw new Error('KPI sheet was found, but no picker data rows were detected beneath the header row.');
-   pickerRows=out;window.pickerKpiRawRows=out;populateKpiFilters();msg.textContent=`Loaded successfully · ${out.length} pickers · ${new Set(out.map(r=>r.block)).size} blocks · Header row ${headerRow+1} · Source: ${sheetName}`;calc();
+   // Validate picker-row sums against the source block-total rows before reporting success.
+   const blockChecks=[...new Set(out.map(r=>r.block))].map(b=>{
+    const sum=out.filter(r=>r.block===b).reduce((a,r)=>a+r.carton,0);
+    const sourceKey=Object.keys(sourceTotals).find(k=>norm(k)===norm(b));
+    const source=sourceKey?sourceTotals[sourceKey]:null;
+    return `${b.replace(/^PICKING\s*-\s*/i,'')}: ${Math.round(sum).toLocaleString('en-US')}${source===null?' (no source total)':`/${Math.round(source).toLocaleString('en-US')}`}`;
+   });
+   pickerRows=out;window.pickerKpiRawRows=out;populateKpiFilters();msg.textContent=`Loaded · ${out.length} pickers · ${new Set(out.map(r=>r.block)).size} blocks · CTN check: ${blockChecks.join(' | ')} · Source: ${sheetName}`;calc();
   }catch(e){msg.textContent='Unable to process KPI workbook: '+e.message;$('pkpiResults').className='pkpi-empty';$('pkpiResults').textContent=e.message;}
   finally{btn.disabled=false;}
  });
@@ -3003,39 +3026,42 @@ html,body{background:#f0f5f1!important}
   const btn=$('pkpiCopyImage'),msg=$('pkpiCopyMessage'),target=$('pickerKpiWorkspace');
   if(!pickerRows.length){msg.textContent='Please load the KPI workbook before copying the report.';return;}
   if(typeof html2canvas==='undefined'){msg.textContent='Image library did not load. Reload the page and try again.';return;}
-  btn.disabled=true;btn.textContent='Preparing HD image…';msg.textContent='Creating high-resolution KPI report image…';
+  btn.disabled=true;btn.textContent='Preparing HD image…';msg.textContent='Capturing only the selected KPI report sections in Ultra HD…';
   try{
-   const captureWidth=Math.max(900,Math.round(target.getBoundingClientRect().width));
    const canvas=await html2canvas(target,{
-    scale:5,
-    backgroundColor:'#ffffff',
-    useCORS:true,
-    allowTaint:false,
-    logging:false,
-    width:captureWidth,
-    windowWidth:captureWidth,
-    windowHeight:Math.max(document.documentElement.clientHeight,target.scrollHeight),
+    scale:5,backgroundColor:'#ffffff',useCORS:true,allowTaint:false,logging:false,
     imageTimeout:15000,
     onclone:(doc)=>{
      const el=doc.getElementById('pickerKpiWorkspace');
      if(el){
-      el.style.width=captureWidth+'px';
-      el.style.maxWidth=captureWidth+'px';
-      el.style.marginLeft='auto';
-      el.style.marginRight='auto';
-      el.style.overflow='visible';
-      el.style.height='auto';
-      el.style.boxSizing='border-box';
+      ['.pkpi-intro','.pkpi-calculator','.pkpi-upload','.pkpi-legend','.pkpi-copy-image','.pkpi-copy-message']
+       .forEach(sel=>el.querySelectorAll(sel).forEach(x=>x.style.setProperty('display','none','important')));
+      el.style.setProperty('display','block','important');
+      el.style.setProperty('height','auto','important');
+      el.style.setProperty('min-height','0','important');
+      el.style.setProperty('overflow','visible','important');
+      el.style.setProperty('box-sizing','border-box','important');
+      el.style.setProperty('width',getComputedStyle(target).width,'important');
+      el.style.setProperty('max-width',getComputedStyle(target).maxWidth,'important');
+      el.style.setProperty('margin-left',getComputedStyle(target).marginLeft,'important');
+      el.style.setProperty('margin-right',getComputedStyle(target).marginRight,'important');
      }
-     ['.pkpi-intro','.pkpi-calculator','.pkpi-upload','.pkpi-legend','.pkpi-copy-image','.pkpi-copy-message'].forEach(sel=>doc.querySelectorAll(sel).forEach(x=>x.style.display='none'));
      const page=doc.getElementById('pickerKpiPage');
-     if(page){page.style.display='block';page.style.position='static';page.style.width=captureWidth+'px';page.style.padding='0';}
+     if(page){page.style.setProperty('display','block','important');page.style.setProperty('position','static','important');}
+     // Prevent the surrounding page or blank right-hand canvas from entering the image.
+     doc.documentElement.style.setProperty('background','#ffffff','important');
+     doc.body.style.setProperty('background','#ffffff','important');
     }
    });
    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
    if(!blob)throw new Error('Could not create PNG image.');
-   if(navigator.clipboard&&window.ClipboardItem){await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.textContent='Copied! HD KPI report image is ready to paste into WhatsApp.';}
-   else{const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Picker-KPI-Report.png';a.click();URL.revokeObjectURL(url);msg.textContent='Image downloaded. Attach Picker-KPI-Report.png in WhatsApp.';}
+   if(navigator.clipboard&&window.ClipboardItem){
+    await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+    msg.textContent='Copied in Ultra HD. Only the KPI report workspace is included; the blank side area and unrelated page sections are excluded.';
+   }else{
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Picker-KPI-Report-HD.png';a.click();URL.revokeObjectURL(url);
+    msg.textContent='HD image downloaded. Only the KPI report workspace is included.';
+   }
   }catch(err){msg.textContent='Unable to copy image: '+err.message;}
   finally{btn.disabled=false;btn.textContent='▣ COPY AS IMAGE (HD)';}
  });
