@@ -1522,6 +1522,100 @@ body[data-view="picking"] .side-foot>div:last-child{display:none!important}
 @media(max-width:760px){#pickerKpiPage .pkpi-data-row{min-height:19px!important;padding:1px 3px!important}#pickerKpiPage .pkpi-seg{height:14px!important;min-height:14px!important}}
 </style>
 
+
+<style id="picker-kpi-v80-inset-and-print-readable">
+/* V80: keep V77 structure and behavior; inset the report and enlarge KPI text only. */
+@media (min-width: 761px) {
+  #pickerKpiPage #pickerKpiWorkspace.pkpi-wrap{
+    width:92%!important;
+    max-width:1500px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+  #pickerKpiPage .pkpi-picker b{
+    font-size:8.2px!important;
+    line-height:1.15!important;
+    font-weight:850!important;
+  }
+  #pickerKpiPage .pkpi-picker .pkpi-person-name{
+    font-size:7.2px!important;
+    line-height:1.15!important;
+  }
+  #pickerKpiPage .pkpi-seg{
+    font-size:8px!important;
+  }
+  #pickerKpiPage .pkpi-seg b{
+    font-size:8px!important;
+    line-height:1.1!important;
+    font-weight:950!important;
+  }
+  #pickerKpiPage .pkpi-seg small{
+    font-size:7px!important;
+    line-height:1.1!important;
+    font-weight:850!important;
+  }
+  #pickerKpiPage .pkpi-block-title{
+    font-size:9.5px!important;
+    line-height:1.15!important;
+  }
+  #pickerKpiPage .pkpi-active-users{
+    font-size:8px!important;
+  }
+}
+@media print {
+  @page { margin:8mm; }
+  #pickerKpiPage #pickerKpiWorkspace.pkpi-wrap{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+  }
+  #pickerKpiPage .pkpi-picker b{
+    font-size:10px!important;
+    line-height:1.2!important;
+    font-weight:900!important;
+  }
+  #pickerKpiPage .pkpi-picker .pkpi-person-name{
+    font-size:8.5px!important;
+    line-height:1.2!important;
+  }
+  #pickerKpiPage .pkpi-seg{
+    font-size:9.5px!important;
+    min-height:18px!important;
+    height:auto!important;
+    padding:2px 3px!important;
+  }
+  #pickerKpiPage .pkpi-seg b{
+    font-size:9.5px!important;
+    line-height:1.15!important;
+    font-weight:950!important;
+  }
+  #pickerKpiPage .pkpi-seg small{
+    font-size:8.5px!important;
+    line-height:1.15!important;
+    font-weight:900!important;
+  }
+  #pickerKpiPage .pkpi-data-row{
+    min-height:22px!important;
+    padding:2px 4px!important;
+  }
+  #pickerKpiPage .pkpi-block-title{
+    font-size:11px!important;
+    padding:5px 7px!important;
+  }
+  #pickerKpiPage .pkpi-active-users{
+    font-size:9px!important;
+  }
+  #pickerKpiPage .pkpi-block-total,
+  #pickerKpiPage .pkpi-block-total b,
+  #pickerKpiPage .pkpi-block-total span{
+    font-size:10px!important;
+    font-weight:950!important;
+  }
+  #pickerKpiPage .pkpi-grand-total b{font-size:18px!important}
+  #pickerKpiPage .pkpi-grand-total strong{font-size:17px!important}
+}
+</style>
+
 </head><body><div class="app-shell">
 <aside class="side">
  <div class="brand"><div class="brandmark">OP</div><div><b>OPERATION OVERVIEW</b><span>MONITOR DISPLAY</span></div></div>
@@ -1696,7 +1790,14 @@ body[data-view="picking"] .side-foot>div:last-child{display:none!important}
   </section>
   <section class="pkpi-upload"><div><b>KPI WORKBOOK</b><small>Only the worksheet named “KPI” will be read.</small></div><div class="pkpi-upload-controls"><input id="pkpiFile" type="file" accept=".xlsx,.xls"><button id="pkpiProcess" type="button">Process KPI Sheet</button></div><p id="pkpiMessage">Upload the Excel workbook containing the KPI sheet to load picker performance.</p></section>
   <section class="pkpi-legend"><b>BAR RULES</b><span><i class="to"></i> TO · Fixed blue</span><span><i class="line-red"></i> LINE · Below target</span><span><i class="line-green"></i> LINE · Target met</span><span><i class="carton"></i> CARTON · Yellow, quantity-scaled</span></section>
-  <section class="pkpi-table-panel"><div class="pkpi-table-head"><div><b>PICKER PERFORMANCE</b><small>One combined performance bar per picker</small></div><button type="button" id="pkpiCopyImage" class="pkpi-copy-image">▣ COPY AS IMAGE (HD)</button></div><div id="pkpiResults" class="pkpi-empty">Upload the KPI workbook. The source columns will be mapped after reviewing the sheet structure.</div><p id="pkpiCopyMessage" class="pkpi-copy-message" aria-live="polite"></p></section>
+  <section class="pkpi-table-panel"><div class="pkpi-table-head"><div><b>PICKER PERFORMANCE</b><small>One combined performance bar per picker</small></div><button type="button" id="pkpiCopyImage" class="pkpi-copy-image">▣ COPY AS IMAGE (HD)</button></div>
+   <section class="pkpi-live-status" aria-label="Live target status">
+    <div class="pkpi-status-heading"><b>LIVE TARGET STATUS</b><span class="pkpi-live">LIVE</span></div>
+    <div class="pkpi-status-values">
+     <span><small>START</small><b id="pkpiStatusStart">18:15</b></span><span><small>CURRENT</small><b id="pkpiStatusCurrent">05:00</b></span><span><small>BREAK</small><b id="pkpiStatusBreak">1.5 HRS</b></span><span><small>ACTUAL HRS</small><b id="pkpiStatusHours">9.25</b></span><span><small>PER HOUR LINE</small><b id="pkpiStatusRate">15</b></span><span class="pkpi-status-target"><small>SHARED TARGET LINE</small><b id="pkpiStatusTarget">139</b></span>
+    </div>
+   </section>
+   <div id="pkpiResults" class="pkpi-empty">Upload the KPI workbook. The source columns will be mapped after reviewing the sheet structure.</div><p id="pkpiCopyMessage" class="pkpi-copy-message" aria-live="polite"></p></section>
  </section>
 </div>
 </main></div>
@@ -2559,6 +2660,10 @@ html,body{background:#f0f5f1!important}
   const gross=(current-start)/60,br=Math.max(0,Number($('pkpiBreak').value)||0),hours=Math.max(0,gross-br),rate=Math.max(0,Number($('pkpiRate').value)||0),raw=hours*rate,target=Math.ceil(raw-1e-10);
   $('pkpiHours').textContent=hours.toFixed(2).replace(/\.?0+$/,'');$('pkpiTarget').textContent=fmt(target);
   $('pkpiFormula').textContent=`Actual Hours × Per Hour Line = Target Line · ${hours.toFixed(2)} × ${rate} = ${raw.toFixed(2)} → ${target}`;
+  const status=(id,value)=>{const el=$(id);if(el)el.textContent=value;};
+  status('pkpiStatusStart',$('pkpiStart').value||'—');status('pkpiStatusCurrent',$('pkpiCurrent').value||'—');
+  status('pkpiStatusBreak',`${Number($('pkpiBreak').value)||0} HRS`);status('pkpiStatusHours',hours.toFixed(2).replace(/\.?0+$/,''));
+  status('pkpiStatusRate',fmt(rate));status('pkpiStatusTarget',fmt(target));
   render(target);return target;
  }
  function filteredPickerRows(){return pickerRows.filter(r=>(selectedOperationDate==='all'||r.operationDate===selectedOperationDate)&&(selectedOperationShift==='all'||r.operationShift===selectedOperationShift));}
@@ -2694,6 +2799,21 @@ html,body{background:#f0f5f1!important}
 }
 </style>
 
+
+<style id="picker-kpi-v77-live-status-in-performance">
+/* V77: display-only target status inside Picker Performance; filters and calculator inputs stay where they were. */
+#pickerKpiPage .pkpi-live-status{margin:7px 0 8px!important;padding:7px 9px!important;background:#f4f8fc!important;border:1px solid #cbdbe8!important;border-radius:7px!important}
+#pickerKpiPage .pkpi-status-heading{display:flex!important;align-items:center!important;justify-content:space-between!important;margin-bottom:5px!important}
+#pickerKpiPage .pkpi-status-heading>b{font-size:9px!important;font-weight:950!important;letter-spacing:.35px!important;color:#173e5c!important}
+#pickerKpiPage .pkpi-status-heading .pkpi-live{font-size:7px!important;padding:3px 7px!important}
+#pickerKpiPage .pkpi-status-values{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:5px!important}
+#pickerKpiPage .pkpi-status-values>span{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:2px!important;min-width:0!important;padding:4px 6px!important;background:#fff!important;border:1px solid #dce6ee!important;border-radius:5px!important}
+#pickerKpiPage .pkpi-status-values small{font-size:6.5px!important;font-weight:900!important;color:#6c8192!important;white-space:nowrap!important}
+#pickerKpiPage .pkpi-status-values b{font-size:10px!important;font-weight:950!important;color:#24465f!important;white-space:nowrap!important}
+#pickerKpiPage .pkpi-status-values .pkpi-status-target{background:#e3f5e9!important;border-color:#b9e2c8!important}
+#pickerKpiPage .pkpi-status-values .pkpi-status-target b{font-size:15px!important;color:#087b49!important}
+@media(max-width:760px){#pickerKpiPage .pkpi-status-values{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+</style>
 </body></html>
 <style>
 
