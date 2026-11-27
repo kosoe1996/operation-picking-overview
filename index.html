@@ -2931,7 +2931,8 @@ html,body{background:#f0f5f1!important}
    html+=`<section class="pkpi-block-card"><div class="pkpi-block-title"><span>${esc(block)}</span><span class="pkpi-active-users">ACTIVE USERS - ${activeUsers}</span></div>`;
    let st={to:0,line:0,carton:0};
    for(const r of items){st.to+=r.to;st.line+=r.line;st.carton+=r.carton;const pct=target>0?r.line/target*100:0,met=target>0&&r.line>=target,ctnPct=Math.max(3,r.carton/maxCtn*100);
-    html+=`<div class="pkpi-data-row"><div class="pkpi-picker"><b>${esc(r.user||r.picker)}${r.user&&r.picker?` <span class="pkpi-person-name">( ${esc(r.picker)} )</span>`:''}</b></div><div class="pkpi-combo"><div class="pkpi-seg pkpi-to"><b>TO - ${fmt(r.to)}</b></div><div class="pkpi-seg ${met?'pkpi-line-green':'pkpi-line-red'}"><b>LINE - ${fmt(r.line)} - ${target?Math.round(pct)+'%':'Target —'}</b></div><div class="pkpi-seg pkpi-carton"><div class="pkpi-carton-fill" style="width:${ctnPct}%"></div><b>CTN - ${fmt(r.carton)}</b></div></div></div>`;
+    const lineFillPct=target>0?Math.max(0,Math.min(100,pct)):0;
+    html+=`<div class="pkpi-data-row"><div class="pkpi-picker"><b>${esc(r.user||r.picker)}${r.user&&r.picker?` <span class="pkpi-person-name">( ${esc(r.picker)} )</span>`:''}</b></div><div class="pkpi-combo"><div class="pkpi-seg pkpi-to"><b>TO - ${fmt(r.to)}</b></div><div class="pkpi-seg ${met?'pkpi-line-green':'pkpi-line-red'}"><span class="pkpi-line-fill" style="width:${met?100:lineFillPct}%"></span><b>LINE - ${fmt(r.line)} - ${target?Math.round(pct)+'%':'Target —'}</b></div><div class="pkpi-seg pkpi-carton"><div class="pkpi-carton-fill" style="width:${ctnPct}%"></div><b>CTN - ${fmt(r.carton)}</b></div></div></div>`;
    }
    html+=`<div class="pkpi-block-total"><b>${esc(block)} TOTAL</b><span>TO - ${fmt(st.to)}　 LINE - ${fmt(st.line)}　 CTN - ${fmt(st.carton)}</span></div></section>`;
   }
@@ -3748,3 +3749,47 @@ html,body{background:#f0f5f1!important}
 #pickerKpiPage .pkpi-grand-total small{flex-basis:100%!important;font-size:9px!important;font-weight:800!important;color:#d9edf7!important;letter-spacing:.4px!important}
 @media(max-width:760px){#pickerKpiPage .pkpi-filter-bar{gap:6px!important}#pickerKpiPage .pkpi-filter-bar label,#pickerKpiPage .pkpi-filter-bar select{min-width:120px!important}#pickerKpiPage .pkpi-grand-total{align-items:flex-start!important;flex-direction:column!important}#pickerKpiPage .pkpi-grand-total b{font-size:15px!important}#pickerKpiPage .pkpi-grand-total strong{font-size:13px!important}}
 </style>
+
+<style id="v86-line-target-progress-bars">
+/* V86: LINE progress is proportional below target; target met/over-target is a full green bar. */
+#pickerKpiPage .pkpi-seg.pkpi-line-red,
+#pickerKpiPage .pkpi-seg.pkpi-line-green{
+  position:relative!important;
+  overflow:hidden!important;
+  background:#fff!important;
+}
+#pickerKpiPage .pkpi-seg.pkpi-line-red{
+  color:#a92323!important;
+  border:1px solid #e9a5a5!important;
+}
+#pickerKpiPage .pkpi-seg.pkpi-line-green{
+  color:#08743b!important;
+  border:1px solid #9dd3b0!important;
+}
+#pickerKpiPage .pkpi-line-fill{
+  position:absolute!important;
+  left:0!important;
+  top:0!important;
+  bottom:0!important;
+  z-index:0!important;
+  display:block!important;
+  max-width:100%!important;
+  border-radius:inherit!important;
+  pointer-events:none!important;
+}
+#pickerKpiPage .pkpi-line-red .pkpi-line-fill{
+  background:#e45b5b!important;
+  opacity:.38!important;
+}
+#pickerKpiPage .pkpi-line-green .pkpi-line-fill{
+  width:100%!important;
+  background:#239b63!important;
+  opacity:.30!important;
+}
+#pickerKpiPage .pkpi-line-red>b,
+#pickerKpiPage .pkpi-line-green>b{
+  position:relative!important;
+  z-index:2!important;
+}
+</style>
+
