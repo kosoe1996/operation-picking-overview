@@ -2922,6 +2922,8 @@ html,body{background:#f0f5f1!important}
  function render(target){
   const root=$('pkpiResults');if(!root)return;
   const visibleRows=filteredPickerRows();
+  $('pkpiOperationDate').textContent=selectedOperationDate==='all'?'All Dates':selectedOperationDate;
+  $('pkpiOperationShift').textContent=selectedOperationShift==='all'?'All Shifts':selectedOperationShift;
   if(!visibleRows.length){root.className='pkpi-empty';root.textContent='No picker records match the selected Operation Date and Shift.';$('pkpiFilterSummary').textContent='0 pickers shown';return;}
   const maxCtn=Math.max(1,...visibleRows.map(r=>r.carton));
   const groups=new Map();for(const r of visibleRows){if(!groups.has(r.block))groups.set(r.block,[]);groups.get(r.block).push(r)}
@@ -2968,21 +2970,24 @@ html,body{background:#f0f5f1!important}
    const norm=v=>String(v??'').trim().toLowerCase().replace(/\s+/g,' ');
    const headerAliases=[
     ['block'],
-    ['picker name-night','picker name-day'],
+    ['picker name','picker name-night','picker name-day'],
     ['user2'],
     ['total to picking'],
     ['total line picking'],
     ['actual picking ctn','actual picking carton','total carton']
    ];
-   let headerRow=-1,cols=[],pickerHeader='';
+   let headerRow=-1,cols=[],pickerHeader='',dateCol=-1,shiftCol=-1;
    for(let ri=0;ri<matrix.length;ri++){
     const row=matrix[ri]||[];
     const found=headerAliases.map(aliases=>row.findIndex(v=>aliases.includes(norm(v))));
     if(found.every(i=>i>=0) && new Set(found).size===headerAliases.length){
-     headerRow=ri;cols=found;pickerHeader=String(row[found[1]]??'').trim();break;
+     headerRow=ri;cols=found;pickerHeader=String(row[found[1]]??'').trim();
+     dateCol=row.findIndex(v=>['operation date','date'].includes(norm(v)));
+     shiftCol=row.findIndex(v=>['operation shift','shift'].includes(norm(v)));
+     break;
     }
    }
-   if(headerRow<0)throw new Error('Could not locate KPI headers. Expected BLOCK, Picker Name-Day or Picker Name-Night, User2, Total TO Picking, Total Line Picking and Actual Picking Ctn.');
+   if(headerRow<0)throw new Error('Could not locate KPI headers. Expected BLOCK, Picker Name, User2, Total TO Picking, Total Line Picking and Actual Picking Ctn.');
    const parseQty=v=>{
     if(typeof v==='number')return Number.isFinite(v)?v:0;
     const raw=String(v??'').trim();
@@ -3003,13 +3008,15 @@ html,body{background:#f0f5f1!important}
    }
    const dateText=v=>{if(v instanceof Date&&!isNaN(v))return v.toLocaleDateString('en-GB');if(typeof v==='number'&&v>20000){const d=XLSX.SSF.parse_date_code(v);return d?`${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')}/${d.y}`:String(v)}return String(v??'').trim()};
    $('pkpiOperationDate').textContent=dateText(opDate)||'—';$('pkpiOperationShift').textContent=String(opShift??'').trim()||'—';
-   const out=[],sourceTotals={};let currentBlock='';
+   const out=[],sourceTotals={};let currentBlock='',currentDate='',currentShift='';
    for(let i=headerRow+1;i<matrix.length;i++){
     const row=matrix[i]||[];
     const block=String(row[cols[0]]??'').trim();
     const picker=String(row[cols[1]]??'').trim();
     const user=String(row[cols[2]]??'').trim();
     if(block)currentBlock=block;
+    if(dateCol>=0 && String(row[dateCol]??'').trim())currentDate=dateText(row[dateCol]);
+    if(shiftCol>=0 && String(row[shiftCol]??'').trim())currentShift=String(row[shiftCol]).trim();
     const isTotal=/\btotal\b/i.test(block)||/^grand total$/i.test(block)||/\btotal\b/i.test(picker);
     if(isTotal){
      const totalBlock=(block||picker).replace(/\s*total\s*$/i,'').trim();
@@ -3020,7 +3027,11 @@ html,body{background:#f0f5f1!important}
     const to=parseQty(row[cols[3]]),line=parseQty(row[cols[4]]),carton=parseQty(row[cols[5]]);
     // Keep legitimate rows with zero carton; do not discard them just because one measure is zero.
     if(!to&&!line&&!carton)continue;
-    out.push({block:currentBlock,picker,user,to,line,carton,operationDate:dateText(opDate)||'—',operationShift:String(opShift??'').trim()||'—'});
+    out.push({
+     block:currentBlock,picker,user,to,line,carton,
+     operationDate:(dateCol>=0?currentDate:dateText(opDate))||'—',
+     operationShift:(shiftCol>=0?currentShift:String(opShift??'').trim())||'—'
+    });
    }
    if(!out.length)throw new Error('KPI sheet was found, but no picker data rows were detected beneath the header row.');
    // Validate picker-row sums against the source block-total rows before reporting success.
@@ -3030,7 +3041,11 @@ html,body{background:#f0f5f1!important}
     const source=sourceKey?sourceTotals[sourceKey]:null;
     return `${b.replace(/^PICKING\s*-\s*/i,'')}: ${Math.round(sum).toLocaleString('en-US')}${source===null?' (no source total)':`/${Math.round(source).toLocaleString('en-US')}`}`;
    });
-   pickerRows=out;window.pickerKpiRawRows=out;populateKpiFilters();msg.textContent=`Loaded · ${out.length} pickers · ${new Set(out.map(r=>r.block)).size} blocks · ${pickerHeader} · CTN check: ${blockChecks.join(' | ')} · Source: ${sheetName}`;calc();
+   pickerRows=out;window.pickerKpiRawRows=out;populateKpiFilters();
+   const dateCount=new Set(out.map(r=>r.operationDate).filter(v=>v&&v!=='—')).size;
+   const shiftCount=new Set(out.map(r=>r.operationShift).filter(v=>v&&v!=='—')).size;
+   const filterNote=(dateCol<0||shiftCol<0)?' · Note: this KPI sheet contains one PivotTable date/shift selection; to switch across multiple dates/shifts, include Operation Date and Operation Shift as row-level columns in the KPI data.':'';
+   msg.textContent=`Loaded · ${out.length} pickers · ${new Set(out.map(r=>r.block)).size} blocks · ${pickerHeader} · ${dateCount} dates · ${shiftCount} shifts · CTN check: ${blockChecks.join(' | ')} · Source: ${sheetName}${filterNote}`;calc();
   }catch(e){msg.textContent='Unable to process KPI workbook: '+e.message;$('pkpiResults').className='pkpi-empty';$('pkpiResults').textContent=e.message;}
   finally{btn.disabled=false;}
  });
