@@ -2963,15 +2963,26 @@ html,body{background:#f0f5f1!important}
    const ws=wb.Sheets[sheetName],matrix=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:true});
    // Find the KPI header row, then resolve each required column by its own header label.
    // This avoids relying on the six fields being adjacent or in a fixed column order.
-   const expected=['BLOCK','Picker Name-Night','User2','Total TO Picking','Total Line Picking','Actual Picking Ctn'];
+   // Support both Day and Night KPI layouts. Only the picker-name header changes;
+   // the remaining measures are resolved independently by their labels.
    const norm=v=>String(v??'').trim().toLowerCase().replace(/\s+/g,' ');
-   let headerRow=-1,cols=[];
+   const headerAliases=[
+    ['block'],
+    ['picker name-night','picker name-day'],
+    ['user2'],
+    ['total to picking'],
+    ['total line picking'],
+    ['actual picking ctn','actual picking carton','total carton']
+   ];
+   let headerRow=-1,cols=[],pickerHeader='';
    for(let ri=0;ri<matrix.length;ri++){
     const row=matrix[ri]||[];
-    const found=expected.map(h=>row.findIndex(v=>norm(v)===norm(h)));
-    if(found.every(i=>i>=0) && new Set(found).size===expected.length){headerRow=ri;cols=found;break;}
+    const found=headerAliases.map(aliases=>row.findIndex(v=>aliases.includes(norm(v))));
+    if(found.every(i=>i>=0) && new Set(found).size===headerAliases.length){
+     headerRow=ri;cols=found;pickerHeader=String(row[found[1]]??'').trim();break;
+    }
    }
-   if(headerRow<0)throw new Error('Could not locate all six KPI headers: BLOCK, Picker Name-Night, User2, Total TO Picking, Total Line Picking and Actual Picking Ctn.');
+   if(headerRow<0)throw new Error('Could not locate KPI headers. Expected BLOCK, Picker Name-Day or Picker Name-Night, User2, Total TO Picking, Total Line Picking and Actual Picking Ctn.');
    const parseQty=v=>{
     if(typeof v==='number')return Number.isFinite(v)?v:0;
     const raw=String(v??'').trim();
@@ -3019,7 +3030,7 @@ html,body{background:#f0f5f1!important}
     const source=sourceKey?sourceTotals[sourceKey]:null;
     return `${b.replace(/^PICKING\s*-\s*/i,'')}: ${Math.round(sum).toLocaleString('en-US')}${source===null?' (no source total)':`/${Math.round(source).toLocaleString('en-US')}`}`;
    });
-   pickerRows=out;window.pickerKpiRawRows=out;populateKpiFilters();msg.textContent=`Loaded · ${out.length} pickers · ${new Set(out.map(r=>r.block)).size} blocks · CTN check: ${blockChecks.join(' | ')} · Source: ${sheetName}`;calc();
+   pickerRows=out;window.pickerKpiRawRows=out;populateKpiFilters();msg.textContent=`Loaded · ${out.length} pickers · ${new Set(out.map(r=>r.block)).size} blocks · ${pickerHeader} · CTN check: ${blockChecks.join(' | ')} · Source: ${sheetName}`;calc();
   }catch(e){msg.textContent='Unable to process KPI workbook: '+e.message;$('pkpiResults').className='pkpi-empty';$('pkpiResults').textContent=e.message;}
   finally{btn.disabled=false;}
  });
